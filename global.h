@@ -1,0 +1,25 @@
+#ifndef MANUFACTURY_GLOBAL_H
+#define MANUFACTURY_GLOBAL_H
+
+#include <curses.h>
+#include <panel.h>
+#include <stdbool.h>
+
+#undef COLOR_WHITE
+#define COLOR_WHITE 15
+#define COLOR_YELLOW_LIGHT 14
+#define COLOR_PINK_LIGHT 13
+#define COLOR_RED_LIGHT 12
+#define COLOR_CYAN_LIGHT 11
+#define COLOR_GREEN_LIGHT 10
+#define COLOR_BLUE_LIGHT 9
+#define COLOR_GRAY_DARK 8
+#define COLOR_GRAY_LIGHT 7
+#define COLOR_YELLOW_DARK 6
+#define COLOR_PINK_DARK 5
+#define COLOR_RED_DARK 4
+#define COLOR_CYAN_DARK 3
+#define COLOR_GREEN_DARK 2
+#define COLOR_BLUE_DARK 1
+
+#endif //MANUFACTURY_GLOBAL_H
