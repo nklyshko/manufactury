@@ -30,7 +30,7 @@ void rmerror(void);
 
 #ifdef A_COLOR
 # define TITLECOLOR       1       /* color pair indices */
-# define MAINMENUCOLOR    (2 | A_BOLD)
+# define MAINMENUCOLOR    (2)
 # define MAINMENUREVCOLOR (3 | A_BOLD | A_REVERSE)
 # define SUBMENUCOLOR     (4 | A_BOLD)
 # define SUBMENUREVCOLOR  (5 | A_BOLD | A_REVERSE)
@@ -114,12 +114,12 @@ static void initcolor(void)
 
     /* foreground, background */
 
-    init_pair(TITLECOLOR       & ~A_ATTR, COLOR_BLACK, COLOR_CYAN);
-    init_pair(MAINMENUCOLOR    & ~A_ATTR, COLOR_WHITE, COLOR_CYAN);
-    init_pair(MAINMENUREVCOLOR & ~A_ATTR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(TITLECOLOR       & ~A_ATTR, COLOR_BLACK, COLOR_RED);
+    init_pair(MAINMENUCOLOR    & ~A_ATTR, 15, COLOR_BLACK);
+    init_pair(MAINMENUREVCOLOR & ~A_ATTR, 8, COLOR_BLACK);
     init_pair(SUBMENUCOLOR     & ~A_ATTR, COLOR_WHITE, COLOR_CYAN);
     init_pair(SUBMENUREVCOLOR  & ~A_ATTR, COLOR_WHITE, COLOR_BLACK);
-    init_pair(BODYCOLOR        & ~A_ATTR, COLOR_WHITE, COLOR_BLUE);
+    init_pair(BODYCOLOR        & ~A_ATTR, 0, 15);
     init_pair(STATUSCOLOR      & ~A_ATTR, COLOR_WHITE, COLOR_CYAN);
     init_pair(INPUTBOXCOLOR    & ~A_ATTR, COLOR_BLACK, COLOR_CYAN);
     init_pair(EDITBOXCOLOR     & ~A_ATTR, COLOR_WHITE, COLOR_BLACK);

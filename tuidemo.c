@@ -31,7 +31,7 @@ void address(void)
 {
     char *fieldname[6] =
     {
-        "Name", "Street", "City", "State", "Country", (char *)0
+        "Имя", "Улица", "Город", "Штат", "Страна", (char *)0
     };
 
     char *fieldbuf[5];
@@ -131,16 +131,16 @@ void subsub(void);
 
 menu MainMenu[] =
 {
-    { "Asub", sub0, "Go inside first submenu" },
-    { "Bsub", sub1, "Go inside second submenu" },
-    { "Csub", sub2, "Go inside third submenu" },
-    { "Dsub", sub3, "Go inside fourth submenu" },
+    { "МенюА", sub0, "Go inside first submenu" },
+    { "МенюБ", sub1, "Go inside second submenu" },
+    { "МенюВ", sub2, "Go inside third submenu" },
+    { "МенюД", sub3, "Go inside fourth submenu" },
     { "", (FUNC)0, "" }   /* always add this as the last item! */
 };
 
 menu SubMenu0[] =
 {
-    { "Exit", DoExit, "Terminate program" },
+    { "Выход", DoExit, "Terminate program" },
     { "", (FUNC)0, "" }
 };
 
@@ -154,14 +154,14 @@ menu SubMenu1[] =
 menu SubMenu2[] =
 {
     { "Browse", subfunc1, "Source file lister" },
-    { "Input", subfunc2, "Interactive file lister" },
-    { "Address", address, "Get address data" },
+    { "Ввод", subfunc2, "Interactive file lister" },
+    { "Адрес", address, "Get address data" },
     { "", (FUNC)0, "" }
 };
 
 menu SubMenu3[] =
 {
-    { "SubSub", subsub, "Go inside sub-submenu" },
+    { "Подменю", subsub, "Go inside sub-submenu" },
     { "", (FUNC)0, "" }
 };
 
@@ -193,6 +193,10 @@ void func1(void)
 {
     beep();
     bodymsg("One beep! ");
+    char* buf = malloc(sizeof(char) * 10);
+    buf[9] = '\0';
+    itoa(COLORS, buf, 10);
+    bodymsg(buf);
 }
 
 void func2(void)
