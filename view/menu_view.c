@@ -7,7 +7,7 @@
 
 typedef struct {
     wchar_t* label;
-    HotKey hotkey;
+    HotKey* hotkey;
     void (* action)(void);
 } MenuItem;
 
@@ -111,7 +111,7 @@ void CreateMenu(int id, wchar_t* label, int size, ...) {
     for (int i = 0; i < size; i++) {
         MenuItem* item = malloc(sizeof(MenuItem));
         item->label = va_arg(args, wchar_t*);
-        item->hotkey = va_arg(args, HotKey);
+        item->hotkey = va_arg(args, HotKey*);
         item->action = va_arg(args, void (*)(void));
 
         menu->items[i] = item;

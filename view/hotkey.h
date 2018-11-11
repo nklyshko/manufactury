@@ -14,10 +14,17 @@ typedef struct {
     unsigned long modifiers;
 } HotKey;
 
-HotKey CreateHotKey(char symbol, unsigned long modifiers);
+typedef struct {
+    HotKey* hotKey;
+    void (* action)(void);
+} HotKeyAction;
 
-bool TestHotKey(HotKey h, int ch, unsigned long modifiers);
+bool InitHotKeyHandler(void (* eventHandler)(HotKey* hotKey));
 
-wchar_t* GetHotKeyTitle(HotKey h);
+HotKey* CreateHotKey(char symbol, unsigned long modifiers);
+
+wchar_t* GetHotKeyTitle(HotKey* hotKey);
+
+void RegisterHotKeyAction(HotKey* hotKey, void (* action)(void));
 
 #endif //MANUFACTURY_HOTKEY_H
