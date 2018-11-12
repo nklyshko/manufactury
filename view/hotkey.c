@@ -3,6 +3,9 @@
 #include <src/log.h>
 #include "hotkey.h"
 
+#define A_CODE 0x01 //первая буква в алфавите
+#define Z_CODE 0x1a //последняя буква в алфавите
+
 List* registeredHotKeys;
 void (* hotKeyEventHandler)(HotKey* hotKey);
 
@@ -32,7 +35,7 @@ wchar_t* GetHotKeyTitle(HotKey* hotKey) {
     //промежуточный буфер
     wchar_t buf[bufSize];
 
-    buf[0] = (wchar_t) (hotKey.key + HOTKEY_OFFSET);
+    buf[0] = (wchar_t) (hotKey->key + HOTKEY_OFFSET);
     buf[1] = '\0';
 
     if (hotKey->modifiers & KEY_SHIFT) {
@@ -56,7 +59,8 @@ void RegisterHotKeyAction(HotKey* hotKey, void (* action)(void)) {
     list_add(registeredHotKeys, hotKeyAction);
 }
 
-void HandleHotKey(int ch, unsigned long modifiers) {
+bool HandleKeyClick(int ch, unsigned long modifiers) {
+    if (ch < A_CODE || ch > Z_CODE) return FALSE;
     ListIter li;
     list_iter_init(&li, registeredHotKeys);
     HotKeyAction* hotKeyAction;
@@ -65,7 +69,8 @@ void HandleHotKey(int ch, unsigned long modifiers) {
         if (hotKey->key == ch && hotKey->modifiers == modifiers) {
             hotKeyAction->action();
             hotKeyEventHandler(hotKey);
-            break;
+            return TRUE;
         }
     }
+    return FALSE;
 }

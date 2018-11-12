@@ -27,4 +27,6 @@ wchar_t* GetHotKeyTitle(HotKey* hotKey);
 
 void RegisterHotKeyAction(HotKey* hotKey, void (* action)(void));
 
+bool HandleKeyClick(int ch, unsigned long modifiers);
+
 #endif //MANUFACTURY_HOTKEY_H
