@@ -59,14 +59,14 @@ void RegisterHotKeyAction(HotKey* hotKey, void (* action)(void)) {
     list_add(registeredHotKeys, hotKeyAction);
 }
 
-bool HandleKeyClick(int ch, unsigned long modifiers) {
-    if (ch < A_CODE || ch > Z_CODE) return FALSE;
+bool HandleHotKeyEvent(int key, unsigned long modifiers) {
+    if (key < A_CODE || key > Z_CODE) return FALSE;
     ListIter li;
     list_iter_init(&li, registeredHotKeys);
     HotKeyAction* hotKeyAction;
     while (list_iter_next(&li, (void**) &hotKeyAction) != CC_ITER_END) {
         HotKey* hotKey = hotKeyAction->hotKey;
-        if (hotKey->key == ch && hotKey->modifiers == modifiers) {
+        if (hotKey->key == key && hotKey->modifiers == modifiers) {
             hotKeyAction->action();
             hotKeyEventHandler(hotKey);
             return TRUE;

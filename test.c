@@ -1,21 +1,25 @@
 #include <curses.h>
+#include <panel.h>
+#include <view/component.h>
+#include <view/component/edit.h>
+#include <view/component/label.h>
 #include "src/log.h"
 #include "view/hotkey.h"
 
 void TestS(void) {
-    mvaddstr(3, 1, "SAVE   ");
+    mvaddstr(11, 1, "SAVE   ");
 }
 
 void TestC(void) {
-    mvaddstr(3, 1, "COPY   ");
+    mvaddstr(11, 1, "COPY   ");
 }
 
 void TestV(void) {
-    mvaddstr(3, 1, "PASTE  ");
+    mvaddstr(11, 1, "PASTE  ");
 }
 
 void EventHandler(HotKey* h) {
-    mvprintw(5, 1, "Event: %c %d          ", h->key, h->modifiers);
+    mvprintw(12, 1, "Event: %c %d          ", h->key, h->modifiers);
 }
 
 int main() {
@@ -47,24 +51,48 @@ int main() {
     RegisterHotKeyAction(CreateHotKey('C', KEY_CTRL), TestC);
     RegisterHotKeyAction(CreateHotKey('Z', KEY_CTRL), TestV);
 
+//    init_pair(1, COLOR_GREEN, COLOR_YELLOW);
+//    WINDOW* w = newwin(3, 3, 4, 4);
+//    wbkgd(w, COLOR_PAIR(1) | L't');
+//    PANEL* panel = new_panel(w);
+//    show_panel(panel);
+//    update_panels();
+
+    Component* c = CreateComponent();
+    c->id = "main";
+    CreateInteractivePanel(c, 0, 0, 80, 24);
+
+    CreateLabel(1, 8, 10, L"Test ёЁ bel");
+    CreateEdit(15, 8, 7);
+
+    update_panels();
+    doupdate();
+
     MEVENT event;
-    move(0 ,0);
-    int input = ERR;
+    int input = getch();
     while (input != KEY_F(3)) {
         input = getch();
         if (input != ERR) {
-
-            mvaddstr(5, 1, "                ");
-
+            //mvaddstr(11, 1, "          ");
+            
+            unsigned long modifiers = PDC_get_key_modifiers();
             if (input == KEY_MOUSE) {
                 nc_getmouse(&event);
+                HandleMouseEvent(event);
+//                if (panel_hidden(panel) == OK) {
+//                    show_panel(panel);
+//                } else {
+//                    hide_panel(panel);
+//                }
                 //log_debug("MOUSE EVENT %d %d", event.y, event.x);
             } else {
-                if (!HandleKeyClick(input, PDC_get_key_modifiers())) {
-                    mvprintw(7, 1, "Key: %d %d             ", input, PDC_get_key_modifiers());
+                if (!HandleHotKeyEvent(input, modifiers)) {
+                    HandleKeyboardEvent(input, modifiers);
                 }
             }
-            move(0, 0);
+            //mvprintw(23, 1, "Key: %d %d             ", input, modifiers);
+            //movecurs(panel, 1, 1);
+            update_panels();
             doupdate();
         }
     }
