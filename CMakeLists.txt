@@ -6,6 +6,7 @@ set(CMAKE_C_STANDARD 11)
 set(PDCURSES D:/WorkC/PDCurses)
 set(LOGC D:/LIBC/logc)
 set(COLLECTIONSC D:/LIBC/CollectionsC)
+set(MANUFACTURY_VERSION "0.3 Beta")
 add_compile_definitions(PDC_WIDE)
 add_compile_definitions(PDC_FORCE_UTF8)
 add_compile_definitions(PDC_USE_STD_BOOL)
@@ -26,17 +27,14 @@ add_executable(manufactury main.c
         view/hotkey.h view/hotkey.c view/styles.h view/styles.c view/mouse_handler.h view/mouse_handler.c view/view_contract.h
         view/view.c view/menu_view.h view/menu_view.c view/component.h view/component.c view/interactive_panel.c view/interactive_panel.h
             view/component/edit.c view/component/edit.h view/component/label.c view/component/label.h
-        )
+        view/layout.c view/layout.h)
 target_link_libraries(manufactury pdcurses)
 target_link_libraries(manufactury collectionsc)
-
-add_executable(tuidemo tui.c tuidemo.c)
-target_link_libraries(tuidemo pdcurses)
 
 add_executable(test test.c ${LOGC}/src/log.c ${LOGC}/src/log.h
         view/hotkey.h view/hotkey.c view/styles.h view/styles.c view/mouse_handler.h view/mouse_handler.c view/view_contract.h
         view/view.c view/menu_view.h view/menu_view.c view/component.h view/component.c view/interactive_panel.c view/interactive_panel.h
         view/component/edit.c view/component/edit.h view/component/label.c view/component/label.h
-        )
+        view/layout.c view/layout.h)
 target_link_libraries(test pdcurses)
 target_link_libraries(test collectionsc)
