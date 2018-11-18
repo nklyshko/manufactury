@@ -56,6 +56,16 @@ bool allowedSymbol(int s) {
     return (s >= NUM_BEGIN && s <= NUM_END) || (s >= EN_BEGIN && s <= EN_END) || (s >= RU_BEGIN && s <= RU_END) || s == 1025 || s == 1105;
 }
 
+void EditShow(Component* handle) {
+    Edit* edit = handle->spec;
+    show_panel(edit->panelEditField->panel);
+}
+
+void EditHide(Component* handle) {
+    Edit* edit = handle->spec;
+    hide_panel(edit->panelEditField->panel);
+}
+
 void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     Edit* edit = handle->spec;
     //TODO: Поддержка Копировать/Ctrl+C, Вставить/Ctrl+V, Вырезать/Ctrl+X
@@ -122,12 +132,12 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     log_debug("CUR LENG: %d", wcslen(edit->data));
 }
 
-void EditOnFocusGet(Component* handle) {
+bool EditOnFocusGet(Component* handle) {
     replaceMode = FALSE;
     curs_set(1);
     Edit* edit = handle->spec;
-    SetPos(edit, edit->length); //reset position to end of line
-    //updateCursor(edit);
+    SetPos(edit, edit->length); //установить курсор в конец строки
+    return true;
 }
 
 void EditOnFocusLost(Component* handle) {
@@ -136,10 +146,8 @@ void EditOnFocusLost(Component* handle) {
 }
 
 Component* CreateEdit(int x, int y, int size) {
-    log_debug("Create Edit");
-
-    Component* component = CreateComponent();
-    InteractivePanel* panelEditField = CreateInteractivePanel(component, x, y, size, 1);
+    Component* handle = CreateComponent();
+    InteractivePanel* panelEditField = CreateInteractivePanel(handle, x, y, size, 1);
 
     Edit* edit = malloc(sizeof(Edit));
     edit->size = size;
@@ -149,10 +157,15 @@ Component* CreateEdit(int x, int y, int size) {
     edit->data[0] = '\0';
     edit->panelEditField = panelEditField;
 
-    component->OnKeyClick = EditOnKeyClick;
-    component->OnFocusGet = EditOnFocusGet;
-    component->OnFocusLost = EditOnFocusLost;
-    component->spec = edit;
-    component->id = "Edit";
-    return component;
+    handle->spec = edit;
+    handle->id = malloc(sizeof(char) * 10);
+    handle->id[10] = '\0';
+    sprintf(handle->id, "%s %d", "Edit", GetNextId());
+
+    handle->Show = EditShow;
+    handle->Hide = EditHide;
+    handle->OnKeyClick = EditOnKeyClick;
+    handle->OnFocusGet = EditOnFocusGet;
+    handle->OnFocusLost = EditOnFocusLost;
+    return handle;
 }

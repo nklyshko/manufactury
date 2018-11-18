@@ -3,11 +3,22 @@
 #include "component.h"
 #include "interactive_panel.h"
 
+#ifdef KEY_TAB
+#undef KEY_TAB
+#endif
+#define KEY_TAB 9
+
+void DefaultShow(Component* component) {
+    //noop
+}
+void DefaultHide(Component* component) {
+    //noop
+}
 void DefaultOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     //noop
 };
-void DefaultOnFocusGet(Component* handle) {
-    //noop
+bool DefaultOnFocusGet(Component* handle) {
+    return true;
 };
 bool DefaultOnFocusChange(Component* handle) {
     return false;
@@ -20,6 +31,8 @@ Component* focusedComponent = NULL;
 
 Component* CreateComponent() {
     Component* component = malloc(sizeof(Component));
+    component->Show = DefaultShow;
+    component->Hide = DefaultHide;
     component->OnKeyClick = DefaultOnKeyClick;
     component->OnFocusGet = DefaultOnFocusGet;
     component->OnFocusChange = DefaultOnFocusChange;
@@ -27,7 +40,34 @@ Component* CreateComponent() {
     return component;
 }
 
-void HandleMouseEvent(MEVENT event) {
+void ShowComponent(Component* component) {
+    component->Show(component);
+}
+
+void HideComponent(Component* component) {
+    component->Hide(component);
+}
+
+void FocusComponent(Component* component) {
+    if (component != focusedComponent) {
+        if (focusedComponent != NULL) {
+            focusedComponent->OnFocusLost(focusedComponent);
+        }
+        log_debug("New focus: %s", component == NULL ? "null" : component->id);
+        focusedComponent = component;
+        if (focusedComponent != NULL) {
+            if (!focusedComponent->OnFocusGet(focusedComponent)) {
+                FocusComponent(focusedComponent->nextFocus);
+            }
+        }
+    }
+}
+
+Component* GetFocusedComponent(void) {
+    return focusedComponent;
+}
+
+void ComponentHandleMouseEvent(MEVENT event) {
     int mouseX = event.x;
     int mouseY = event.y;
     PANEL* panel = stack_top_panel();
@@ -39,8 +79,7 @@ void HandleMouseEvent(MEVENT event) {
         int x = getbegx(w);
         int height = getmaxy(w);
         int width = getmaxx(w);
-        //log_debug("handleEvent %d <= %d < %d  &&  %d <= %d < %d");
-        if (mouseY >= y && mouseX >= x && mouseY < y + height && mouseX < x + width) {
+        if (mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height) {
             event.y = mouseY - y;
             event.x = mouseX - x;
             break;
@@ -49,32 +88,26 @@ void HandleMouseEvent(MEVENT event) {
         }
     }
     if (panel == NULL) return;
-    log_debug("PANEL not NULL");
 
     InteractivePanel* interactivePanel = (InteractivePanel*) panel_userptr(panel);
     Component* component = NULL;
     if (interactivePanel != NULL) {
-        log_debug("Interactive panel not NULL");
         component = interactivePanel->holder;
     }
-
-    if (component != focusedComponent) {
-        if (focusedComponent != NULL) {
-            focusedComponent->OnFocusLost(focusedComponent);
-        }
-        log_debug("New focus: %s", component == NULL ? "null" : component->id);
-        focusedComponent = component;
-        if (focusedComponent != NULL) {
-            focusedComponent->OnFocusGet(focusedComponent);
-        }
-    }
+    FocusComponent(component);
     if (interactivePanel != NULL) {
         interactivePanel->OnMouseClick(interactivePanel, event);
     }
 }
 
-void HandleKeyboardEvent(int key, unsigned long modifiers) {
+void ComponentHandleKeyboardEvent(int key, unsigned long modifiers) {
     if (focusedComponent != NULL) {
         focusedComponent->OnKeyClick(focusedComponent, key, modifiers);
     }
+}
+
+int nextId = 1;
+//debug???
+int GetNextId() {
+    return nextId++;
 }
