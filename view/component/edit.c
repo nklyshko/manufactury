@@ -9,11 +9,15 @@
 #define NUM_END   57
 
 
+void DefaultEnterAction(Component* handle) {
+    //noop
+}
+
 bool replaceMode = FALSE;
 
 void updateCursor(Edit* edit) {
-    movecurs(edit->panelEditField->panel, edit->pos, 0);
-    wmove(edit->panelEditField->window, 0, edit->pos);
+    movecurs(edit->panel->panel, edit->pos, 0);
+    wmove(edit->panel->window, 0, edit->pos);
 }
 
 void EditSetPos(Edit* edit, int pos) {
@@ -40,13 +44,13 @@ bool allowedSymbol(int s) {
 
 void EditShow(Component* handle) {
     Edit* edit = handle->spec;
-    wbkgd(edit->panelEditField->window, COLOR_PAIR(edit->style->defaultColor));
-    PanelShow(edit->panelEditField);
+    wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
+    PanelShow(edit->panel);
 }
 
 void EditHide(Component* handle) {
     Edit* edit = handle->spec;
-    PanelHide(edit->panelEditField);
+    PanelHide(edit->panel);
 }
 
 void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
@@ -60,32 +64,32 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
                     edit->data[edit->pos] = ch;
                     edit->length++;
                     edit->data[edit->length] = L'\0';
-                    waddch(edit->panelEditField->window, ch);
+                    waddch(edit->panel->window, ch);
                     EditSetPos(edit, edit->pos + 1);
                 }
             } else {
                 edit->data[edit->pos] = ch;
-                waddch(edit->panelEditField->window, ch);
+                waddch(edit->panel->window, ch);
                 EditSetPos(edit, edit->pos + 1);
             }
         } else if (edit->length < edit->size) {
             insertChar(edit->data, edit->length, edit->pos, ch);
             edit->length++;
-            winsch(edit->panelEditField->window, ch);
+            winsch(edit->panel->window, ch);
             EditSetPos(edit, edit->pos + 1);
         }
     } else if (key == KEY_BACKSPACE) {
         if (edit->length > 0) {
             if (edit->pos > 0) {
                 EditSetPos(edit, edit->pos - 1);
-                wdelch(edit->panelEditField->window);
+                wdelch(edit->panel->window);
                 deleteChar(edit->data, edit->length, edit->pos);
                 edit->length--;
             }
         }
     } else if (key == KEY_DELETE) {
         if (edit->pos >= 0 && edit->pos < edit->length) {
-            wdelch(edit->panelEditField->window);
+            wdelch(edit->panel->window);
             deleteChar(edit->data, edit->length, edit->pos);
             edit->length--;
         }
@@ -110,7 +114,8 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     } else if (key == KEY_END) {
         EditSetPos(edit, edit->length);
     } else if (key == KEY_ENTER) {
-
+        FocusComponent(NULL);
+        edit->action(handle);
     }
 }
 
@@ -118,7 +123,7 @@ bool EditOnFocusGet(Component* handle) {
     replaceMode = FALSE;
     curs_set(1);
     Edit* edit = handle->spec;
-    wbkgd(edit->panelEditField->window, COLOR_PAIR(edit->style->activeColor));
+    wbkgd(edit->panel->window, COLOR_PAIR(edit->style->activeColor));
     EditSetPos(edit, edit->length); //установить курсор в конец строки
     return true;
 }
@@ -127,13 +132,11 @@ void EditOnFocusLost(Component* handle) {
     curs_set(0);
     move(0, 0);
     Edit* edit = handle->spec;
-    wbkgd(edit->panelEditField->window, COLOR_PAIR(edit->style->defaultColor));
+    wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
 }
 
 Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     Component* handle = CreateComponent();
-    InteractivePanel* panelEditField = CreateInteractivePanel(handle, x, y, size + 1, 1);
-
     Edit* edit = malloc(sizeof(Edit));
     edit->style = style;
     edit->size = size;
@@ -141,8 +144,10 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     edit->length = 0;
     edit->data = malloc((size + 1) * sizeof(wchar_t));
     edit->data[0] = L'\0';
-    edit->panelEditField = panelEditField;
+    edit->action = DefaultEnterAction;
 
+    InteractivePanel* panel = CreateInteractivePanel(handle, x, y, size + 1, 1);
+    edit->panel = panel;
 
     handle->spec = edit;
     handle->id = malloc(sizeof(char) * 10);
@@ -155,6 +160,11 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     handle->OnFocusGet = EditOnFocusGet;
     handle->OnFocusLost = EditOnFocusLost;
     return handle;
+}
+
+void EditSetEnterAction(Component* handle, void (* action)(Component* handle)) {
+    Edit* edit = handle->spec;
+    edit->action = action;
 }
 
 EditStyle* CreateEditStyle(int defaultColor, int activeColor) {
