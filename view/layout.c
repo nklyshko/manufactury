@@ -1,8 +1,21 @@
+#include <src/log.h>
+#include <minmax.h>
 #include "layout.h"
 #include "interactive_panel.h"
 
+
 Layout* activeLayout = NULL;
 Layout* mainLayout; //Основное окно программы. Если открыты другие, то оно на фоне
+
+void DefaultOnScrollUp(ScrollType type) {
+    log_debug("ScrollUp %d", type);
+    //noop
+}
+
+void DefaultOnScrollDown(ScrollType type) {
+    log_debug("ScrollDown %d", type);
+    //noop
+}
 
 Layout* CreateLayout(int x, int y, int width, int height) {
     Layout* layout = malloc(sizeof(Layout));
@@ -10,7 +23,10 @@ Layout* CreateLayout(int x, int y, int width, int height) {
     PANEL* layoutPanel = new_panel(window);
     hide_panel(layoutPanel);
     set_panel_userptr(layoutPanel, NULL);
-    layout->layoutPanel = layoutPanel;
+    layout->panel = layoutPanel;
+    layout->window = window;
+    layout->OnScrollUp = DefaultOnScrollUp;
+    layout->OnScrollDown = DefaultOnScrollDown;
     return layout;
 }
 
@@ -26,7 +42,7 @@ void LayoutAddComponent(Layout* layout, Component* component) {
 }
 
 void ShowLayout(Layout* layout) {
-    show_panel(layout->layoutPanel);
+    show_panel(layout->panel);
     Component* component = layout->firstComponent;
     while (component != NULL) {
         ShowComponent(component);
@@ -35,7 +51,7 @@ void ShowLayout(Layout* layout) {
 }
 
 void HideLayout(Layout* layout) {
-    hide_panel(layout->layoutPanel);
+    hide_panel(layout->panel);
     Component* component = layout->firstComponent;
     while (component != NULL) {
         HideComponent(component);
@@ -61,20 +77,24 @@ void SetMainLayout(Layout* layout) {
 }
 
 void LayoutHandleMouseEvent(MEVENT event) {
-    if (activeLayout == NULL)
-        return;
-    int mouseX = event.x;
-    int mouseY = event.y;
-    WINDOW* w = panel_window(activeLayout->layoutPanel);
-    int y = getbegy(w);
-    int x = getbegx(w);
-    int height = getmaxy(w);
-    int width = getmaxx(w);
-    if (mouseX < x || mouseY < y || mouseX >= x + width || mouseY >= y + height) {
-        beep();
-        return;
+    if (event.bstate & BUTTON4_PRESSED) {
+        activeLayout->OnScrollUp(SINGLE);
+    } else if (event.bstate & BUTTON5_PRESSED) {
+        activeLayout->OnScrollDown(SINGLE);
+    } else {
+        int mouseX = event.x;
+        int mouseY = event.y;
+        WINDOW* w = panel_window(activeLayout->panel);
+        int y = getbegy(w);
+        int x = getbegx(w);
+        int height = getmaxy(w);
+        int width = getmaxx(w);
+        if (mouseX < x || mouseY < y || mouseX >= x + width || mouseY >= y + height) {
+            beep();
+            return;
+        }
+        ComponentHandleMouseEvent(event);
     }
-    ComponentHandleMouseEvent(event);
 }
 
 void LayoutHandleKeyboardEvent(int key, unsigned long modifiers) {
@@ -90,6 +110,10 @@ void LayoutHandleKeyboardEvent(int key, unsigned long modifiers) {
         } else {
             FocusComponent(component);
         }
+    } else if (key == KEY_PGUP) {
+        activeLayout->OnScrollUp(PAGE);
+    } else if (key == KEY_PGDOWN) {
+        activeLayout->OnScrollDown(PAGE);
     } else {
         ComponentHandleKeyboardEvent(key, modifiers);
     }

@@ -5,10 +5,6 @@
 
 #define HOTKEY_OFFSET 0x40
 
-#define KEY_CTRL PDC_KEY_MODIFIER_CONTROL
-#define KEY_SHIFT PDC_KEY_MODIFIER_SHIFT
-#define KEY_ALT PDC_KEY_MODIFIER_ALT
-
 typedef struct HotKey HotKey;
 
 struct HotKey {

@@ -1,6 +1,7 @@
 #include <list.h>
 #include <curses.h>
 #include <src/log.h>
+#include <key_codes.h>
 #include "hotkey.h"
 
 #define A_CODE 0x01 //первая буква в алфавите

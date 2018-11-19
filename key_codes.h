@@ -22,11 +22,24 @@
 #define KEY_ENTER 10
 
 #ifdef KEY_TAB
-#undef KEY_TAB
+# undef KEY_TAB
 #endif
 #define KEY_TAB 9
 
+#ifdef KEY_PGDOWN
+# undef KEY_PGDOWN
+#endif
+#define KEY_PGDOWN 60617
+
+#ifdef KEY_PGUP
+# undef KEY_PGUP
+#endif
+#define KEY_PGUP 60611
+
 #define KEY_DELETE KEY_DC
 #define KEY_INSERT KEY_IC
+#define KEY_CTRL PDC_KEY_MODIFIER_CONTROL
+#define KEY_SHIFT PDC_KEY_MODIFIER_SHIFT
+#define KEY_ALT PDC_KEY_MODIFIER_ALT
 
 #endif //MANUFACTURY_KEY_CODES_H

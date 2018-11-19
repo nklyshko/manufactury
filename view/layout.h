@@ -5,12 +5,18 @@
 #include "component.h"
 
 typedef struct Layout Layout;
+typedef enum ScrollType ScrollType;
 
 struct Layout {
-    PANEL* layoutPanel;
+    PANEL* panel;
+    WINDOW* window;
     Component* firstComponent;
     Component* lastComponent;
+    void (* OnScrollUp)(ScrollType type);
+    void (* OnScrollDown)(ScrollType type);
 };
+
+enum ScrollType { SINGLE, PAGE };
 
 Layout* CreateLayout(int x, int y, int width, int height);
 
