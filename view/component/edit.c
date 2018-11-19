@@ -40,12 +40,13 @@ bool allowedSymbol(int s) {
 
 void EditShow(Component* handle) {
     Edit* edit = handle->spec;
-    show_panel(edit->panelEditField->panel);
+    wbkgd(edit->panelEditField->window, COLOR_PAIR(edit->style->defaultColor));
+    PanelShow(edit->panelEditField);
 }
 
 void EditHide(Component* handle) {
     Edit* edit = handle->spec;
-    hide_panel(edit->panelEditField->panel);
+    PanelHide(edit->panelEditField);
 }
 
 void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
@@ -117,6 +118,7 @@ bool EditOnFocusGet(Component* handle) {
     replaceMode = FALSE;
     curs_set(1);
     Edit* edit = handle->spec;
+    wbkgd(edit->panelEditField->window, COLOR_PAIR(edit->style->activeColor));
     EditSetPos(edit, edit->length); //установить курсор в конец строки
     return true;
 }
@@ -124,13 +126,16 @@ bool EditOnFocusGet(Component* handle) {
 void EditOnFocusLost(Component* handle) {
     curs_set(0);
     move(0, 0);
+    Edit* edit = handle->spec;
+    wbkgd(edit->panelEditField->window, COLOR_PAIR(edit->style->defaultColor));
 }
 
-Component* CreateEdit(int x, int y, int size) {
+Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     Component* handle = CreateComponent();
     InteractivePanel* panelEditField = CreateInteractivePanel(handle, x, y, size + 1, 1);
 
     Edit* edit = malloc(sizeof(Edit));
+    edit->style = style;
     edit->size = size;
     edit->pos = 0;
     edit->length = 0;
@@ -150,4 +155,11 @@ Component* CreateEdit(int x, int y, int size) {
     handle->OnFocusGet = EditOnFocusGet;
     handle->OnFocusLost = EditOnFocusLost;
     return handle;
+}
+
+EditStyle* CreateEditStyle(int defaultColor, int activeColor) {
+    EditStyle* style = malloc(sizeof(EditStyle));
+    style->defaultColor = defaultColor;
+    style->activeColor = activeColor;
+    return style;
 }

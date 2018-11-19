@@ -1,6 +1,10 @@
 #ifndef MANUFACTURY_STYLES_H
 #define MANUFACTURY_STYLES_H
 
+#include <view/component/edit.h>
+#include <view/component/label.h>
+#include <view/component/menu.h>
+
 #define TERMINAL_WIDTH 128
 #define TERMINAL_HEIGHT 32
 
@@ -21,11 +25,17 @@
 #define COLOR_GREEN_DARK 2
 #define COLOR_BLUE_DARK 1
 
-#define COLOR_MENU 1
-#define COLOR_MENU_ACTIVE 2
-#define COLOR_MENU_ITEM 3
-#define COLOR_MENU_ITEM_ACTIVE 4
+#define COLOR_MENU 4
+#define COLOR_MENU_ACTIVE 5
+#define COLOR_MENU_ITEM 6
+#define COLOR_MENU_ITEM_ACTIVE 7
+#define COLOR_TEST_2 254
+#define COLOR_TEST_1 255
 
+
+extern EditStyle* editStyle;
+extern LabelStyle* labelStyle;
+extern MenuStyle* menuStyle;
 
 void InitStyle(void);
 

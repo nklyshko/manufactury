@@ -3,6 +3,7 @@
 
 void LabelShow(Component* handle) {
     Label* label = handle->spec;
+    wbkgd(label->panelLabel->window, COLOR_PAIR(label->style->color));
     PanelShow(label->panelLabel);
 }
 
@@ -15,10 +16,11 @@ bool LabelOnFocusGet(Component* component) {
     return false;
 }
 
-Component* CreateLabel(int x, int y, int size, wchar_t* text) {
+Component* CreateLabel(LabelStyle* style, int x, int y, int size, wchar_t* text) {
     Component* handle = CreateComponent();
     InteractivePanel* panelLabel = CreateInteractivePanel(handle, x, y, size, 1);
     Label* label = malloc(sizeof(Label));
+    label->style = style;
     label->size = size;
     label->text = malloc(sizeof(wchar_t) * (size + 1));
     wmemcpy_s(label->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
@@ -44,3 +46,9 @@ void LabelSetText(Component* handle, wchar_t* text) {
     wmove(label->panelLabel->window, 0, 0);
     waddwstr(label->panelLabel->window, label->text);
 }
+
+LabelStyle* CreateLabelStyle(int color) {
+    LabelStyle* style = malloc(sizeof(LabelStyle));
+    style->color = color;
+    return style;
+};

@@ -6,8 +6,10 @@
 #include <global.h>
 
 typedef struct Edit Edit;
+typedef struct EditStyle EditStyle;
 
 struct Edit {
+    EditStyle* style;
     int size;
     int pos;
     int length;
@@ -15,6 +17,13 @@ struct Edit {
     InteractivePanel* panelEditField;
 };
 
-Component* CreateEdit(int x, int y, int size);
+struct EditStyle {
+    int defaultColor;
+    int activeColor;
+};
+
+Component* CreateEdit(EditStyle* style, int x, int y, int size);
+
+EditStyle* CreateEditStyle(int defaultColor, int activeColor);
 
 #endif //MANUFACTURY_EDIT_H

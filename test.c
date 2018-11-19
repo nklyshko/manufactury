@@ -14,7 +14,7 @@
 //#endif
 #define MANUFACTURY_VERSION "1.0 TEST"
 
-#define COLOR1 1
+//#define COLOR1 1
 
 //File actions
 void FileNew(void) { log_debug("FileNew"); };
@@ -80,11 +80,11 @@ int main() {
 
     PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
 
-    init_pair(COLOR1, COLOR_WHITE, COLOR_YELLOW);
-    init_pair(2, COLOR_BLACK, COLOR_CYAN_LIGHT);
-    init_pair(4, COLOR_BLACK, COLOR_GRAY_DARK);
-
+    InitStyle();
     InitHotKeyHandler(EventHandler);
+
+    //init_pair(COLOR1, COLOR_WHITE, COLOR_YELLOW);
+
 
     RegisterHotKeyAction(CreateHotKey('A', KEY_CTRL | KEY_SHIFT), TestS);
     RegisterHotKeyAction(CreateHotKey('C', KEY_CTRL), TestC);
@@ -93,27 +93,27 @@ int main() {
     log_debug("ENTER %d", KEY_ENTER);
 
     Layout* mainLayout = CreateLayout(0, 0, 80, 24);
-    wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(COLOR1) | L'_');
+    //wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(COLOR1) | L'_');
 
 
-    Component* label = CreateLabel(1, 8, 10, L"Test ёЁ bel");
-    Component* edit = CreateEdit(15, 8, 7);
-    Component* edit2 = CreateEdit(27, 8, 4);
+    Component* label = CreateLabel(labelStyle, 1, 8, 10, L"Test ёЁ bel");
+    Component* edit = CreateEdit(editStyle, 15, 8, 7);
+    Component* edit2 = CreateEdit(editStyle, 27, 8, 4);
     LayoutAddComponent(mainLayout, label);
     LayoutAddComponent(mainLayout, edit);
     LayoutAddComponent(mainLayout, edit2);
 
-    Component* menu1 = CreateMenu(0, 15, L"Файл", 4,
+    Component* menu1 = CreateMenu(menuStyle, 0, 15, L"Файл", 4,
                                   L"Новый", CreateHotKey('N', KEY_CTRL), FileNew,
                                   L"Открыть", CreateHotKey('O', KEY_CTRL), FileOpen,
                                   L"Сохранить", CreateHotKey('S', KEY_CTRL), FileSave,
                                   L"Сохранить как...", CreateHotKey('S', KEY_CTRL | KEY_SHIFT), FileSaveAs);
-    Component* menu2 = CreateMenu(6, 15, L"Правка", 4,
+    Component* menu2 = CreateMenu(menuStyle, 6, 15, L"Правка", 4,
                                   L"Найти", CreateHotKey('F', KEY_CTRL), EditFind,
                                   L"Добавить", CreateHotKey('I', KEY_CTRL), EditAdd,
                                   L"Удалить", CreateHotKey('D', KEY_CTRL), EditDelete,
                                   L"Изменить", CreateHotKey('E', KEY_CTRL), EditChange);
-    Component* menu3 = CreateMenu(14, 15, L"Инструменты", 2,
+    Component* menu3 = CreateMenu(menuStyle, 14, 15, L"Инструменты", 2,
                                   L"Экспорт в .CSV", CreateHotKey('E', KEY_CTRL | KEY_ALT | KEY_SHIFT), ToolsExportCSV,
                                   L"Создать отчет", CreateHotKey('R', KEY_CTRL), ToolsCreateReport);
     LayoutAddComponent(mainLayout, menu1);
@@ -124,9 +124,9 @@ int main() {
 
 
     Layout* dialog = CreateLayout(5, 5, 16, 5);
-    Component* de = CreateEdit(6, 9, 12);
+    Component* de = CreateEdit(editStyle, 6, 9, 12);
     LayoutAddComponent(dialog, de);
-    Component* dl = CreateLabel(6, 7, 12, L"Test dialog");
+    Component* dl = CreateLabel(labelStyle, 6, 7, 12, L"Test dialog");
     LayoutAddComponent(dialog, dl);
 
     ActivateLayout(dialog);
@@ -142,8 +142,6 @@ int main() {
             unsigned long modifiers = PDC_get_key_modifiers();
             if (input == KEY_RESIZE) {
                 log_debug("RESIZE!!!!!!!");
-                init_pair(COLOR1, COLOR_GREEN, COLOR_WHITE);
-                wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(COLOR1) | L'_');
             }
             if (input == KEY_MOUSE) {
                 nc_getmouse(&event);

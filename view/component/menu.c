@@ -3,22 +3,17 @@
 #include <src/log.h>
 #include "menu.h"
 
-#define COLOR_MENU_LABEL 1
-#define COLOR_MENU_LABEL_ACTIVE 2
-#define COLOR_MENU_ITEM 3
-#define COLOR_MENU_ITEM_ACTIVE 4
-
 #define NOT_ACTIVE -1
 
 void MenuSetPos(Menu* menu, int pos) {
     if (menu->pos == pos) return;
     WINDOW* w = menu->menuPanel->window;
     if (menu->pos != NOT_ACTIVE) {
-        mvwchgat(w, menu->pos, 0, menu->width, 0, COLOR_MENU_ITEM, NULL);
+        mvwchgat(w, menu->pos, 0, menu->width, 0, (short) menu->style->defaultItem, NULL);
     }
     menu->pos = pos;
     if (menu->pos != NOT_ACTIVE) {
-        mvwchgat(w, menu->pos, 0, menu->width, 0, COLOR_MENU_ITEM_ACTIVE, NULL);
+        mvwchgat(w, menu->pos, 0, menu->width, 0, (short) menu->style->activeItem, NULL);
     }
 }
 
@@ -57,7 +52,6 @@ void MenuHide(Component* handle) {
 
 void MenuOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     Menu* menu = handle->spec;
-    log_debug("MENU KEY: %d", key);
     if (key == KEY_DOWN) {
         if (menu->active) {
             if (menu->pos < menu->size - 1) MenuSetPos(menu, menu->pos + 1);
@@ -67,7 +61,6 @@ void MenuOnKeyClick(Component* handle, int key, unsigned long modifiers) {
             if (menu->pos > 0) MenuSetPos(menu, menu->pos - 1);
         }
     } else if (key == KEY_ENTER) {
-        log_debug("MENU ENTER: %d", menu->pos);
         if (menu->pos != NOT_ACTIVE) {
             menu->items[menu->pos]->action();
             FocusComponent(NULL);
@@ -77,7 +70,7 @@ void MenuOnKeyClick(Component* handle, int key, unsigned long modifiers) {
 
 bool MenuOnFocusGet(Component* handle) {
     Menu* menu = handle->spec;
-    wbkgd(menu->labelPanel->window, COLOR_PAIR(COLOR_MENU_LABEL_ACTIVE));
+    wbkgd(menu->labelPanel->window, COLOR_PAIR(menu->style->activeLabel));
     MenuSetPos(menu, NOT_ACTIVE);
     return true;
 }
@@ -96,7 +89,7 @@ bool MenuOnFocusChange(Component* handle) {
 
 void MenuOnFocusLost(Component* handle) {
     Menu* menu = handle->spec;
-    wbkgd(menu->labelPanel->window, COLOR_PAIR(COLOR_MENU_LABEL));
+    wbkgd(menu->labelPanel->window, COLOR_PAIR(menu->style->defaultLabel));
     if (menu->active) {
         MenuSetPos(menu, NOT_ACTIVE);
         PanelHide(menu->menuPanel);
@@ -104,9 +97,10 @@ void MenuOnFocusLost(Component* handle) {
     }
 }
 
-Component* CreateMenu(int x, int y, wchar_t* label, int size, ...) {
+Component* CreateMenu(MenuStyle* style, int x, int y, wchar_t* label, int size, ...) {
     Component* handle = CreateComponent();
     Menu* menu = malloc(sizeof(Menu));
+    menu->style = style;
     menu->pos = NOT_ACTIVE;
     menu->active = false;
     menu->label = label; //TODO: копировать строку
@@ -134,13 +128,13 @@ Component* CreateMenu(int x, int y, wchar_t* label, int size, ...) {
     menu->width += 13 + 2 + 2;
 
     InteractivePanel* labelPanel = CreateInteractivePanel(handle, x, y, (int) wcslen(label) + 2, 1); //label width = len(label) + 2(spaces)
-    wbkgd(labelPanel->window, COLOR_PAIR(COLOR_MENU_LABEL));
+    wbkgd(labelPanel->window, COLOR_PAIR(style->defaultLabel));
     mvwaddwstr(labelPanel->window, 0, 1, menu->label);
     labelPanel->OnMouseClick = MenuLabelOnMouseClick;
     menu->labelPanel = labelPanel;
 
     InteractivePanel* menuPanel = CreateInteractivePanel(handle, x, y + 1, menu->width, size);
-    wbkgd(menuPanel->window, COLOR_PAIR(COLOR_MENU_ITEM));
+    wbkgd(menuPanel->window, COLOR_PAIR(style->defaultItem));
     for (int i = 0; i < menu->size; i++) {
         MenuItem* item = menu->items[i];
         //пункт меню
@@ -164,4 +158,13 @@ Component* CreateMenu(int x, int y, wchar_t* label, int size, ...) {
     handle->OnFocusChange = MenuOnFocusChange;
     handle->OnFocusLost = MenuOnFocusLost;
     return handle;
+}
+
+MenuStyle* CreateMenuStyle(int defaultLabel, int activeLabel, int defaultItem, int activeItem) {
+    MenuStyle* style = malloc(sizeof(MenuStyle));
+    style->defaultLabel = defaultLabel;
+    style->activeLabel = activeLabel;
+    style->defaultItem = defaultItem;
+    style->activeItem = activeItem;
+    return style;
 }
