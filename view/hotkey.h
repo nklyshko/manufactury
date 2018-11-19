@@ -1,7 +1,7 @@
 #ifndef MANUFACTURY_HOTKEY_H
 #define MANUFACTURY_HOTKEY_H
 
-#include <global.h>
+#include <curses.h>
 
 #define HOTKEY_OFFSET 0x40
 

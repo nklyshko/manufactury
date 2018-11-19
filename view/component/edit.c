@@ -8,29 +8,6 @@
 #define NUM_BEGIN 48
 #define NUM_END   57
 
-#ifdef KEY_BACKSPACE
-# undef KEY_BACKSPACE
-#endif
-#define KEY_BACKSPACE 8
-
-#ifdef KEY_HOME
-# undef KEY_HOME
-#endif
-#define KEY_HOME 60609
-
-#ifdef KEY_END
-# undef KEY_END
-#endif
-#define KEY_END 60615
-
-#ifdef KEY_ENTER
-# undef KEY_ENTER
-#endif
-#define KEY_ENTER 10
-
-#define KEY_DELETE KEY_DC
-#define KEY_INSERT KEY_IC
-
 
 bool replaceMode = FALSE;
 
@@ -39,7 +16,7 @@ void updateCursor(Edit* edit) {
     wmove(edit->panelEditField->window, 0, edit->pos);
 }
 
-void SetPos(Edit* edit, int pos) {
+void EditSetPos(Edit* edit, int pos) {
     if (pos <= edit->length) {
         edit->pos = pos;
         updateCursor(edit);
@@ -83,23 +60,23 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
                     edit->length++;
                     edit->data[edit->length] = L'\0';
                     waddch(edit->panelEditField->window, ch);
-                    SetPos(edit, edit->pos + 1);
+                    EditSetPos(edit, edit->pos + 1);
                 }
             } else {
                 edit->data[edit->pos] = ch;
                 waddch(edit->panelEditField->window, ch);
-                SetPos(edit, edit->pos + 1);
+                EditSetPos(edit, edit->pos + 1);
             }
         } else if (edit->length < edit->size) {
             insertChar(edit->data, edit->length, edit->pos, ch);
             edit->length++;
             winsch(edit->panelEditField->window, ch);
-            SetPos(edit, edit->pos + 1);
+            EditSetPos(edit, edit->pos + 1);
         }
     } else if (key == KEY_BACKSPACE) {
         if (edit->length > 0) {
             if (edit->pos > 0) {
-                SetPos(edit, edit->pos - 1);
+                EditSetPos(edit, edit->pos - 1);
                 wdelch(edit->panelEditField->window);
                 deleteChar(edit->data, edit->length, edit->pos);
                 edit->length--;
@@ -121,16 +98,16 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
         }
     } else if (key == KEY_LEFT) {
         if (edit->pos > 0) {
-            SetPos(edit, edit->pos - 1);
+            EditSetPos(edit, edit->pos - 1);
         }
     } else if (key == KEY_RIGHT) {
         if (edit->pos < edit->size) {
-            SetPos(edit, edit->pos + 1);
+            EditSetPos(edit, edit->pos + 1);
         }
     } else if (key == KEY_HOME) {
-        SetPos(edit, 0);
+        EditSetPos(edit, 0);
     } else if (key == KEY_END) {
-        SetPos(edit, edit->length);
+        EditSetPos(edit, edit->length);
     } else if (key == KEY_ENTER) {
 
     }
@@ -140,7 +117,7 @@ bool EditOnFocusGet(Component* handle) {
     replaceMode = FALSE;
     curs_set(1);
     Edit* edit = handle->spec;
-    SetPos(edit, edit->length); //установить курсор в конец строки
+    EditSetPos(edit, edit->length); //установить курсор в конец строки
     return true;
 }
 

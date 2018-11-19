@@ -2,6 +2,7 @@
 #define MANUFACTURY_COMPONENT_H
 
 #include <panel.h>
+#include <key_codes.h>
 
 typedef struct Component Component;
 

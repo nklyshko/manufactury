@@ -4,6 +4,8 @@
 #include <view/component/edit.h>
 #include <view/component/label.h>
 #include <view/layout.h>
+#include <view/component/menu.h>
+#include <view/styles.h>
 #include "src/log.h"
 #include "view/hotkey.h"
 
@@ -13,6 +15,29 @@
 #define MANUFACTURY_VERSION "1.0 TEST"
 
 #define COLOR1 1
+
+//File actions
+void FileNew(void) { log_debug("FileNew"); };
+
+void FileOpen(void) { log_debug("FileOpen"); };
+
+void FileSave(void) { log_debug("FileSave"); };
+
+void FileSaveAs(void) { log_debug("FileSaveAs"); };
+
+//Edit actions
+void EditFind(void) { log_debug("EditFind"); };
+
+void EditAdd(void) { log_debug("EditAdd"); };
+
+void EditDelete(void) {log_debug("EditDelete");};
+
+void EditChange(void) {log_debug("EditChange");};
+
+//Tools actions
+void ToolsExportCSV(void) {log_debug("ToolsExportCSV");};
+
+void ToolsCreateReport(void) {log_debug("ToolsCreateReport");};
 
 void TestS(void) {
     mvaddstr(11, 1, "SAVE   ");
@@ -56,33 +81,44 @@ int main() {
     PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
 
     init_pair(COLOR1, COLOR_WHITE, COLOR_YELLOW);
+    init_pair(2, COLOR_BLACK, COLOR_CYAN_LIGHT);
+    init_pair(4, COLOR_BLACK, COLOR_GRAY_DARK);
 
     InitHotKeyHandler(EventHandler);
 
     RegisterHotKeyAction(CreateHotKey('A', KEY_CTRL | KEY_SHIFT), TestS);
     RegisterHotKeyAction(CreateHotKey('C', KEY_CTRL), TestC);
-    RegisterHotKeyAction(CreateHotKey('Z', KEY_CTRL), TestV);
+    RegisterHotKeyAction(CreateHotKey('Z', KEY_CTRL), TestV);;
 
-//    init_pair(1, COLOR_GREEN, COLOR_YELLOW);
-//    WINDOW* w = newwin(3, 3, 4, 4);
-//    wbkgd(w, COLOR_PAIR(1) | L't');
-//    PANEL* panel = new_panel(w);
-//    show_panel(panel);
-//    update_panels();
+    log_debug("ENTER %d", KEY_ENTER);
 
     Layout* mainLayout = CreateLayout(0, 0, 80, 24);
     wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(COLOR1) | L'_');
 
-    /*Component* c = CreateComponent();
-    c->id = "main";
-    CreateInteractivePanel(c, 0, 0, 80, 24);*/
 
     Component* label = CreateLabel(1, 8, 10, L"Test ёЁ bel");
     Component* edit = CreateEdit(15, 8, 7);
-    Component* edit2 = CreateEdit(27, 8, 6);
+    Component* edit2 = CreateEdit(27, 8, 4);
     LayoutAddComponent(mainLayout, label);
     LayoutAddComponent(mainLayout, edit);
     LayoutAddComponent(mainLayout, edit2);
+
+    Component* menu1 = CreateMenu(0, 15, L"Файл", 4,
+                                  L"Новый", CreateHotKey('N', KEY_CTRL), FileNew,
+                                  L"Открыть", CreateHotKey('O', KEY_CTRL), FileOpen,
+                                  L"Сохранить", CreateHotKey('S', KEY_CTRL), FileSave,
+                                  L"Сохранить как...", CreateHotKey('S', KEY_CTRL | KEY_SHIFT), FileSaveAs);
+    Component* menu2 = CreateMenu(6, 15, L"Правка", 4,
+                                  L"Найти", CreateHotKey('F', KEY_CTRL), EditFind,
+                                  L"Добавить", CreateHotKey('I', KEY_CTRL), EditAdd,
+                                  L"Удалить", CreateHotKey('D', KEY_CTRL), EditDelete,
+                                  L"Изменить", CreateHotKey('E', KEY_CTRL), EditChange);
+    Component* menu3 = CreateMenu(14, 15, L"Инструменты", 2,
+                                  L"Экспорт в .CSV", CreateHotKey('E', KEY_CTRL | KEY_ALT | KEY_SHIFT), ToolsExportCSV,
+                                  L"Создать отчет", CreateHotKey('R', KEY_CTRL), ToolsCreateReport);
+    LayoutAddComponent(mainLayout, menu1);
+    LayoutAddComponent(mainLayout, menu2);
+    LayoutAddComponent(mainLayout, menu3);
 
     SetMainLayout(mainLayout);
 
@@ -93,7 +129,7 @@ int main() {
     Component* dl = CreateLabel(6, 7, 12, L"Test dialog");
     LayoutAddComponent(dialog, dl);
 
-    //ActivateLayout(dialog);
+    ActivateLayout(dialog);
 
     update_panels();
     doupdate();
@@ -103,33 +139,23 @@ int main() {
     while (input != KEY_F(3)) {
         input = getch();
         if (input != ERR) {
-            //mvaddstr(11, 1, "          ");
-            
             unsigned long modifiers = PDC_get_key_modifiers();
             if (input == KEY_RESIZE) {
                 log_debug("RESIZE!!!!!!!");
+                init_pair(COLOR1, COLOR_GREEN, COLOR_WHITE);
+                wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(COLOR1) | L'_');
             }
             if (input == KEY_MOUSE) {
                 nc_getmouse(&event);
                 LayoutHandleMouseEvent(event);
-//                ComponentHandleMouseEvent(event);
-
-//                if (panel_hidden(panel) == OK) {
-//                    show_panel(panel);
-//                } else {
-//                    hide_panel(panel);
-//                }
-                //log_debug("MOUSE EVENT %d %d", event.y, event.x);
             } else {
                 if (!HandleHotKeyEvent(input, modifiers)) {
-//                    ComponentHandleKeyboardEvent(input, modifiers);
                     LayoutHandleKeyboardEvent(input, modifiers);
                 }
             }
-
-            //mvprintw(23, 1, "Key: %d %d             ", input, modifiers);
-            //movecurs(panel, 1, 1);
-
+            if (input == KEY_F(4)) {
+                ActivateLayout(NULL);
+            }
             update_panels();
             doupdate();
         }

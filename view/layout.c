@@ -1,11 +1,6 @@
 #include "layout.h"
 #include "interactive_panel.h"
 
-#ifdef KEY_TAB
-#undef KEY_TAB
-#endif
-#define KEY_TAB 9
-
 Layout* activeLayout = NULL;
 Layout* mainLayout; //Основное окно программы. Если открыты другие, то оно на фоне
 
@@ -65,7 +60,6 @@ void SetMainLayout(Layout* layout) {
     ActivateLayout(mainLayout);
 }
 
-//TODO???: За фокусировку ответственене модуль Component, Layout лишь обеспечивает формирование списка компонентов и ограничение событий мыши
 void LayoutHandleMouseEvent(MEVENT event) {
     if (activeLayout == NULL)
         return;
@@ -83,11 +77,12 @@ void LayoutHandleMouseEvent(MEVENT event) {
     ComponentHandleMouseEvent(event);
 }
 
-//TODO???: Перенести логику фокусировки в component.c
 void LayoutHandleKeyboardEvent(int key, unsigned long modifiers) {
     if (key == KEY_TAB) {
         Component* component = GetFocusedComponent();
         if (component != NULL) {
+            //Перефокусировка внутри компонента
+            if (component->OnFocusChange(component)) return;
             component = component->nextFocus;
         }
         if (component == NULL) {
