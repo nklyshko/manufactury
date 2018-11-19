@@ -1,6 +1,7 @@
 #include <src/log.h>
 #include "label.h"
 
+
 void LabelShow(Component* handle) {
     Label* label = handle->spec;
     wbkgd(label->panelLabel->window, COLOR_PAIR(label->style->color));
@@ -12,7 +13,7 @@ void LabelHide(Component* handle) {
     PanelHide(label->panelLabel);
 }
 
-bool LabelOnFocusGet(Component* component) {
+bool LabelOnFocusGet(Component* handle) {
     return false;
 }
 
@@ -51,4 +52,4 @@ LabelStyle* CreateLabelStyle(int color) {
     LabelStyle* style = malloc(sizeof(LabelStyle));
     style->color = color;
     return style;
-};
+}

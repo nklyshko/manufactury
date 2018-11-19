@@ -3,6 +3,7 @@
 #include <src/log.h>
 #include "menu.h"
 
+
 #define NOT_ACTIVE -1
 
 void MenuSetPos(Menu* menu, int pos) {
@@ -32,8 +33,8 @@ void MenuOnMouseClick(InteractivePanel* handle, MEVENT event) {
     Menu* menu = handle->holder->spec;
     int id = event.y;
     MenuItem* item = menu->items[id];
-    item->action();
     FocusComponent(NULL);
+    item->action();
 }
 
 void MenuShow(Component* handle) {
@@ -62,8 +63,8 @@ void MenuOnKeyClick(Component* handle, int key, unsigned long modifiers) {
         }
     } else if (key == KEY_ENTER) {
         if (menu->pos != NOT_ACTIVE) {
-            menu->items[menu->pos]->action();
             FocusComponent(NULL);
+            menu->items[menu->pos]->action();
         }
     }
 }

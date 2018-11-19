@@ -6,6 +6,13 @@
 #define A_CODE 0x01 //первая буква в алфавите
 #define Z_CODE 0x1a //последняя буква в алфавите
 
+typedef struct HotKeyAction HotKeyAction;
+
+struct HotKeyAction{
+    HotKey* hotKey;
+    void (* action)(void);
+};
+
 List* registeredHotKeys;
 void (* hotKeyEventHandler)(HotKey* hotKey);
 

@@ -6,6 +6,7 @@
 #include <view/layout.h>
 #include <view/component/menu.h>
 #include <view/styles.h>
+#include <view/component/button.h>
 #include "src/log.h"
 #include "view/hotkey.h"
 
@@ -55,6 +56,10 @@ void EventHandler(HotKey* h) {
     mvprintw(12, 1, "Event: %c %d          ", h->key, h->modifiers);
 }
 
+void ButtonAct(void) {
+    log_debug("Button clicked");
+}
+
 int main() {
     FILE* log = fopen("test.txt", "w");
     log_set_fp(log);
@@ -83,7 +88,7 @@ int main() {
     InitStyle();
     InitHotKeyHandler(EventHandler);
 
-    //init_pair(COLOR1, COLOR_WHITE, COLOR_YELLOW);
+    init_pair(250, COLOR_BLACK, COLOR_WHITE);
 
 
     RegisterHotKeyAction(CreateHotKey('A', KEY_CTRL | KEY_SHIFT), TestS);
@@ -93,13 +98,14 @@ int main() {
     log_debug("ENTER %d", KEY_ENTER);
 
     Layout* mainLayout = CreateLayout(0, 0, 80, 24);
-    //wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(COLOR1) | L'_');
+    wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(250) | L' ');
 
 
-    Component* label = CreateLabel(labelStyle, 1, 8, 10, L"Test ёЁ bel");
+    Component* button = CreateButton(buttonStyle, 1, 8, 10, L"Test ёЁ bel", ButtonAct);
+    ButtonSetEnabled(button, false);
     Component* edit = CreateEdit(editStyle, 15, 8, 7);
     Component* edit2 = CreateEdit(editStyle, 27, 8, 4);
-    LayoutAddComponent(mainLayout, label);
+    LayoutAddComponent(mainLayout, button);
     LayoutAddComponent(mainLayout, edit);
     LayoutAddComponent(mainLayout, edit2);
 
@@ -142,6 +148,7 @@ int main() {
             unsigned long modifiers = PDC_get_key_modifiers();
             if (input == KEY_RESIZE) {
                 log_debug("RESIZE!!!!!!!");
+                resize_term(24, 80);
             }
             if (input == KEY_MOUSE) {
                 nc_getmouse(&event);

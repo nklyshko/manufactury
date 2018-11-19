@@ -1,4 +1,4 @@
-#include <malloc.h>
+#include <global.h>
 #include <src/log.h>
 #include "interactive_panel.h"
 

@@ -4,6 +4,7 @@
 #include <view/component/edit.h>
 #include <view/component/label.h>
 #include <view/component/menu.h>
+#include <view/component/button.h>
 
 #define TERMINAL_WIDTH 128
 #define TERMINAL_HEIGHT 32
@@ -36,6 +37,7 @@
 extern EditStyle* editStyle;
 extern LabelStyle* labelStyle;
 extern MenuStyle* menuStyle;
+extern ButtonStyle* buttonStyle;
 
 void InitStyle(void);
 

@@ -1,7 +1,6 @@
 #ifndef MANUFACTURY_INTERACTIVE_PANEL_H
 #define MANUFACTURY_INTERACTIVE_PANEL_H
 
-#include <panel.h>
 #include "component.h"
 
 typedef struct InteractivePanel InteractivePanel;

@@ -2,7 +2,6 @@
 #define MANUFACTURY_LABEL_H
 
 #include <view/interactive_panel.h>
-#include <curses.h>
 #include <malloc.h>
 
 typedef struct Label Label;

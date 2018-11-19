@@ -9,15 +9,12 @@
 #define KEY_SHIFT PDC_KEY_MODIFIER_SHIFT
 #define KEY_ALT PDC_KEY_MODIFIER_ALT
 
-typedef struct {
+typedef struct HotKey HotKey;
+
+struct HotKey {
     int key;
     unsigned long modifiers;
-} HotKey;
-
-typedef struct {
-    HotKey* hotKey;
-    void (* action)(void);
-} HotKeyAction;
+};
 
 bool InitHotKeyHandler(void (* eventHandler)(HotKey* hotKey));
 
