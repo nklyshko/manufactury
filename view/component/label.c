@@ -3,14 +3,12 @@
 
 void LabelShow(Component* handle) {
     Label* label = handle->spec;
-    //TODO: инкапсулировать вызов в InteractivePanel
-    show_panel(label->panelLabel->panel);
+    PanelShow(label->panelLabel);
 }
 
 void LabelHide(Component* handle) {
     Label* label = handle->spec;
-    //TODO: инкапсулировать вызов в InteractivePanel
-    hide_panel(label->panelLabel->panel);
+    PanelHide(label->panelLabel);
 }
 
 bool LabelOnFocusGet(Component* component) {
@@ -23,7 +21,7 @@ Component* CreateLabel(int x, int y, int size, wchar_t* text) {
     Label* label = malloc(sizeof(Label));
     label->size = size;
     label->text = malloc(sizeof(wchar_t) * (size + 1));
-    wmemcpy_s(label->text, (rsize_t) size, text, (size_t) size); //wcscpy_s не работает
+    wmemcpy_s(label->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
     label->panelLabel = panelLabel;
     wmove(panelLabel->window, 0, 0);
     waddwstr(panelLabel->window, label->text);
@@ -38,4 +36,11 @@ Component* CreateLabel(int x, int y, int size, wchar_t* text) {
     handle->Hide = LabelHide;
     handle->OnFocusGet = LabelOnFocusGet;
     return handle;
+}
+
+void LabelSetText(Component* handle, wchar_t* text) {
+    Label* label = handle->spec;
+    wmemcpy_s(label->text, (size_t) label->size, text, (size_t) label->size);
+    wmove(label->panelLabel->window, 0, 0);
+    waddwstr(label->panelLabel->window, label->text);
 }

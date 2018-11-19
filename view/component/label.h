@@ -15,4 +15,6 @@ struct Label {
 
 Component* CreateLabel(int x, int y, int size, wchar_t* text);
 
+void LabelSetText(Component* handle, wchar_t* text);
+
 #endif //MANUFACTURY_LABEL_H

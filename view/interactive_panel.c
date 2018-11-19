@@ -15,6 +15,21 @@ InteractivePanel* CreateInteractivePanel(Component* holder, int x, int y, int wi
     interactivePanel->panel = panel;
     interactivePanel->window = window;
     interactivePanel->holder = holder;
+    interactivePanel->visible = false;
     interactivePanel->OnMouseClick = DefaultOnMouseClick;
     return interactivePanel;
+}
+
+void PanelShow(InteractivePanel* panel) {
+    if (!panel->visible) {
+        show_panel(panel->panel);
+        panel->visible = true;
+    }
+}
+
+void PanelHide(InteractivePanel* panel) {
+    if (panel->visible) {
+        hide_panel(panel->panel);
+        panel->visible = false;
+    }
 }
