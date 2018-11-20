@@ -60,6 +60,33 @@ void ButtonAct(void) {
     log_debug("Button clicked");
 }
 
+Component* scrollbar;
+
+int parseInt(const wchar_t* s) {
+    int num = 0;
+    int i = 0;
+    while(s[i] != L'\0') {
+        if (s[i] < 48 || s[i] > 57) return 0;
+        num = num * 10 + (s[i] - 48);
+        i++;
+    }
+    return num;
+}
+
+void SetNum(Component* handle) {
+    Edit* e = handle->spec;
+    int num = parseInt(e->data);
+    log_debug("SETNUM %d", num);
+    ScrollBarSetNumber(scrollbar, num);
+}
+
+void SetCnt(Component* handle) {
+    Edit* e = handle->spec;
+    int cnt = parseInt(e->data);
+    log_debug("SETCNT %d", cnt);
+    ScrollBarSetCount(scrollbar, cnt);
+}
+
 int main() {
     FILE* log = fopen("test.txt", "w");
     log_set_fp(log);
@@ -98,16 +125,20 @@ int main() {
     log_debug("ENTER %d", KEY_ENTER);
 
     Layout* mainLayout = CreateLayout(0, 0, 80, 24);
-    wbkgd(panel_window(mainLayout->layoutPanel), COLOR_PAIR(250) | L' ');
+    wbkgd(panel_window(mainLayout->panel), COLOR_PAIR(250) | L' ');
 
 
     Component* button = CreateButton(buttonStyle, 1, 8, 10, L"Test ёЁ bel", ButtonAct);
     ButtonSetEnabled(button, false);
     Component* edit = CreateEdit(editStyle, 15, 8, 7);
+    EditSetEnterAction(edit, SetCnt);
     Component* edit2 = CreateEdit(editStyle, 27, 8, 4);
+    EditSetEnterAction(edit2, SetNum);
+    scrollbar = CreateScrollBar(scrollBarStyle, 79, 1, 20, mainLayout);
     LayoutAddComponent(mainLayout, button);
     LayoutAddComponent(mainLayout, edit);
     LayoutAddComponent(mainLayout, edit2);
+    LayoutAddComponent(mainLayout, scrollbar);
 
     Component* menu1 = CreateMenu(menuStyle, 0, 15, L"Файл", 4,
                                   L"Новый", CreateHotKey('N', KEY_CTRL), FileNew,

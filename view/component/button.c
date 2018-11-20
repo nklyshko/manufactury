@@ -10,16 +10,16 @@ void ButtonOnMouseClick(InteractivePanel* handle, MEVENT event) {
 void ButtonShow(Component* handle) {
     Button* button = handle->spec;
     if (button->enabled) {
-        wbkgd(button->panelButton->window, COLOR_PAIR(button->style->defaultColor));
+        wbkgd(button->panel->window, COLOR_PAIR(button->style->defaultColor));
     } else {
-        wbkgd(button->panelButton->window, COLOR_PAIR(button->style->disabledColor));
+        wbkgd(button->panel->window, COLOR_PAIR(button->style->disabledColor));
     }
-    PanelShow(button->panelButton);
+    PanelShow(button->panel);
 }
 
 void ButtonHide(Component* handle) {
     Button* button = handle->spec;
-    PanelHide(button->panelButton);
+    PanelHide(button->panel);
 }
 
 void ButtonOnKeyClick(Component* handle, int key, unsigned long modifiers) {
@@ -33,7 +33,7 @@ void ButtonOnKeyClick(Component* handle, int key, unsigned long modifiers) {
 bool ButtonOnFocusGet(Component* handle) {
     Button* button = handle->spec;
     if (button->enabled) {
-        wbkgd(button->panelButton->window, COLOR_PAIR(button->style->focusedColor));
+        wbkgd(button->panel->window, COLOR_PAIR(button->style->focusedColor));
         return true;
     } else {
         return false;
@@ -43,15 +43,14 @@ bool ButtonOnFocusGet(Component* handle) {
 void ButtonOnFocusLost(Component* handle) {
     Button* button = handle->spec;
     if (button->enabled) {
-        wbkgd(button->panelButton->window, COLOR_PAIR(button->style->defaultColor));
+        wbkgd(button->panel->window, COLOR_PAIR(button->style->defaultColor));
     } else {
-        wbkgd(button->panelButton->window, COLOR_PAIR(button->style->disabledColor));
+        wbkgd(button->panel->window, COLOR_PAIR(button->style->disabledColor));
     }
 }
 
 Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* text, void (* action)(void)) {
     Component* handle = CreateComponent();
-    InteractivePanel* panelButton = CreateInteractivePanel(handle, x, y, size, 1);
     Button* button = malloc(sizeof(Button));
     button->style = style;
     button->enabled = true;
@@ -59,18 +58,19 @@ Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* tex
     button->action = action;
     button->text = malloc(sizeof(wchar_t) * (size + 1));
     wmemcpy_s(button->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
-    button->panelButton = panelButton;
-    wbkgd(panelButton->window, COLOR_PAIR(button->style->defaultColor));
-    wmove(panelButton->window, 0, 0);
-    waddwstr(panelButton->window, button->text);
-    panelButton->OnMouseClick = ButtonOnMouseClick;
 
-    handle->spec = button;
+    InteractivePanel* panel = CreateInteractivePanel(handle, x, y, size, 1);
+    wbkgd(panel->window, COLOR_PAIR(button->style->defaultColor));
+    wmove(panel->window, 0, 0);
+    waddwstr(panel->window, button->text);
+    panel->OnMouseClick = ButtonOnMouseClick;
+    button->panel = panel;
 
     handle->id = malloc(sizeof(char) * 10);
     handle->id[10] = '\0';
     sprintf(handle->id, "%s %d", "Button", GetNextId());
 
+    handle->spec = button;
     handle->Show = ButtonShow;
     handle->Hide = ButtonHide;
     handle->OnKeyClick = ButtonOnKeyClick;
@@ -82,14 +82,14 @@ Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* tex
 void ButtonSetText(Component* handle, wchar_t* text) {
     Button* button = handle->spec;
     wmemcpy_s(button->text, (size_t) button->size, text, (size_t) button->size);
-    wmove(button->panelButton->window, 0, 0);
-    waddwstr(button->panelButton->window, button->text);
+    wmove(button->panel->window, 0, 0);
+    waddwstr(button->panel->window, button->text);
 }
 
 void ButtonSetEnabled(Component* handle, bool enabled) {
     Button* button = handle->spec;
     button->enabled = enabled;
-    WINDOW* w = button->panelButton->window;
+    WINDOW* w = button->panel->window;
     if (enabled) {
         wbkgd(w, COLOR_PAIR(button->style->defaultColor));
     } else {

@@ -27,14 +27,14 @@ add_executable(manufactury main.c
         view/hotkey.h view/hotkey.c view/styles.h view/styles.c view/mouse_handler.h view/mouse_handler.c view/view_contract.h
         view/view.c view/menu_view.h view/menu_view.c view/component.h view/component.c view/interactive_panel.c view/interactive_panel.h
             view/component/edit.c view/component/edit.h view/component/label.c view/component/label.h
-        view/layout.c view/layout.h)
+        view/layout.c view/layout.h view/component/menu.c view/component/menu.h key_codes.h view/component/button.c view/component/button.h view/component/scroll_bar.c view/component/scroll_bar.h)
 target_link_libraries(manufactury pdcurses)
 target_link_libraries(manufactury collectionsc)
 
 add_executable(test test.c ${LOGC}/src/log.c ${LOGC}/src/log.h
-        view/hotkey.h view/hotkey.c view/styles.h view/styles.c view/mouse_handler.h view/mouse_handler.c view/view_contract.h
-        view/view.c view/menu_view.h view/menu_view.c view/component.h view/component.c view/interactive_panel.c view/interactive_panel.h
+        view/hotkey.h view/hotkey.c view/styles.h view/styles.c view/mouse_handler.h view/mouse_handler.c
+        view/component.h view/component.c view/interactive_panel.c view/interactive_panel.h
         view/component/edit.c view/component/edit.h view/component/label.c view/component/label.h
-        view/layout.c view/layout.h)
+        view/layout.c view/layout.h view/component/menu.c view/component/menu.h key_codes.h view/component/button.c view/component/button.h view/component/scroll_bar.c view/component/scroll_bar.h)
 target_link_libraries(test pdcurses)
 target_link_libraries(test collectionsc)

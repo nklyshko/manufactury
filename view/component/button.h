@@ -12,7 +12,7 @@ struct Button {
     bool enabled;
     int size;
     wchar_t* text;
-    InteractivePanel* panelButton;
+    InteractivePanel* panel;
     void (* action)(void);
 };
 

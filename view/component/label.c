@@ -19,22 +19,22 @@ bool LabelOnFocusGet(Component* handle) {
 
 Component* CreateLabel(LabelStyle* style, int x, int y, int size, wchar_t* text) {
     Component* handle = CreateComponent();
-    InteractivePanel* panelLabel = CreateInteractivePanel(handle, x, y, size, 1);
     Label* label = malloc(sizeof(Label));
     label->style = style;
     label->size = size;
     label->text = malloc(sizeof(wchar_t) * (size + 1));
     wmemcpy_s(label->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
+
+    InteractivePanel* panelLabel = CreateInteractivePanel(handle, x, y, size, 1);
     label->panelLabel = panelLabel;
     wmove(panelLabel->window, 0, 0);
     waddwstr(panelLabel->window, label->text);
-
-    handle->spec = label;
 
     handle->id = malloc(sizeof(char) * 10);
     handle->id[10] = '\0';
     sprintf(handle->id, "%s %d", "Label", GetNextId());
 
+    handle->spec = label;
     handle->Show = LabelShow;
     handle->Hide = LabelHide;
     handle->OnFocusGet = LabelOnFocusGet;
