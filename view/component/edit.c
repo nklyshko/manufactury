@@ -1,4 +1,6 @@
 #include <src/log.h>
+#include <global.h>
+#include <view/hotkey.h>
 #include "edit.h"
 
 #define RU_BEGIN 1040
@@ -9,7 +11,7 @@
 #define NUM_END   57
 
 
-void DefaultEnterAction(Component* handle) {
+void defaultEditEnterAction(Component* handle) {
     //noop
 }
 
@@ -20,7 +22,7 @@ void updateCursor(Edit* edit) {
     wmove(edit->panel->window, 0, edit->pos);
 }
 
-void EditSetPos(Edit* edit, int pos) {
+void editSetPos(Edit* edit, int pos) {
     if (pos <= edit->length) {
         edit->pos = pos;
         updateCursor(edit);
@@ -44,7 +46,11 @@ bool allowedSymbol(int s) {
 
 void EditShow(Component* handle) {
     Edit* edit = handle->spec;
-    wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
+    if (edit->enabled) {
+        wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
+    } else {
+        wbkgd(edit->panel->window, COLOR_PAIR(edit->style->disabledColor));
+    }
     PanelShow(edit->panel);
 }
 
@@ -56,6 +62,27 @@ void EditHide(Component* handle) {
 void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     Edit* edit = handle->spec;
     //TODO: Поддержка Копировать/Ctrl+C, Вставить/Ctrl+V, Вырезать/Ctrl+X
+//    bool selectMode = false;
+//    if (modifiers == KEY_SHIFT) selectMode = true;
+//    if (modifiers == KEY_CTRL) {
+//        char *ptr = NULL;
+//        long i, length = 0;
+//        switch (key) {
+//            case 'C' - HOTKEY_OFFSET:
+//                if (PDC_setclipboard(text, (long)strlen(text) == PDC_CLIP_SUCCESS) {
+//
+//                }
+//                break;
+//            case 'V' - HOTKEY_OFFSET:
+//                if (PDC_getclipboard(&ptr, &length) == PDC_CLIP_SUCCESS) {
+//
+//                }
+//                break;
+//            case 'X' - HOTKEY_OFFSET:
+//                break;
+//            default:
+//                break;
+//        } else
     if (allowedSymbol(key)) {
         wchar_t ch = (wchar_t) key;
         if (replaceMode) {
@@ -65,23 +92,23 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
                     edit->length++;
                     edit->data[edit->length] = L'\0';
                     waddch(edit->panel->window, ch);
-                    EditSetPos(edit, edit->pos + 1);
+                    editSetPos(edit, edit->pos + 1);
                 }
             } else {
                 edit->data[edit->pos] = ch;
                 waddch(edit->panel->window, ch);
-                EditSetPos(edit, edit->pos + 1);
+                editSetPos(edit, edit->pos + 1);
             }
         } else if (edit->length < edit->size) {
             insertChar(edit->data, edit->length, edit->pos, ch);
             edit->length++;
             winsch(edit->panel->window, ch);
-            EditSetPos(edit, edit->pos + 1);
+            editSetPos(edit, edit->pos + 1);
         }
     } else if (key == KEY_BACKSPACE) {
         if (edit->length > 0) {
             if (edit->pos > 0) {
-                EditSetPos(edit, edit->pos - 1);
+                editSetPos(edit, edit->pos - 1);
                 wdelch(edit->panel->window);
                 deleteChar(edit->data, edit->length, edit->pos);
                 edit->length--;
@@ -103,29 +130,37 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
         }
     } else if (key == KEY_LEFT) {
         if (edit->pos > 0) {
-            EditSetPos(edit, edit->pos - 1);
+//            if (selectMode) {
+//                if (edit->selected > 0) {
+//                    edit->selected--;
+//                }
+//            }
+            editSetPos(edit, edit->pos - 1);
         }
     } else if (key == KEY_RIGHT) {
         if (edit->pos < edit->size) {
-            EditSetPos(edit, edit->pos + 1);
+            editSetPos(edit, edit->pos + 1);
         }
     } else if (key == KEY_HOME) {
-        EditSetPos(edit, 0);
+        editSetPos(edit, 0);
     } else if (key == KEY_END) {
-        EditSetPos(edit, edit->length);
+        editSetPos(edit, edit->length);
     } else if (key == KEY_ENTER) {
         FocusComponent(NULL);
-        edit->action(handle);
     }
 }
 
 bool EditOnFocusGet(Component* handle) {
-    replaceMode = FALSE;
-    curs_set(1);
     Edit* edit = handle->spec;
-    wbkgd(edit->panel->window, COLOR_PAIR(edit->style->activeColor));
-    EditSetPos(edit, edit->length); //установить курсор в конец строки
-    return true;
+    if (edit->enabled) {
+        replaceMode = FALSE;
+        curs_set(1);
+        wbkgd(edit->panel->window, COLOR_PAIR(edit->style->activeColor));
+        editSetPos(edit, edit->length); //установить курсор в конец строки
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void EditOnFocusLost(Component* handle) {
@@ -133,6 +168,7 @@ void EditOnFocusLost(Component* handle) {
     move(0, 0);
     Edit* edit = handle->spec;
     wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
+    edit->action(handle);
 }
 
 Component* CreateEdit(EditStyle* style, int x, int y, int size) {
@@ -141,10 +177,11 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     edit->style = style;
     edit->size = size;
     edit->pos = 0;
+    edit->selected = 0;
     edit->length = 0;
     edit->data = malloc((size + 1) * sizeof(wchar_t));
     edit->data[0] = L'\0';
-    edit->action = DefaultEnterAction;
+    edit->action = defaultEditEnterAction;
 
     InteractivePanel* panel = CreateInteractivePanel(handle, x, y, size + 1, 1);
     edit->panel = panel;
@@ -162,14 +199,26 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     return handle;
 }
 
+void EditSetEnabled(Component* handle, bool enabled) {
+    Edit* edit = handle->spec;
+    edit->enabled = enabled;
+    WINDOW* w = edit->panel->window;
+    if (enabled) {
+        wbkgd(w, COLOR_PAIR(edit->style->defaultColor));
+    } else {
+        wbkgd(w, COLOR_PAIR(edit->style->disabledColor));
+    }
+}
+
 void EditSetEnterAction(Component* handle, void (* action)(Component* handle)) {
     Edit* edit = handle->spec;
     edit->action = action;
 }
 
-EditStyle* CreateEditStyle(int defaultColor, int activeColor) {
+EditStyle* CreateEditStyle(int defaultColor, int disabledColor, int activeColor) {
     EditStyle* style = malloc(sizeof(EditStyle));
     style->defaultColor = defaultColor;
+    style->disabledColor = disabledColor;
     style->activeColor = activeColor;
     return style;
 }

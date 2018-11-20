@@ -4,13 +4,13 @@
 
 void LabelShow(Component* handle) {
     Label* label = handle->spec;
-    wbkgd(label->panelLabel->window, COLOR_PAIR(label->style->color));
-    PanelShow(label->panelLabel);
+    wbkgd(label->panel->window, COLOR_PAIR(label->style->color));
+    PanelShow(label->panel);
 }
 
 void LabelHide(Component* handle) {
     Label* label = handle->spec;
-    PanelHide(label->panelLabel);
+    PanelHide(label->panel);
 }
 
 bool LabelOnFocusGet(Component* handle) {
@@ -26,7 +26,7 @@ Component* CreateLabel(LabelStyle* style, int x, int y, int size, wchar_t* text)
     wmemcpy_s(label->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
 
     InteractivePanel* panelLabel = CreateInteractivePanel(handle, x, y, size, 1);
-    label->panelLabel = panelLabel;
+    label->panel = panelLabel;
     wmove(panelLabel->window, 0, 0);
     waddwstr(panelLabel->window, label->text);
 
@@ -43,9 +43,9 @@ Component* CreateLabel(LabelStyle* style, int x, int y, int size, wchar_t* text)
 
 void LabelSetText(Component* handle, wchar_t* text) {
     Label* label = handle->spec;
-    wmemcpy_s(label->text, (size_t) label->size, text, (size_t) label->size);
-    wmove(label->panelLabel->window, 0, 0);
-    waddwstr(label->panelLabel->window, label->text);
+    label->text = text;
+    wmove(label->panel->window, 0, 0);
+    waddwstr(label->panel->window, label->text);
 }
 
 LabelStyle* CreateLabelStyle(int color) {

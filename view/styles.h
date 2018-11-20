@@ -6,6 +6,7 @@
 #include <view/component/menu.h>
 #include <view/component/button.h>
 #include <view/component/scroll_bar.h>
+#include <view/component/select.h>
 
 #define TERMINAL_WIDTH 128
 #define TERMINAL_HEIGHT 32
@@ -40,6 +41,7 @@ extern LabelStyle* labelStyle;
 extern MenuStyle* menuStyle;
 extern ButtonStyle* buttonStyle;
 extern ScrollBarStyle* scrollBarStyle;
+extern SelectStyle* selectStyle;
 
 void InitStyle(void);
 

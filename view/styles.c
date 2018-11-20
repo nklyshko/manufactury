@@ -6,15 +6,18 @@ LabelStyle* labelStyle;
 MenuStyle* menuStyle;
 ButtonStyle* buttonStyle;
 ScrollBarStyle* scrollBarStyle;
+SelectStyle* selectStyle;
 
 void InitStyle(void) {
-    editStyle = CreateEditStyle(11, 12);
+    editStyle = CreateEditStyle(11, 12, 13);
     labelStyle = CreateLabelStyle(21);
     menuStyle = CreateMenuStyle(31, 32, 33, 34);
     buttonStyle = CreateButtonStyle(41, 42, 43);
     scrollBarStyle = CreateScrollBarStyle(51);
+    selectStyle = CreateSelectStyle(61, 62, 63, 64, 65);
     init_pair(11, COLOR_BLACK, COLOR_GRAY_LIGHT);
-    init_pair(12, COLOR_WHITE, COLOR_GRAY_DARK);
+    init_pair(12, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
+    init_pair(13, COLOR_WHITE, COLOR_GRAY_DARK);
 
     init_pair(21, COLOR_BLACK, COLOR_WHITE);
 
@@ -28,4 +31,10 @@ void InitStyle(void) {
     init_pair(43, COLOR_BLACK, COLOR_CYAN_LIGHT);
 
     init_pair(51, COLOR_BLACK, COLOR_WHITE);
+
+    init_pair(61, COLOR_BLACK, COLOR_GRAY_DARK);
+    init_pair(62, COLOR_BLACK, COLOR_GRAY_LIGHT);
+    init_pair(63, COLOR_WHITE, COLOR_GRAY_DARK);
+    init_pair(64, COLOR_BLACK, COLOR_GRAY_LIGHT);
+    init_pair(65, COLOR_BLACK, COLOR_CYAN_LIGHT);
 }

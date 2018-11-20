@@ -40,20 +40,8 @@ void ToolsExportCSV(void) {log_debug("ToolsExportCSV");};
 
 void ToolsCreateReport(void) {log_debug("ToolsCreateReport");};
 
-void TestS(void) {
-    mvaddstr(11, 1, "SAVE   ");
-}
-
-void TestC(void) {
-    mvaddstr(11, 1, "COPY   ");
-}
-
-void TestV(void) {
-    mvaddstr(11, 1, "PASTE  ");
-}
-
 void EventHandler(HotKey* h) {
-    mvprintw(12, 1, "Event: %c %d          ", h->key, h->modifiers);
+    //mvprintw(12, 1, "Event: %c %d          ", h->key, h->modifiers);
 }
 
 void ButtonAct(void) {
@@ -85,6 +73,11 @@ void SetCnt(Component* handle) {
     int cnt = parseInt(e->data);
     log_debug("SETCNT %d", cnt);
     ScrollBarSetCount(scrollbar, cnt);
+    //EditSetEnabled(handle, false);
+}
+
+void SelectedEvent(Component* handle) {
+    log_debug("Selected event");
 }
 
 int main() {
@@ -117,27 +110,24 @@ int main() {
 
     init_pair(250, COLOR_BLACK, COLOR_WHITE);
 
-
-    RegisterHotKeyAction(CreateHotKey('A', KEY_CTRL | KEY_SHIFT), TestS);
-    RegisterHotKeyAction(CreateHotKey('C', KEY_CTRL), TestC);
-    RegisterHotKeyAction(CreateHotKey('Z', KEY_CTRL), TestV);;
-
     log_debug("ENTER %d", KEY_ENTER);
 
     Layout* mainLayout = CreateLayout(0, 0, 80, 24);
     wbkgd(panel_window(mainLayout->panel), COLOR_PAIR(250) | L' ');
 
 
-    Component* button = CreateButton(buttonStyle, 1, 8, 10, L"Test ёЁ bel", ButtonAct);
+    Component* button = CreateButton(buttonStyle, 1, 8, 10, L"Test ёЁ belmandsabhbsadbhb", ButtonAct);
     ButtonSetEnabled(button, false);
     Component* edit = CreateEdit(editStyle, 15, 8, 7);
     EditSetEnterAction(edit, SetCnt);
     Component* edit2 = CreateEdit(editStyle, 27, 8, 4);
     EditSetEnterAction(edit2, SetNum);
     scrollbar = CreateScrollBar(scrollBarStyle, 79, 1, 20, mainLayout);
+    Component* select = CreateSelect(selectStyle, 50, 8, 4, 3, L"М", L"Ж", L"Тест");
     LayoutAddComponent(mainLayout, button);
     LayoutAddComponent(mainLayout, edit);
     LayoutAddComponent(mainLayout, edit2);
+    LayoutAddComponent(mainLayout, select);
     LayoutAddComponent(mainLayout, scrollbar);
 
     Component* menu1 = CreateMenu(menuStyle, 0, 15, L"Файл", 4,

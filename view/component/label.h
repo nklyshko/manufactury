@@ -2,7 +2,6 @@
 #define MANUFACTURY_LABEL_H
 
 #include <view/interactive_panel.h>
-#include <malloc.h>
 
 typedef struct Label Label;
 typedef struct LabelStyle LabelStyle;
@@ -11,7 +10,7 @@ struct Label {
     LabelStyle* style;
     int size;
     wchar_t* text;
-    InteractivePanel* panelLabel;
+    InteractivePanel* panel;
 };
 
 struct LabelStyle {

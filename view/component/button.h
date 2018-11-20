@@ -2,7 +2,6 @@
 #define MANUFACTURY_BUTTON_H
 
 #include <view/interactive_panel.h>
-#include <malloc.h>
 
 typedef struct Button Button;
 typedef struct ButtonStyle ButtonStyle;

@@ -2,6 +2,7 @@
 #define MANUFACTURY_INTERACTIVE_PANEL_H
 
 #include "component.h"
+#include <malloc.h>
 
 typedef struct InteractivePanel InteractivePanel;
 
