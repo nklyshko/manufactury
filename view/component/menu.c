@@ -123,6 +123,7 @@ Component* CreateMenu(MenuStyle* style, int x, int y, wchar_t* label, int size, 
             menu->width = len;
         }
 
+        RegisterHotKeyAction(item->hotkey, item->action);
     }
     va_end(args);
     //ширина информации hotkey, пробел между заголовком и hotkey, отступы по бокам
