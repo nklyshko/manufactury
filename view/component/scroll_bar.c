@@ -9,10 +9,14 @@ int divUp(int a, int b) {
 
 void ScrollBarOnMouseClick(InteractivePanel* handle, MEVENT event) {
     ScrollBar* scrollBar = handle->holder->spec;
-    if (event.y == 0) {
+    if (event.y == 0) { //верхняя кнопка
         scrollBar->layout->OnScrollUp(SINGLE);
-    } else if (event.y == scrollBar->size - 1) {
+    } else if (event.y == scrollBar->height - 1) { //нижняя кнопка
         scrollBar->layout->OnScrollDown(SINGLE);
+    } else if (event.y - 1 < scrollBar->pos) { //выше ползунка
+        scrollBar->layout->OnScrollUp(PAGE);
+    } else if (event.y - 1 > scrollBar->pos && event.y - 1 >= scrollBar->pos + scrollBar->thumb) { //ниже ползунка
+        scrollBar->layout->OnScrollDown(PAGE);
     }
 }
 
@@ -27,6 +31,10 @@ void ScrollBarHide(Component* handle) {
     PanelHide(scrollBar->panel);
 }
 
+bool ScrollBarOnFocusGet(Component* handle) {
+    return false;
+}
+
 Component* CreateScrollBar(ScrollBarStyle* style, int x, int y, int height, Layout* layout) {
     Component* handle = CreateComponent();
     ScrollBar* scrollBar = malloc(sizeof(ScrollBar));
@@ -35,6 +43,7 @@ Component* CreateScrollBar(ScrollBarStyle* style, int x, int y, int height, Layo
     scrollBar->height = height;
     scrollBar->size = 1;
     scrollBar->pos = 0;
+    scrollBar->step = 1;
     scrollBar->thumb = height - 2;
     scrollBar->count = 1;
 
@@ -56,19 +65,23 @@ Component* CreateScrollBar(ScrollBarStyle* style, int x, int y, int height, Layo
     handle->spec = scrollBar;
     handle->Show = ScrollBarShow;
     handle->Hide = ScrollBarHide;
+    handle->OnFocusGet = ScrollBarOnFocusGet;
     return handle;
 }
 
 void ScrollBarSetNumber(Component* handle, int number) {
     ScrollBar* scrollBar = handle->spec;
-    if (number > scrollBar->count) return;
+    if (number >= scrollBar->count) return;
     scrollBar->number = number; //абсолютный номер элемента
     WINDOW* w = scrollBar->panel->window;
+    //очистка старого положения ползунка
     wmove(w, scrollBar->pos + 1, 0);
     for (int i = 0; i < scrollBar->thumb; i++) {
         waddch(w, ACS_CKBOARD);
     }
+
     scrollBar->pos = scrollBar->number / scrollBar->step; //позиция ползунка
+    //отрисовка нового положения ползунка
     wmove(w, scrollBar->pos + 1, 0);
     for (int i = 0; i < scrollBar->thumb; i++) {
         waddch(w, ACS_BLOCK);
@@ -76,7 +89,14 @@ void ScrollBarSetNumber(Component* handle, int number) {
 }
 
 void ScrollBarSetCount(Component* handle, int count) {
+    if (count < 1) return;
     ScrollBar* scrollBar = handle->spec;
+    //очистка старого ползунка
+    wmove(scrollBar->panel->window, scrollBar->pos + 1, 0);
+    for (int i = 0; i < scrollBar->thumb; i++) {
+        waddch(scrollBar->panel->window, ACS_CKBOARD);
+    }
+
     scrollBar->count = count;
     int pages = divUp(scrollBar->count, scrollBar->height);
     if (pages >= scrollBar->height - 2) {
