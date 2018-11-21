@@ -18,6 +18,8 @@ struct Layout {
 
 enum ScrollType { SINGLE, PAGE };
 
+void InitLayouts(Layout* mainLayout);
+
 Layout* CreateLayout(int x, int y, int width, int height);
 
 void LayoutAddComponent(Layout* layout, Component* component);
@@ -27,8 +29,6 @@ void ShowLayout(Layout* layout);
 void HideLayout(Layout* layout);
 
 void ActivateLayout(Layout* layout);
-
-void SetMainLayout(Layout* layout);
 
 void LayoutHandleMouseEvent(MEVENT event);
 

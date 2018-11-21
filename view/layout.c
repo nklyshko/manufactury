@@ -4,7 +4,7 @@
 #include "interactive_panel.h"
 
 
-Layout* activeLayout = NULL;
+Layout* activeLayout;
 Layout* mainLayout; //Основное окно программы. Если открыты другие, то оно на фоне
 
 void DefaultOnScrollUp(ScrollType type) {
@@ -13,6 +13,12 @@ void DefaultOnScrollUp(ScrollType type) {
 
 void DefaultOnScrollDown(ScrollType type) {
     //noop
+}
+
+void InitLayouts(Layout* layout) {
+    mainLayout = layout;
+    activeLayout = layout;
+    ShowLayout(activeLayout);
 }
 
 Layout* CreateLayout(int x, int y, int width, int height) {
@@ -29,7 +35,6 @@ Layout* CreateLayout(int x, int y, int width, int height) {
 }
 
 void LayoutAddComponent(Layout* layout, Component* component) {
-    component->nextFocus = NULL;
     if (layout->lastComponent == NULL) {
         layout->firstComponent = component;
         layout->lastComponent = component;
@@ -58,20 +63,15 @@ void HideLayout(Layout* layout) {
 }
 
 void ActivateLayout(Layout* layout) {
-    if (activeLayout != NULL && activeLayout != mainLayout) {
+    FocusSingleComponent(NULL);
+    if (activeLayout != mainLayout) {
         HideLayout(activeLayout);
         activeLayout = mainLayout;
     }
-    FocusSingleComponent(NULL);
-    if (layout != NULL) {
+    if (layout != NULL && layout != mainLayout) {
         ShowLayout(layout);
         activeLayout = layout;
     }
-}
-
-void SetMainLayout(Layout* layout) {
-    mainLayout = layout;
-    ActivateLayout(mainLayout);
 }
 
 void LayoutHandleMouseEvent(MEVENT event) {
