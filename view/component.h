@@ -8,6 +8,7 @@ typedef struct Component Component;
 
 struct Component {
     void* spec;
+    void* custom;
     char* id; //debug???
     Component* nextFocus;
     void (* Show)(Component* component);
@@ -26,7 +27,11 @@ void ShowComponent(Component* component);
 
 void HideComponent(Component* component);
 
-void FocusComponent(Component* component);
+void FocusSingleComponent(Component* component);
+
+void FocusNextComponent(Component* resetComponent);
+
+void DefocusComponent(Component* component);
 
 Component* GetFocusedComponent(void);
 

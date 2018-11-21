@@ -146,7 +146,7 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     } else if (key == KEY_END) {
         editSetPos(edit, edit->length);
     } else if (key == KEY_ENTER) {
-        FocusComponent(NULL);
+        DefocusComponent(handle);
     }
 }
 

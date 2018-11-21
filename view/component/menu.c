@@ -33,7 +33,7 @@ void MenuOnMouseClick(InteractivePanel* handle, MEVENT event) {
     Menu* menu = handle->holder->spec;
     int id = event.y;
     MenuItem* item = menu->items[id];
-    FocusComponent(NULL);
+    FocusSingleComponent(NULL);
     item->action();
 }
 
@@ -63,8 +63,9 @@ void MenuOnKeyClick(Component* handle, int key, unsigned long modifiers) {
         }
     } else if (key == KEY_ENTER) {
         if (menu->pos != NOT_ACTIVE) {
-            FocusComponent(NULL);
-            menu->items[menu->pos]->action();
+            int pos = menu->pos; //необходимо сохранить значение, т.к. при расфокусировке произвойдет установка pos в NOT_ACTIVE
+            FocusSingleComponent(NULL);
+            menu->items[pos]->action();
         }
     }
 }

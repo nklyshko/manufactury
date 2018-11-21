@@ -79,7 +79,7 @@ void SelectOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     } else if (key == KEY_ENTER) {
         if (select->active) {
             closeList(select);
-            FocusComponent(NULL);
+            DefocusComponent(handle);
         } else {
             openList(select);
         }

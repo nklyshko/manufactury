@@ -8,12 +8,10 @@ Layout* activeLayout = NULL;
 Layout* mainLayout; //Основное окно программы. Если открыты другие, то оно на фоне
 
 void DefaultOnScrollUp(ScrollType type) {
-    log_debug("ScrollUp %d", type);
     //noop
 }
 
 void DefaultOnScrollDown(ScrollType type) {
-    log_debug("ScrollDown %d", type);
     //noop
 }
 
@@ -64,7 +62,7 @@ void ActivateLayout(Layout* layout) {
         HideLayout(activeLayout);
         activeLayout = mainLayout;
     }
-    FocusComponent(NULL);
+    FocusSingleComponent(NULL);
     if (layout != NULL) {
         ShowLayout(layout);
         activeLayout = layout;
@@ -100,16 +98,11 @@ void LayoutHandleMouseEvent(MEVENT event) {
 void LayoutHandleKeyboardEvent(int key, unsigned long modifiers) {
     if (key == KEY_TAB) {
         Component* component = GetFocusedComponent();
-        if (component != NULL) {
+        if (component != NULL && component->OnFocusChange(component)) {
             //Перефокусировка внутри компонента
-            if (component->OnFocusChange(component)) return;
-            component = component->nextFocus;
+            return;
         }
-        if (component == NULL) {
-            FocusComponent(activeLayout->firstComponent);
-        } else {
-            FocusComponent(component);
-        }
+        FocusNextComponent(activeLayout->firstComponent);
     } else if (key == KEY_PGUP) {
         activeLayout->OnScrollUp(PAGE);
     } else if (key == KEY_PGDOWN) {

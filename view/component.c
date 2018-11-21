@@ -31,6 +31,8 @@ Component* focusedComponent = NULL;
 
 Component* CreateComponent() {
     Component* component = malloc(sizeof(Component));
+    component->custom = NULL;
+    component->nextFocus = NULL;
     component->Show = DefaultShow;
     component->Hide = DefaultHide;
     component->OnKeyClick = DefaultOnKeyClick;
@@ -48,19 +50,47 @@ void HideComponent(Component* component) {
     component->Hide(component);
 }
 
-void FocusComponent(Component* component) {
-    if (component != focusedComponent) {
+void FocusSingleComponent(Component* component) {
+    if (focusedComponent != component) {
         if (focusedComponent != NULL) {
             focusedComponent->OnFocusLost(focusedComponent);
         }
-        log_debug("New focus: %s", component == NULL ? "null" : component->id);
         focusedComponent = component;
-        if (focusedComponent != NULL) {
-            if (!focusedComponent->OnFocusGet(focusedComponent)) {
-                FocusComponent(focusedComponent->nextFocus);
+        if (focusedComponent != NULL && !focusedComponent->OnFocusGet(focusedComponent)) {
+            focusedComponent = NULL;
+        }
+    }
+}
+
+void FocusNextComponent(Component* resetComponent) {
+    if (focusedComponent == NULL) {
+        focusedComponent = resetComponent;
+    } else {
+        focusedComponent->OnFocusLost(focusedComponent);
+        focusedComponent = focusedComponent->nextFocus;
+        if (focusedComponent == NULL) {
+            focusedComponent = resetComponent;
+        }
+    }
+    if (focusedComponent != NULL) {
+        while (!focusedComponent->OnFocusGet(focusedComponent)) {
+            if (focusedComponent->nextFocus == NULL) {
+                if (resetComponent != NULL) {
+                    focusedComponent = resetComponent;
+                    resetComponent = NULL;
+                } else {
+                    break;
+                }
+            } else {
+                focusedComponent = focusedComponent->nextFocus;
             }
         }
     }
+}
+
+void DefocusComponent(Component* component) {
+    if (focusedComponent != component) return;
+    FocusNextComponent(NULL);
 }
 
 Component* GetFocusedComponent(void) {
@@ -94,7 +124,7 @@ void ComponentHandleMouseEvent(MEVENT event) {
     if (interactivePanel != NULL) {
         component = interactivePanel->holder;
     }
-    FocusComponent(component);
+    FocusSingleComponent(component);
     if (interactivePanel != NULL) {
         interactivePanel->OnMouseClick(interactivePanel, event);
     }

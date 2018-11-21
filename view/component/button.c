@@ -3,7 +3,7 @@
 
 void ButtonOnMouseClick(InteractivePanel* handle, MEVENT event) {
     Button* button = handle->holder->spec;
-    FocusComponent(NULL);
+    FocusSingleComponent(NULL);
     button->action();
 }
 
@@ -25,7 +25,7 @@ void ButtonHide(Component* handle) {
 void ButtonOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     Button* button = handle->spec;
     if (key == KEY_ENTER) {
-        FocusComponent(NULL);
+        FocusSingleComponent(NULL);
         button->action();
     }
 }
