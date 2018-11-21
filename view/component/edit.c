@@ -175,6 +175,7 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     Component* handle = CreateComponent();
     Edit* edit = malloc(sizeof(Edit));
     edit->style = style;
+    edit->enabled = true;
     edit->size = size;
     edit->pos = 0;
     edit->selected = 0;
