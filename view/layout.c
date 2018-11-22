@@ -105,6 +105,8 @@ void LayoutHandleKeyboardEvent(int key, unsigned long modifiers) {
             return;
         }
         FocusNextComponent(activeLayout->firstComponent);
+    } else if (key == KEY_ESC) {
+        FocusSingleComponent(NULL);
     } else if (key == KEY_PGUP) {
         activeLayout->OnScrollUp(PAGE);
     } else if (key == KEY_PGDOWN) {

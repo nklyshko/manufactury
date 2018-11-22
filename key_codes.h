@@ -36,6 +36,11 @@
 #endif
 #define KEY_PGUP 60611
 
+#ifdef KEY_ESC
+# undef KEY_ESC
+#endif
+#define KEY_ESC 27
+
 #define KEY_DELETE KEY_DC
 #define KEY_INSERT KEY_IC
 #define KEY_CTRL PDC_KEY_MODIFIER_CONTROL
