@@ -3,16 +3,10 @@
 #include <src/log.h>
 #include "styles.h"
 #include "view_contract.h"
-#include "menu_view.h"
-#include "mouse_handler.h"
+#include "winapi_bridge.h"
 
 
-PANEL* title;
-PANEL* table;
-PANEL* status;
-
-//Init
-void initMenu(void);
+#define MANUFACTURY_VERSION "0.5 Beta"
 
 //File menu
 void FileNew(void);
@@ -23,7 +17,6 @@ void FileSave(void);
     //Redirect to controller(check if file already have name, or its new...)
 void FileSaveAs(void);
     //Show save dialog, request file save to controller with selected filename
-
 
 //Edit menu
 void EditFind(void);
@@ -39,6 +32,8 @@ void ToolsExportCSV(void);
 
 void ToolsCreateReport(void);
 
+bool running = true;
+
 void InitView(void) {
     //инициализация главного окна
     initscr();
@@ -53,50 +48,76 @@ void InitView(void) {
     //распознавание функциональных кнопок клавиатуры(F1, ...)
     keypad(stdscr, TRUE);
     //сохранение модификаторов нажатых клавиш при чтении(Ctrl, Alt, Shift, ...)
-    PDC_save_key_modifiers(FALSE);
+    PDC_save_key_modifiers(TRUE);
     //поддержка цвета
     start_color();
     //поддержка мыши
     mouse_set(ALL_MOUSE_EVENTS);
-    //размеры консоли
-    resize_term(TERMINAL_HEIGHT, TERMINAL_WIDTH);
+    //установка заголовка окна программы
+    PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
 
-    AllocateMenus(3);
-    CreateMenu(0, L"Файл", 4,
-            L"Новый", CreateHotKey('N', KEY_CTRL), FileNew,
-            L"Открыть", CreateHotKey('O', KEY_CTRL), FileOpen,
-            L"Сохранить", CreateHotKey('S', KEY_CTRL), FileSave,
-            L"Сохранить как...", CreateHotKey('S', KEY_CTRL | KEY_SHIFT), FileSaveAs);
-    CreateMenu(1, L"Правка", 4,
-            L"Найти", CreateHotKey('F', KEY_CTRL), EditFind,
-            L"Добавить", CreateHotKey('I', KEY_CTRL), EditAdd,
-            L"Удалить", CreateHotKey('D', KEY_CTRL), EditDelete,
-            L"Изменить", CreateHotKey('E', KEY_CTRL), EditChange);
-    CreateMenu(2, L"Инструменты", 2,
-            L"Экспорт в .CSV", CreateHotKey('E', KEY_CTRL | KEY_ALT | KEY_SHIFT), ToolsExportCSV,
-            L"Создать отчет", CreateHotKey('R', KEY_CTRL), ToolsCreateReport);
+    resize_term(25, 80);
 
     InitStyle();
-    InitMenu();
+    InitHotKeyHandler(NULL);
+
+    init_pair(250, COLOR_BLACK, COLOR_WHITE);
+
+    Layout* mainLayout = CreateLayout(0, 0, 80, 25);
+    wbkgd(panel_window(mainLayout->panel), COLOR_PAIR(250) | L' ');
+    mvwchgat(panel_window(mainLayout->panel), 0, 25, 80 - 25, 0, (short) menuStyle->defaultLabel, NULL);
+
+    Component* menu1 = CreateMenu(menuStyle, 0, 0, L"Файл", 4,
+                                  L"Новый", CreateHotKey('N', KEY_CTRL), FileNew,
+                                  L"Открыть", CreateHotKey('O', KEY_CTRL), FileOpen,
+                                  L"Сохранить", CreateHotKey('S', KEY_CTRL), FileSave,
+                                  L"Сохранить как...", CreateHotKey('S', KEY_CTRL | KEY_SHIFT), FileSaveAs);
+    Component* menu2 = CreateMenu(menuStyle, 6, 0, L"Правка", 4,
+                                  L"Найти", CreateHotKey('F', KEY_CTRL), EditFind,
+                                  L"Добавить", CreateHotKey('I', KEY_CTRL), EditAdd,
+                                  L"Удалить", CreateHotKey('D', KEY_CTRL), EditDelete,
+                                  L"Изменить", CreateHotKey('E', KEY_CTRL), EditChange);
+    Component* menu3 = CreateMenu(menuStyle, 14, 0, L"Инструменты", 2,
+                                  L"Экспорт в .CSV", CreateHotKey('E', KEY_CTRL | KEY_ALT | KEY_SHIFT), ToolsExportCSV,
+                                  L"Создать отчет", CreateHotKey('R', KEY_CTRL), ToolsCreateReport);
+    LayoutAddComponent(mainLayout, menu1);
+    LayoutAddComponent(mainLayout, menu2);
+    LayoutAddComponent(mainLayout, menu3);
+
+    InitLayouts(mainLayout);
 
     update_panels();
     doupdate();
 
     MEVENT event;
-    move(0 ,0);
-    int input = ERR;
-    while (input != KEY_F(3)) {
+    int input = getch();
+    while (running) {
         input = getch();
         if (input != ERR) {
-
-            if (input == KEY_MOUSE) {
+            unsigned long modifiers = PDC_get_key_modifiers();
+            if (input == KEY_RESIZE) {
+                resize_term(0, 0);
+                if (LINES < 25 || COLS < 80) {
+                    ShowMessage(L"Уменьшение окна не поддерживается");
+                    running = false;
+                    return;
+                }
+                resize_term(25, 80);
+                PANEL* panel = stack_top_panel();
+                while (panel != NULL) {
+                    touchwin(panel_window(panel));
+                    panel = panel_below(panel);
+                }
+            } else if (input == KEY_MOUSE) {
                 nc_getmouse(&event);
-                //log_debug("MOUSE EVENT %d %d", event.y, event.x);
-                handleEvent(event);
+                LayoutHandleMouseEvent(event);
+            } else {
+                if (!HandleHotKeyEvent(input, modifiers)) {
+                    LayoutHandleKeyboardEvent(input, modifiers);
+                }
             }
             update_panels();
             doupdate();
-            move(0, 0);
         }
     }
 
