@@ -29,6 +29,8 @@ Layout* CreateLayout(int x, int y, int width, int height) {
     set_panel_userptr(layoutPanel, NULL);
     layout->panel = layoutPanel;
     layout->window = window;
+    layout->firstComponent = NULL;
+    layout->lastComponent = NULL;
     layout->OnScrollUp = DefaultOnScrollUp;
     layout->OnScrollDown = DefaultOnScrollDown;
     return layout;
