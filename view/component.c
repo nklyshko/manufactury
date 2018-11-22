@@ -52,10 +52,11 @@ void HideComponent(Component* component) {
 
 void FocusSingleComponent(Component* component) {
     if (focusedComponent != component) {
-        if (focusedComponent != NULL) {
-            focusedComponent->OnFocusLost(focusedComponent);
-        }
+        Component* defocus = focusedComponent;
         focusedComponent = component;
+        if (defocus != NULL) {
+            defocus->OnFocusLost(defocus);
+        }
         if (focusedComponent != NULL && !focusedComponent->OnFocusGet(focusedComponent)) {
             focusedComponent = NULL;
         }
@@ -66,11 +67,12 @@ void FocusNextComponent(Component* resetComponent) {
     if (focusedComponent == NULL) {
         focusedComponent = resetComponent;
     } else {
-        focusedComponent->OnFocusLost(focusedComponent);
-        focusedComponent = focusedComponent->nextFocus;
+        Component* component = focusedComponent;
+        focusedComponent = component->nextFocus;
         if (focusedComponent == NULL) {
             focusedComponent = resetComponent;
         }
+        component->OnFocusLost(component);
     }
     if (focusedComponent != NULL) {
         while (!focusedComponent->OnFocusGet(focusedComponent)) {
@@ -89,8 +91,9 @@ void FocusNextComponent(Component* resetComponent) {
 }
 
 void DefocusComponent(Component* component) {
-    if (focusedComponent != component) return;
-    FocusNextComponent(NULL);
+    if (focusedComponent == component) {
+        FocusNextComponent(NULL);
+    }
 }
 
 Component* GetFocusedComponent(void) {

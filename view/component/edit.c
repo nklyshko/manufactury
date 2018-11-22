@@ -167,7 +167,11 @@ void EditOnFocusLost(Component* handle) {
     curs_set(0);
     move(0, 0);
     Edit* edit = handle->spec;
-    wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
+    if (edit->enabled) {
+        wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
+    } else {
+        wbkgd(edit->panel->window, COLOR_PAIR(edit->style->disabledColor));
+    }
     edit->action(handle);
 }
 
@@ -203,11 +207,11 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
 void EditSetEnabled(Component* handle, bool enabled) {
     Edit* edit = handle->spec;
     edit->enabled = enabled;
-    WINDOW* w = edit->panel->window;
     if (enabled) {
-        wbkgd(w, COLOR_PAIR(edit->style->defaultColor));
+        wbkgd(edit->panel->window, COLOR_PAIR(edit->style->defaultColor));
     } else {
-        wbkgd(w, COLOR_PAIR(edit->style->disabledColor));
+        wbkgd(edit->panel->window, COLOR_PAIR(edit->style->disabledColor));
+        DefocusComponent(handle);
     }
 }
 
