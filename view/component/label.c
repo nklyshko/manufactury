@@ -23,7 +23,7 @@ Component* CreateLabel(LabelStyle* style, int x, int y, int size, wchar_t* text)
     label->style = style;
     label->size = size;
     label->text = malloc(sizeof(wchar_t) * (size + 1));
-    wmemcpy_s(label->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
+    wmemcpy_s(label->text, (size_t) label->size, text, (size_t) label->size); //wcscpy_s не работает
 
     InteractivePanel* panelLabel = CreateInteractivePanel(handle, x, y, size, 1);
     label->panel = panelLabel;
@@ -44,8 +44,7 @@ Component* CreateLabel(LabelStyle* style, int x, int y, int size, wchar_t* text)
 void LabelSetText(Component* handle, wchar_t* text) {
     Label* label = handle->spec;
     label->text = text;
-    wmove(label->panel->window, 0, 0);
-    waddwstr(label->panel->window, label->text);
+    mvwaddwstr(label->panel->window, 0, 0, label->text);
 }
 
 LabelStyle* CreateLabelStyle(int color) {

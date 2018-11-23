@@ -88,19 +88,19 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
         if (replaceMode) {
             if (edit->pos == edit->length) {
                 if (edit->length < edit->size) {
-                    edit->data[edit->pos] = ch;
+                    edit->value[edit->pos] = ch;
                     edit->length++;
-                    edit->data[edit->length] = L'\0';
+                    edit->value[edit->length] = L'\0';
                     waddch(edit->panel->window, ch);
                     editSetPos(edit, edit->pos + 1);
                 }
             } else {
-                edit->data[edit->pos] = ch;
+                edit->value[edit->pos] = ch;
                 waddch(edit->panel->window, ch);
                 editSetPos(edit, edit->pos + 1);
             }
         } else if (edit->length < edit->size) {
-            insertChar(edit->data, edit->length, edit->pos, ch);
+            insertChar(edit->value, edit->length, edit->pos, ch);
             edit->length++;
             winsch(edit->panel->window, ch);
             editSetPos(edit, edit->pos + 1);
@@ -110,14 +110,14 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
             if (edit->pos > 0) {
                 editSetPos(edit, edit->pos - 1);
                 wdelch(edit->panel->window);
-                deleteChar(edit->data, edit->length, edit->pos);
+                deleteChar(edit->value, edit->length, edit->pos);
                 edit->length--;
             }
         }
     } else if (key == KEY_DELETE) {
         if (edit->pos >= 0 && edit->pos < edit->length) {
             wdelch(edit->panel->window);
-            deleteChar(edit->data, edit->length, edit->pos);
+            deleteChar(edit->value, edit->length, edit->pos);
             edit->length--;
         }
     } else if (key == KEY_INSERT) {
@@ -184,8 +184,8 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     edit->pos = 0;
     edit->selected = 0;
     edit->length = 0;
-    edit->data = malloc((size + 1) * sizeof(wchar_t));
-    edit->data[0] = L'\0';
+    edit->value = malloc((size + 1) * sizeof(wchar_t));
+    edit->value[0] = L'\0';
     edit->OnValueEnter = defaultOnValueEnter;
 
     InteractivePanel* panel = CreateInteractivePanel(handle, x, y, size + 1, 1);
@@ -202,6 +202,13 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     handle->OnFocusGet = EditOnFocusGet;
     handle->OnFocusLost = EditOnFocusLost;
     return handle;
+}
+
+void EditSetValue(Component* handle, wchar_t* value) {
+    Edit* edit = handle->spec;
+    wmemcpy_s(edit->value, (size_t) edit->size, value, (size_t) edit->size); //wcscpy_s не работает
+    wclear(edit->panel->window);
+    mvwaddwstr(edit->panel->window, 0, 0, edit->value);
 }
 
 void EditSetEnabled(Component* handle, bool enabled) {

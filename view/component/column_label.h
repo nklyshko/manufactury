@@ -15,7 +15,7 @@ struct ColumnLabel {
     SortDirection activeDirection;
     wchar_t* text;
     InteractivePanel* panel;
-    void (* OnDirectionChange)(void);
+    void (* OnDirectionChange)(Component* handle);
 };
 
 struct ColumnLabelStyle {
@@ -25,6 +25,8 @@ struct ColumnLabelStyle {
 };
 
 Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wchar_t* text);
+
+void ColumnLabelSetDirection(Component* handle, SortDirection direction);
 
 ColumnLabelStyle* CreateColumnLabelStyle(int defaultColor, int focusedColor, int activeColor);
 

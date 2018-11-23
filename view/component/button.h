@@ -12,7 +12,7 @@ struct Button {
     int size;
     wchar_t* text;
     InteractivePanel* panel;
-    void (* OnButtonClick)(void);
+    void (* OnButtonClick)(Component* handle);
 };
 
 struct ButtonStyle {
@@ -21,7 +21,7 @@ struct ButtonStyle {
     int focusedColor;
 };
 
-Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* text, void (* OnButtonClick)(void));
+Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* text, void (* OnButtonClick)(Component* handle));
 
 void ButtonSetText(Component* handle, wchar_t* text);
 

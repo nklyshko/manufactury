@@ -1,6 +1,10 @@
 #include "column_label.h"
 
 
+void defaultOnDirectionChange(Component* handle) {
+    //noop
+}
+
 void setDirection(Component* handle, SortDirection direction) {
     ColumnLabel* columnLabel = handle->spec;
     columnLabel->activeDirection = direction;
@@ -12,6 +16,15 @@ void setDirection(Component* handle, SortDirection direction) {
         }
     } else {
         mvwaddch(columnLabel->panel->window, 0, columnLabel->size - 1, columnLabel->activeDirection == ASC ? L'▲' : L'▼');
+    }
+}
+
+void updateStyle(Component* handle) {
+    ColumnLabel* columnLabel = handle->spec;
+    if (columnLabel->activeDirection == NONE) {
+        wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->defaultColor));
+    } else {
+        wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->activeColor));
     }
 }
 
@@ -35,17 +48,14 @@ void ColumnLabelHide(Component* handle) {
 }
 
 void ColumnLabelOnKeyClick(Component* handle, int key, unsigned long modifiers) {
+    ColumnLabel* columnLabel = handle->spec;
     if (key == KEY_DOWN) {
-        setDirection(handle, DSC);
+        ColumnLabelSetDirection(handle, DSC);
     } else if (key == KEY_UP) {
-        setDirection(handle, ASC);
+        ColumnLabelSetDirection(handle, ASC);
     } else if (key == KEY_ENTER) {
         DefocusComponent(handle);
     }
-//    else if (key == KEY_ESC) {
-//        setDirection(handle, NONE);
-//        DefocusComponent(handle);
-//    }
 }
 
 
@@ -57,12 +67,8 @@ bool ColumnLabelOnFocusGet(Component* handle) {
 
 void ColumnLabelOnFocusLost(Component* handle) {
     ColumnLabel* columnLabel = handle->spec;
-    if (columnLabel->activeDirection == NONE) {
-        wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->defaultColor));
-    } else {
-        wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->activeColor));
-    }
-    //TODO: Оповестить о состоянии(направление сортировки)
+    updateStyle(handle);
+    columnLabel->OnDirectionChange(handle);
 }
 
 Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wchar_t* text) {
@@ -71,6 +77,7 @@ Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wc
     columnLabel->style = style;
     columnLabel->size = size;
     columnLabel->activeDirection = NONE;
+    columnLabel->OnDirectionChange = defaultOnDirectionChange;
     columnLabel->text = malloc(sizeof(wchar_t) * (size + 1));
     wmemcpy_s(columnLabel->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
 
@@ -92,6 +99,11 @@ Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wc
     handle->OnFocusGet = ColumnLabelOnFocusGet;
     handle->OnFocusLost = ColumnLabelOnFocusLost;
     return handle;
+}
+
+void ColumnLabelSetDirection(Component* handle, SortDirection direction) {
+    setDirection(handle, direction);
+    updateStyle(handle);
 }
 
 ColumnLabelStyle* CreateColumnLabelStyle(int defaultColor, int focusedColor, int activeColor) {

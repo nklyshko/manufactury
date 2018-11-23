@@ -4,7 +4,7 @@
 void ButtonOnMouseClick(InteractivePanel* handle, MEVENT event) {
     Button* button = handle->holder->spec;
     FocusSingleComponent(NULL);
-    button->OnButtonClick();
+    button->OnButtonClick(handle);
 }
 
 void ButtonShow(Component* handle) {
@@ -26,7 +26,7 @@ void ButtonOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     Button* button = handle->spec;
     if (key == KEY_ENTER) {
         FocusSingleComponent(NULL);
-        button->OnButtonClick();
+        button->OnButtonClick(handle);
     }
 }
 
@@ -49,7 +49,7 @@ void ButtonOnFocusLost(Component* handle) {
     }
 }
 
-Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* text, void (* OnButtonClick)(void)) {
+Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* text, void (* OnButtonClick)(Component* handle)) {
     Component* handle = CreateComponent();
     Button* button = malloc(sizeof(Button));
     button->style = style;
@@ -82,8 +82,8 @@ Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* tex
 void ButtonSetText(Component* handle, wchar_t* text) {
     Button* button = handle->spec;
     wmemcpy_s(button->text, (size_t) button->size, text, (size_t) button->size);
-    wmove(button->panel->window, 0, 0);
-    waddwstr(button->panel->window, button->text);
+    wclear(button->panel->window);
+    mvwaddwstr(button->panel->window, 0, 0, button->text);
 }
 
 void ButtonSetEnabled(Component* handle, bool enabled) {
