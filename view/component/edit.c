@@ -11,7 +11,7 @@
 #define NUM_END   57
 
 
-void defaultEditEnterAction(Component* handle) {
+void defaultOnValueEnter(Component* handle) {
     //noop
 }
 
@@ -172,7 +172,7 @@ void EditOnFocusLost(Component* handle) {
     } else {
         wbkgd(edit->panel->window, COLOR_PAIR(edit->style->disabledColor));
     }
-    edit->action(handle);
+    edit->OnValueEnter(handle);
 }
 
 Component* CreateEdit(EditStyle* style, int x, int y, int size) {
@@ -186,7 +186,7 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     edit->length = 0;
     edit->data = malloc((size + 1) * sizeof(wchar_t));
     edit->data[0] = L'\0';
-    edit->action = defaultEditEnterAction;
+    edit->OnValueEnter = defaultOnValueEnter;
 
     InteractivePanel* panel = CreateInteractivePanel(handle, x, y, size + 1, 1);
     edit->panel = panel;
@@ -215,9 +215,9 @@ void EditSetEnabled(Component* handle, bool enabled) {
     }
 }
 
-void EditSetEnterAction(Component* handle, void (* action)(Component* handle)) {
+void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle)) {
     Edit* edit = handle->spec;
-    edit->action = action;
+    edit->OnValueEnter = OnValueEnter;
 }
 
 EditStyle* CreateEditStyle(int defaultColor, int disabledColor, int activeColor) {

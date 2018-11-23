@@ -23,7 +23,11 @@ void showArrow(Select* select) {
 }
 
 void hideArrow(Select* select) {
-    mvwaddch(select->selectedPanel->window, 0, select->width - 1, ' ');
+    if (wcslen(select->options[select->selected]) >= select->width) {
+        mvwaddch(select->selectedPanel->window, 0, select->width - 1, select->options[select->selected][select->width - 1]);
+    } else {
+        mvwaddch(select->selectedPanel->window, 0, select->width - 1, ' ');
+    }
 }
 
 void openList(Select* select) {
@@ -141,8 +145,9 @@ Component* CreateSelect(SelectStyle* style, int x, int y, int width, int count, 
     select->selectedPanel = selectedPanel;
 
     SelectSetSelected(select, 0);
-    wmove(select->selectedPanel->window, 0, select->width - 1);
-    waddch(select->selectedPanel->window, L'▼');
+    hideArrow(select);
+//    wmove(select->selectedPanel->window, 0, select->width - 1);
+//    waddch(select->selectedPanel->window, L'▼');
 
     handle->id = malloc(sizeof(char) * 10);
     handle->id[10] = '\0';

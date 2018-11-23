@@ -8,22 +8,22 @@
 #endif
 #define KEY_TAB 9
 
-void DefaultShow(Component* component) {
+void defaultShow(Component* component) {
     //noop
 }
-void DefaultHide(Component* component) {
+void defaultHide(Component* component) {
     //noop
 }
-void DefaultOnKeyClick(Component* handle, int key, unsigned long modifiers) {
+void defaultOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     //noop
 };
-bool DefaultOnFocusGet(Component* handle) {
+bool defaultOnFocusGet(Component* handle) {
     return true;
 };
-bool DefaultOnFocusChange(Component* handle) {
+bool defaultOnFocusChange(Component* handle) {
     return false;
 };
-void DefaultOnFocusLost(Component* handle) {
+void defaultOnFocusLost(Component* handle) {
     //noop
 };
 
@@ -33,12 +33,12 @@ Component* CreateComponent() {
     Component* component = malloc(sizeof(Component));
     component->custom = NULL;
     component->nextFocus = NULL;
-    component->Show = DefaultShow;
-    component->Hide = DefaultHide;
-    component->OnKeyClick = DefaultOnKeyClick;
-    component->OnFocusGet = DefaultOnFocusGet;
-    component->OnFocusChange = DefaultOnFocusChange;
-    component->OnFocusLost = DefaultOnFocusLost;
+    component->Show = defaultShow;
+    component->Hide = defaultHide;
+    component->OnKeyClick = defaultOnKeyClick;
+    component->OnFocusGet = defaultOnFocusGet;
+    component->OnFocusChange = defaultOnFocusChange;
+    component->OnFocusLost = defaultOnFocusLost;
     return component;
 }
 

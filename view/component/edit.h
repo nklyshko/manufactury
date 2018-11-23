@@ -15,7 +15,7 @@ struct Edit {
     int selected;
     int length;
     wchar_t* data;
-    void (* action)(Component* handle);
+    void (* OnValueEnter)(Component* handle);
     InteractivePanel* panel;
 };
 
@@ -29,7 +29,7 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size);
 
 void EditSetEnabled(Component* handle, bool enabled);
 
-void EditSetEnterAction(Component* handle, void (* action)(Component* handle));
+void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle));
 
 EditStyle* CreateEditStyle(int defaultColor, int disabledColor, int activeColor);
 

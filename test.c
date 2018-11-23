@@ -64,20 +64,32 @@ int parseInt(const wchar_t* s) {
 void SetNum(Component* handle) {
     Edit* e = handle->spec;
     int num = parseInt(e->data);
-    log_debug("SETNUM %d", num);
+//    log_debug("SETNUM %d", num);
     ScrollBarSetNumber(scrollbar, num);
 }
 
 void SetCnt(Component* handle) {
     Edit* e = handle->spec;
     int cnt = parseInt(e->data);
-    log_debug("SETCNT %d", cnt);
+//    log_debug("SETCNT %d", cnt);
     ScrollBarSetCount(scrollbar, cnt);
-    //EditSetEnabled(handle, false);
+    EditSetEnabled(handle, false);
 }
 
 void SelectedEvent(Component* handle) {
     log_debug("Selected event");
+}
+
+void SetWindowSize(int width, int height) {
+    //resize_term(0, 0);
+    resize_term(height, width);
+    PANEL* panel = stack_top_panel();
+    while (panel != NULL) {
+        touchwin(panel_window(panel));
+        panel = panel_below(panel);
+    }
+    update_panels();
+    doupdate();
 }
 
 int main() {
@@ -105,16 +117,15 @@ int main() {
 
     PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
 
+    resize_term(25, 80);
+
     InitStyle();
     InitHotKeyHandler(EventHandler);
 
     init_pair(250, COLOR_BLACK, COLOR_WHITE);
 
-    log_debug("ENTER %d", KEY_ENTER);
-
-    Layout* mainLayout = CreateLayout(0, 0, 80, 24);
+    Layout* mainLayout = CreateLayout(0, 0, 80, 25);
     wbkgd(panel_window(mainLayout->panel), COLOR_PAIR(250) | L' ');
-
 
     Component* button = CreateButton(buttonStyle, 1, 8, 10, L"Test ёЁ belmandsabhbsadbhb", ButtonAct);
     ButtonSetEnabled(button, false);
@@ -129,6 +140,9 @@ int main() {
     LayoutAddComponent(mainLayout, edit2);
     LayoutAddComponent(mainLayout, select);
     LayoutAddComponent(mainLayout, scrollbar);
+
+    Component* columnLabel = CreateColumnLabel(columnLabelStyle, 60, 8, 6, L"Test");
+    LayoutAddComponent(mainLayout, columnLabel);
 
     Component* menu1 = CreateMenu(menuStyle, 0, 15, L"Файл", 4,
                                   L"Новый", CreateHotKey('N', KEY_CTRL), FileNew,
@@ -147,8 +161,7 @@ int main() {
     LayoutAddComponent(mainLayout, menu2);
     LayoutAddComponent(mainLayout, menu3);
 
-    SetMainLayout(mainLayout);
-
+    InitLayouts(mainLayout);
 
     Layout* dialog = CreateLayout(5, 5, 16, 5);
     Component* de = CreateEdit(editStyle, 6, 9, 12);
@@ -162,19 +175,25 @@ int main() {
     doupdate();
 
     MEVENT event;
-    int input = getch();
+    int input = ERR;
     while (input != KEY_F(3)) {
         input = getch();
         if (input != ERR) {
             unsigned long modifiers = PDC_get_key_modifiers();
             if (input == KEY_RESIZE) {
-                log_debug("RESIZE!!!!!!!");
-                resize_term(24, 80);
+                resize_term(0, 0);
+                if (LINES < 25 || COLS < 80) {
+                    //TODO: terminate program
+                    return 0;
+                }
+                log_debug("%d %d", LINES, COLS);
+                SetWindowSize(80, 25);
             }
             if (input == KEY_MOUSE) {
                 nc_getmouse(&event);
                 LayoutHandleMouseEvent(event);
             } else {
+                log_debug("Keyboard %d %d", input, modifiers);
                 if (!HandleHotKeyEvent(input, modifiers)) {
                     LayoutHandleKeyboardEvent(input, modifiers);
                 }

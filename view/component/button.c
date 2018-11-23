@@ -4,7 +4,7 @@
 void ButtonOnMouseClick(InteractivePanel* handle, MEVENT event) {
     Button* button = handle->holder->spec;
     FocusSingleComponent(NULL);
-    button->action();
+    button->OnButtonClick();
 }
 
 void ButtonShow(Component* handle) {
@@ -26,7 +26,7 @@ void ButtonOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     Button* button = handle->spec;
     if (key == KEY_ENTER) {
         FocusSingleComponent(NULL);
-        button->action();
+        button->OnButtonClick();
     }
 }
 
@@ -49,13 +49,13 @@ void ButtonOnFocusLost(Component* handle) {
     }
 }
 
-Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* text, void (* action)(void)) {
+Component* CreateButton(ButtonStyle* style, int x, int y, int size, wchar_t* text, void (* OnButtonClick)(void)) {
     Component* handle = CreateComponent();
     Button* button = malloc(sizeof(Button));
     button->style = style;
     button->enabled = true;
     button->size = size;
-    button->action = action;
+    button->OnButtonClick = OnButtonClick;
     button->text = malloc(sizeof(wchar_t) * (size + 1));
     wmemcpy_s(button->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает
 
