@@ -10,6 +10,8 @@ struct Component {
     void* spec;
     void* custom;
     char* id; //debug???
+    bool tabFocusing;
+    Component* prevFocus;
     Component* nextFocus;
     void (* Show)(Component* component);
     void (* Hide)(Component* component);
@@ -28,6 +30,8 @@ void ShowComponent(Component* component);
 void HideComponent(Component* component);
 
 void FocusSingleComponent(Component* component);
+
+void FocusPrevComponent(Component* resetComponent);
 
 void FocusNextComponent(Component* resetComponent);
 

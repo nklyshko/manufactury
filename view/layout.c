@@ -42,6 +42,7 @@ void LayoutAddComponent(Layout* layout, Component* component) {
         layout->lastComponent = component;
     } else {
         layout->lastComponent->nextFocus = component;
+        component->prevFocus = layout->lastComponent;
         layout->lastComponent = component;
     }
 }
@@ -98,13 +99,17 @@ void LayoutHandleMouseEvent(MEVENT event) {
 }
 
 void LayoutHandleKeyboardEvent(int key, unsigned long modifiers) {
-    if (key == KEY_TAB) {
-        Component* component = GetFocusedComponent();
-        if (component != NULL && component->OnFocusChange(component)) {
-            //Перефокусировка внутри компонента
-            return;
+    if (key == KEY_TAB || key == KEY_RTAB) {
+        if (modifiers == KEY_SHIFT) {
+            FocusPrevComponent(activeLayout->lastComponent);
+        } else {
+            Component* component = GetFocusedComponent();
+            if (component != NULL && component->OnFocusChange(component)) {
+                //Перефокусировка внутри компонента
+                return;
+            }
+            FocusNextComponent(activeLayout->firstComponent);
         }
-        FocusNextComponent(activeLayout->firstComponent);
     } else if (key == KEY_ESC) {
         FocusSingleComponent(NULL);
     } else if (key == KEY_PGUP) {

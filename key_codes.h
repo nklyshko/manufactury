@@ -26,6 +26,11 @@
 #endif
 #define KEY_TAB 9
 
+#ifdef KEY_RTAB
+# undef KEY_RTAB
+#endif
+#define KEY_RTAB 60511
+
 #ifdef KEY_PGDOWN
 # undef KEY_PGDOWN
 #endif

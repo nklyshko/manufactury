@@ -4,7 +4,7 @@
 void ButtonOnMouseClick(InteractivePanel* handle, MEVENT event) {
     Button* button = handle->holder->spec;
     FocusSingleComponent(NULL);
-    button->OnButtonClick(handle);
+    button->OnButtonClick(handle->holder);
 }
 
 void ButtonShow(Component* handle) {

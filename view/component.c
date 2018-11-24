@@ -32,7 +32,9 @@ Component* focusedComponent = NULL;
 Component* CreateComponent() {
     Component* component = malloc(sizeof(Component));
     component->custom = NULL;
+    component->prevFocus = NULL;
     component->nextFocus = NULL;
+    component->tabFocusing = true;
     component->Show = defaultShow;
     component->Hide = defaultHide;
     component->OnKeyClick = defaultOnKeyClick;
@@ -63,6 +65,33 @@ void FocusSingleComponent(Component* component) {
     }
 }
 
+void FocusPrevComponent(Component* resetComponent) {
+    if (focusedComponent == NULL) {
+        focusedComponent = resetComponent;
+    } else {
+        Component* component = focusedComponent;
+        focusedComponent = component->prevFocus;
+        if (focusedComponent == NULL) {
+            focusedComponent = resetComponent;
+        }
+        component->OnFocusLost(component);
+    }
+    if (focusedComponent != NULL) {
+        while (!focusedComponent->tabFocusing || !focusedComponent->OnFocusGet(focusedComponent)) {
+            if (focusedComponent->prevFocus == NULL) {
+                if (resetComponent != NULL) {
+                    focusedComponent = resetComponent;
+                    resetComponent = NULL;
+                } else {
+                    break;
+                }
+            } else {
+                focusedComponent = focusedComponent->prevFocus;
+            }
+        }
+    }
+}
+
 void FocusNextComponent(Component* resetComponent) {
     if (focusedComponent == NULL) {
         focusedComponent = resetComponent;
@@ -75,7 +104,7 @@ void FocusNextComponent(Component* resetComponent) {
         component->OnFocusLost(component);
     }
     if (focusedComponent != NULL) {
-        while (!focusedComponent->OnFocusGet(focusedComponent)) {
+        while (!focusedComponent->tabFocusing || !focusedComponent->OnFocusGet(focusedComponent)) {
             if (focusedComponent->nextFocus == NULL) {
                 if (resetComponent != NULL) {
                     focusedComponent = resetComponent;
