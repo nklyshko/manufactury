@@ -37,12 +37,16 @@
 #define COLOR_TEST_1 255
 
 
-extern EditStyle* editStyle;
+extern EditStyle* evenEditStyle;
+extern EditStyle* oddEditStyle;
+extern ButtonStyle* evenButtonStyle;
+extern ButtonStyle* oddButtonStyle;
+extern SelectStyle* evenSelectStyle;
+extern SelectStyle* oddSelectStyle;
+
 extern LabelStyle* labelStyle;
 extern MenuStyle* menuStyle;
-extern ButtonStyle* buttonStyle;
 extern ScrollBarStyle* scrollBarStyle;
-extern SelectStyle* selectStyle;
 extern ColumnLabelStyle* columnLabelStyle;
 
 void InitStyle(void);

@@ -132,8 +132,7 @@ Component* CreateSelect(SelectStyle* style, int x, int y, int width, int count, 
     va_start(args, count);
     for (int i = 0; i < count; i++) {
         select->options[i] =  va_arg(args, wchar_t*);
-        wmove(listPanel->window, i, 0);
-        waddwstr(listPanel->window, select->options[i]);
+        mvwaddnwstr(listPanel->window, i, 1, select->options[i], width - 1);
     }
     va_end(args);
     listPanel->OnMouseClick = ListOnMouseClick;

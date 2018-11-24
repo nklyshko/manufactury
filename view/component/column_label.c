@@ -68,7 +68,9 @@ bool ColumnLabelOnFocusGet(Component* handle) {
 void ColumnLabelOnFocusLost(Component* handle) {
     ColumnLabel* columnLabel = handle->spec;
     updateStyle(handle);
-    columnLabel->OnDirectionChange(handle);
+    if (columnLabel->activeDirection != NONE) {
+        columnLabel->OnDirectionChange(handle);
+    }
 }
 
 Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wchar_t* text) {
