@@ -143,7 +143,7 @@ Component* CreateMenu(MenuStyle* style, int x, int y, wchar_t* label, int size, 
         //пункт меню
         mvwaddwstr(menuPanel->window, i, 1, item->label);
         //hotkey
-        wchar_t* h = GetHotKeyTitle(item->hotkey);
+        wchar_t* h = item->hotkey->title;
         mvwaddwstr(menuPanel->window, i, (int) (menu->width - 1 - wcslen(h)), h);
     }
     menuPanel->OnMouseClick = MenuOnMouseClick;

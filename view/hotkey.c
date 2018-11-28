@@ -29,35 +29,35 @@ HotKey* CreateHotKey(char symbol, unsigned long modifiers) {
     HotKey* hotKey = malloc(sizeof(HotKey));
     hotKey->key = (int) symbol - HOTKEY_OFFSET;
     hotKey->modifiers = modifiers;
+    hotKey->title = malloc(sizeof(wchar_t) * 13);
+    hotKey->title[0] = (wchar_t) (hotKey->key + HOTKEY_OFFSET);
+    hotKey->title[1] = L'\0';
+
+    if (hotKey->modifiers & KEY_SHIFT) {
+        wmemmove(hotKey->title + 2, hotKey->title, wcslen(hotKey->title) + 1);
+        hotKey->title[0] = L'↑';
+        hotKey->title[1] = L'+';
+    }
+    if (hotKey->modifiers & KEY_ALT) {
+        wmemmove(hotKey->title + 4, hotKey->title, wcslen(hotKey->title) + 1);
+        hotKey->title[0] = L'A';
+        hotKey->title[1] = L'l';
+        hotKey->title[2] = L't';
+        hotKey->title[3] = L'+';
+    }
+    if (hotKey->modifiers & KEY_CTRL) {
+        wmemmove(hotKey->title + 5, hotKey->title, wcslen(hotKey->title) + 1);
+        hotKey->title[0] = L'C';
+        hotKey->title[1] = L't';
+        hotKey->title[2] = L'r';
+        hotKey->title[3] = L'l';
+        hotKey->title[4] = L'+';
+    }
     return hotKey;
 }
 
 bool TestHotKey(HotKey* hotKey, int ch, unsigned long modifiers) {
     return hotKey->key == ch && hotKey->modifiers == modifiers;
-}
-
-wchar_t* GetHotKeyTitle(HotKey* hotKey) {
-    const int bufSize = 13;
-    wchar_t* result = malloc(sizeof(wchar_t) * bufSize);
-
-    //промежуточный буфер
-    wchar_t buf[bufSize];
-
-    buf[0] = (wchar_t) (hotKey->key + HOTKEY_OFFSET);
-    buf[1] = '\0';
-
-    if (hotKey->modifiers & KEY_SHIFT) {
-        swprintf(result, bufSize, L"%s+%s", L"↑", buf);
-        wcscpy(buf, result);
-    }
-    if (hotKey->modifiers & KEY_ALT) {
-        swprintf(result, bufSize, L"%s+%s", L"Alt", buf);
-        wcscpy(buf, result);
-    }
-    if (hotKey->modifiers & KEY_CTRL) {
-        swprintf(result, bufSize, L"%s+%s", L"Ctrl", buf);
-    }
-    return result;
 }
 
 void RegisterHotKeyAction(HotKey* hotKey, void (* action)(void)) {
@@ -76,7 +76,9 @@ bool HandleHotKeyEvent(int key, unsigned long modifiers) {
         HotKey* hotKey = hotKeyAction->hotKey;
         if ((hotKey->key == key || hotKey->key + HOTKEY_OFFSET == key) && hotKey->modifiers == modifiers) {
             hotKeyAction->action();
-            hotKeyEventHandler(hotKey);
+            if (hotKeyEventHandler != NULL) {
+                hotKeyEventHandler(hotKey);
+            }
             return TRUE;
         }
     }

@@ -10,13 +10,12 @@ typedef struct HotKey HotKey;
 struct HotKey {
     int key;
     unsigned long modifiers;
+    wchar_t* title;
 };
 
 bool InitHotKeyHandler(void (* eventHandler)(HotKey* hotKey));
 
 HotKey* CreateHotKey(char symbol, unsigned long modifiers);
-
-wchar_t* GetHotKeyTitle(HotKey* hotKey);
 
 void RegisterHotKeyAction(HotKey* hotKey, void (* action)(void));
 
