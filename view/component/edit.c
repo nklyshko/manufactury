@@ -207,6 +207,7 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
 void EditSetValue(Component* handle, wchar_t* value) {
     Edit* edit = handle->spec;
     wmemcpy_s(edit->value, (size_t) edit->size, value, (size_t) edit->size); //wcscpy_s не работает
+    edit->length = (int) wcslen(edit->value);
     wclear(edit->panel->window);
     mvwaddwstr(edit->panel->window, 0, 0, edit->value);
 }

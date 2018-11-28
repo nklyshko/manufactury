@@ -5,7 +5,7 @@ void defaultSelectEnterAction(Component* handle) {
     //noop
 }
 
-void SelectSetSelected(Select* select, int selected) {
+void setSelected(Select* select, int selected) {
     WINDOW* l = select->listPanel->window;
     mvwchgat(l, select->selected, 0, select->width, 0, (short) select->style->listColor, NULL);
     select->selected = selected;
@@ -55,7 +55,7 @@ void SelectOnMouseClick(InteractivePanel* handle, MEVENT event) {
 
 void ListOnMouseClick(InteractivePanel* handle, MEVENT event) {
     Select* select = handle->holder->spec;
-    SelectSetSelected(select, event.y);
+    setSelected(select, event.y);
     openList(select);
 }
 
@@ -77,9 +77,9 @@ void SelectHide(Component* handle) {
 void SelectOnKeyClick(Component* handle, int key, unsigned long modifiers) {
     Select* select = handle->spec;
     if (key == KEY_DOWN) {
-        if (select->selected < select->count - 1) SelectSetSelected(select, select->selected + 1);
+        if (select->selected < select->count - 1) setSelected(select, select->selected + 1);
     } else if (key == KEY_UP) {
-        if (select->selected > 0) SelectSetSelected(select, select->selected - 1);
+        if (select->selected > 0) setSelected(select, select->selected - 1);
     } else if (key == KEY_ENTER) {
         if (select->active) {
             closeList(select);
@@ -143,7 +143,7 @@ Component* CreateSelect(SelectStyle* style, int x, int y, int width, int count, 
     selectedPanel->OnMouseClick = SelectOnMouseClick;
     select->selectedPanel = selectedPanel;
 
-    SelectSetSelected(select, 0);
+    setSelected(select, 0);
     hideArrow(select);
 //    wmove(select->selectedPanel->window, 0, select->width - 1);
 //    waddch(select->selectedPanel->window, L'▼');
@@ -170,6 +170,12 @@ void SelectSetEnabled(Component* handle, bool enabled) {
     } else {
         wbkgd(w, COLOR_PAIR(select->style->disabledColor));
     }
+}
+
+void SelectSetValue(Component* handle, int value) {
+    Select* select = handle->spec;
+    if (value < 0 || value >= select->count) return;
+    setSelected(select, value);
 }
 
 SelectStyle* CreateSelectStyle(int defaultColor, int disabledColor, int focusedColor, int listColor, int activeItemColor) {

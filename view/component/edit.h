@@ -27,9 +27,9 @@ struct EditStyle {
 
 Component* CreateEdit(EditStyle* style, int x, int y, int size);
 
-void EditSetValue(Component* handle, wchar_t* value);
-
 void EditSetEnabled(Component* handle, bool enabled);
+
+void EditSetValue(Component* handle, wchar_t* value);
 
 void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle));
 
