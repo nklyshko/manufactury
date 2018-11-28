@@ -108,7 +108,7 @@ void ScrollBarSetCount(Component* handle, int count) {
         scrollBar->size = pages;
     }
     scrollBar->thumb = (scrollBar->height - 2) - scrollBar->size + 1;
-    scrollBar->step = scrollBar->count / scrollBar->size;
+    scrollBar->step = scrollBar->count / scrollBar->size + (scrollBar->count % scrollBar->size > 0);
 }
 
 ScrollBarStyle* CreateScrollBarStyle(int color) {

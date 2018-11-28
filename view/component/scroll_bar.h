@@ -28,7 +28,7 @@ Component* CreateScrollBar(ScrollBarStyle* style, int x, int y, int height, Layo
 
 void ScrollBarSetNumber(Component* handle, int number);
 
-void ScrollBarSetCount(Component* scrollBar, int count);
+void ScrollBarSetCount(Component* handle, int count);
 
 ScrollBarStyle* CreateScrollBarStyle(int color);
 
