@@ -2,6 +2,7 @@
 #include <panel.h>
 #include <src/log.h>
 #include <minmax.h>
+#include <data_types.h>
 #include "styles.h"
 #include "view_contract.h"
 #include "winapi_bridge.h"
@@ -48,6 +49,9 @@
 #define COL_SALARY_WIDTH 8
 
 Layout* mainLayout;
+Component* scrollBar;
+Component* labels[COLUMNS_COUNT] = {0};
+Component** columns[COLUMNS_COUNT] = {0};
 
 Component* idColLabel;
 Component* colId[MAX_TABLE_SIZE];
@@ -73,8 +77,6 @@ Component* plotColLabel;
 Component* colPlot[MAX_TABLE_SIZE];
 Component* salaryColLabel;
 Component* colSalary[MAX_TABLE_SIZE];
-Component* labels[COLUMNS_COUNT] = {0};
-Component** columns[COLUMNS_COUNT] = {0};
 
 //File menu
 void FileNew(void);
@@ -101,7 +103,7 @@ void ToolsExportCSV(void);
 void ToolsCreateReport(void);
 
 bool running = true;
-int currentTableSize;
+int currentTableSize = 0;
 Array* currentData = NULL;
 int currentPos = 0;
 
@@ -309,8 +311,6 @@ void createSalaryCol() {
 }
 
 void hideLines(int begin) {
-    log_debug("HideLines %d", begin);
-//    if (begin < 0 || begin >= MAX_TABLE_SIZE) return;
     for (int l = begin; l < MAX_TABLE_SIZE; l++) {
         for (int c = 0; c < COLUMNS_COUNT; c++) {
             HideComponent(columns[c][l]);
@@ -319,8 +319,6 @@ void hideLines(int begin) {
 }
 
 void showLines(int begin, int count) {
-    log_debug("ShowLines %d %d", begin, count);
-//    if (begin < 0 || begin >= MAX_TABLE_SIZE) return;
     for (int l = begin; l < begin + count; l++) {
         for (int c = 0; c < COLUMNS_COUNT; c++) {
             ShowComponent(columns[c][l]);
@@ -334,35 +332,14 @@ void enableLabels(bool enabled) {
     }
 }
 
-void initCurses() {
-    //инициализация главного окна
-    initscr();
-    //режим распознавания каждого нажатия клавиши без ожадания Enter
-    cbreak();
-    //отключение отображения введенного символа
-    noecho();
-    //отключение курсора
-    curs_set(0);
-    //неблокирующий ввод
-    nodelay(stdscr, TRUE);
-    //распознавание функциональных кнопок клавиатуры(F1, ...)
-    keypad(stdscr, TRUE);
-    //сохранение модификаторов нажатых клавиш при чтении(Ctrl, Alt, Shift, ...)
-    PDC_save_key_modifiers(TRUE);
-    //поддержка цвета
-    start_color();
-    //поддержка мыши
-    mouse_set(ALL_MOUSE_EVENTS);
-}
-
-void drawTableHeader() {
+void drawTableHeader(bool disabled) {
     WINDOW* w = mainLayout->window;
     mvwchgat(w, 0, 0, WIDTH, 0, (short) menuStyle->defaultLabel, NULL);
-    wattrset(w, COLOR_PAIR(currentData == NULL ? transitionMenuTableDisabled : transitionMenuTable));
+    wattrset(w, COLOR_PAIR(disabled ? transitionMenuTableDisabled : transitionMenuTable));
     mvwhline(w, TABLE_LABEL_Y - 1, 0, ACS_BBLOCK, WIDTH);
-    wattrset(w, COLOR_PAIR(currentData == NULL ? transitionMenuTableDisabled : transitionMenuTable));
+    wattrset(w, COLOR_PAIR(disabled ? transitionMenuTableDisabled : transitionMenuTable));
     mvwhline(w, TABLE_LABEL_Y + 1, 0, ACS_BLOCK, WIDTH);
-    wattrset(w, COLOR_PAIR(currentData == NULL ? tableDisabledColor : tableEvenColor));
+    wattrset(w, COLOR_PAIR(disabled ? tableDisabledColor : tableEvenColor));
     mvwaddch(w, TABLE_LABEL_Y, WIDTH - 2, ACS_RBLOCK);
     mvwaddch(w, TABLE_LABEL_Y, WIDTH - 1, ACS_BLOCK);
     for (int c = 0; c < COLUMNS_COUNT; c++) {
@@ -376,6 +353,8 @@ void drawTableBody() {
     for (int l = 0; l < MAX_TABLE_SIZE; l++) {
         if (l < currentTableSize) {
             wattrset(w, COLOR_PAIR(l % 2 == 0 ? tableEvenColor : tableOddColor));
+        } else {
+            wattrset(w, COLOR_PAIR(tableEvenColor));
         }
         mvwaddch(w, TABLE_BODY_START_Y + l, WIDTH - 2, ACS_RBLOCK);
         for (int c = 0; c < COLUMNS_COUNT; c++) {
@@ -396,20 +375,35 @@ void drawStarter() {
     mvwaddstr(w, HELP_Y, (WIDTH - 69) / 2, "Для начала работы откройте файл(Ctrl+O) или создайте новый(Ctrl+N)...");
 }
 
-void drawTableFooter() {
+void drawTableFooter(bool disabled) {
     WINDOW* w = mainLayout->window;
-    wattrset(w, COLOR_PAIR(currentData == NULL ? transitionMenuTableDisabled : transitionMenuTable));
+    wattrset(w, COLOR_PAIR(disabled ? transitionMenuTableDisabled : transitionMenuTable));
     mvwhline(w, TABLE_BODY_START_Y + MAX_TABLE_SIZE, 0, ACS_UBLOCK, WIDTH);
 }
 
 void drawMainLayout() {
-    drawTableHeader();
-    drawTableFooter();
-    drawStarter();
+
 }
 
 void InitView(void) {
-    initCurses();
+    //инициализация главного окна
+    initscr();
+    //режим распознавания каждого нажатия клавиши без ожадания Enter
+    cbreak();
+    //отключение отображения введенного символа
+    noecho();
+    //отключение курсора
+    curs_set(0);
+    //неблокирующий ввод
+    nodelay(stdscr, TRUE);
+    //распознавание функциональных кнопок клавиатуры(F1, ...)
+    keypad(stdscr, TRUE);
+    //сохранение модификаторов нажатых клавиш при чтении(Ctrl, Alt, Shift, ...)
+    PDC_save_key_modifiers(TRUE);
+    //поддержка цвета
+    start_color();
+    //поддержка мыши
+    mouse_set(ALL_MOUSE_EVENTS);
     //установка заголовка окна программы
     PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
 
@@ -450,23 +444,33 @@ void InitView(void) {
     createDeptCol();
     createPlotCol();
     createSalaryCol();
-
     for (int l = 0; l < MAX_TABLE_SIZE; l++) {
         LayoutAddComponent(mainLayout, colId[l]);
     }
 
+    scrollBar = CreateScrollBar(scrollBarStyle, WIDTH - 1, TABLE_BODY_START_Y, MAX_TABLE_SIZE, mainLayout);
+    LayoutAddComponent(mainLayout, scrollBar);
+
     InitLayouts(mainLayout);
+    enableLabels(false);
+    HideComponent(scrollBar);
     for (int c = 0; c < COLUMNS_COUNT; c++) {
         for (int l = 0; l < MAX_TABLE_SIZE; l++) {
             HideComponent(columns[c][l]);
         }
     }
-    enableLabels(false);
 
-    drawMainLayout();
+    drawTableHeader(true);
+    drawStarter();
+    drawTableFooter(true);
 
     update_panels();
     doupdate();
+}
+
+void DestroyView(void) {
+    //завершение работы curses
+    endwin();
 }
 
 void StartControl(void) {
@@ -501,12 +505,9 @@ void StartControl(void) {
             doupdate();
         }
     }
-
-    //завершение работы curses
-    endwin();
 }
 
-void ShowTable(Array* data, int pos) {
+void SetData(Array* data, int pos) {
     currentData = data;
     currentPos = pos;
     int newSize = min((int) (array_size(currentData) - currentPos), MAX_TABLE_SIZE);
@@ -516,11 +517,65 @@ void ShowTable(Array* data, int pos) {
         hideLines(newSize);
     }
     currentTableSize = newSize;
-    wclear(mainLayout->window);
-    enableLabels(currentData != NULL);
-    drawTableHeader();
-    drawTableBody();
-    drawTableFooter();
+    for (int l = pos; l < pos + currentTableSize; l++) {
+        Employee* employee;
+        array_get_at(data, (size_t) l, (void**) &employee);
+        wchar_t id[COL_ID_WIDTH];
+        swprintf(id, COL_ID_WIDTH, L"%d", employee->id);
+        ButtonSetText(colId[l], id);
+        EditSetValue(colSurname[l], employee->surname);
+        EditSetValue(colName[l], employee->name);
+        EditSetValue(colPatronymic[l], employee->patronymic);
+        wchar_t yob[COL_YOB_WIDTH];
+        swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yearOfBirth);
+        EditSetValue(colYOB[l], yob);
+        SelectSetValue(colGender[l], employee->gender ? 1 : 0);
+        EditSetValue(colProf[l], employee->profession);
+        wchar_t exp[COL_EXP_WIDTH];
+        swprintf(exp, COL_EXP_WIDTH, L"%d", employee->experience);
+        EditSetValue(colExp[l], exp);
+        SelectSetValue(colClass[l], employee->class - 1);
+        wchar_t dept[COL_DEPT_WIDTH];
+        swprintf(dept, COL_DEPT_WIDTH, L"%d", employee->departmentId);
+        EditSetValue(colDept[l], dept);
+        wchar_t plot[COL_PLOT_WIDTH];
+        swprintf(plot, COL_PLOT_WIDTH, L"%d", employee->plotId);
+        EditSetValue(colPlot[l], plot);
+        wchar_t salary[COL_SALARY_WIDTH];
+        swprintf(salary, COL_SALARY_WIDTH, L"%d", employee->salary);
+        EditSetValue(colSalary[l], salary);
+    }
+    ScrollBarSetCount(scrollBar, (int) array_size(data));
+    ScrollBarSetNumber(scrollBar, pos);
+}
+
+void ShowTable(Array* data, int pos) {
+    if (currentData == NULL) {
+        if (data != NULL) {
+            wclear(mainLayout->window);
+            enableLabels(true);
+            ShowComponent(scrollBar);
+            SetData(data, pos);
+            drawTableHeader(data == NULL);
+            //set size to draw body properly ----> show data
+            drawTableBody();
+            drawTableFooter(data == NULL);
+        }
+    } else {
+        if (data == NULL) {
+            wclear(mainLayout->window);
+            enableLabels(false);
+            HideComponent(scrollBar);
+            //hide lines
+            drawTableHeader(data == NULL);
+            drawStarter();
+            drawTableFooter(data == NULL);
+        } else {
+            SetData(data, pos);
+            drawTableBody();
+        }
+    }
+
     update_panels();
     doupdate();
 }
