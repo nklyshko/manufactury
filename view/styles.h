@@ -9,9 +9,6 @@
 #include <view/component/select.h>
 #include <view/component/column_label.h>
 
-#define TERMINAL_WIDTH 128
-#define TERMINAL_HEIGHT 32
-
 #undef COLOR_WHITE
 #define COLOR_WHITE 15
 #define COLOR_YELLOW_LIGHT 14
@@ -29,25 +26,25 @@
 #define COLOR_GREEN_DARK 2
 #define COLOR_BLUE_DARK 1
 
-#define COLOR_MENU 4
-#define COLOR_MENU_ACTIVE 5
-#define COLOR_MENU_ITEM 6
-#define COLOR_MENU_ITEM_ACTIVE 7
-#define COLOR_TEST_2 254
-#define COLOR_TEST_1 255
-
-
+extern MenuStyle* menuStyle;
 extern EditStyle* evenEditStyle;
 extern EditStyle* oddEditStyle;
 extern ButtonStyle* evenButtonStyle;
 extern ButtonStyle* oddButtonStyle;
 extern SelectStyle* evenSelectStyle;
 extern SelectStyle* oddSelectStyle;
+extern ColumnLabelStyle* columnLabelStyle;
+
+extern int mainBackground;
+extern int tableEvenColor;
+extern int tableOddColor;
+extern int tableDisabledColor;
+extern int transitionMenuTable;
+extern int transitionMenuTableDisabled;
 
 extern LabelStyle* labelStyle;
-extern MenuStyle* menuStyle;
 extern ScrollBarStyle* scrollBarStyle;
-extern ColumnLabelStyle* columnLabelStyle;
+
 
 void InitStyle(void);
 

@@ -26,7 +26,7 @@ add_executable(manufactury main.c
         view/view.c view/component.h view/component.c view/interactive_panel.c view/interactive_panel.h
             view/component/edit.c view/component/edit.h view/component/label.c view/component/label.h
         view/layout.c view/layout.h view/component/menu.c view/component/menu.h key_codes.h view/component/button.c view/component/button.h
-        view/component/scroll_bar.c view/component/scroll_bar.h view/component/select.c view/component/select.h view/winapi_bridge.c view/winapi_bridge.h view/component/column_label.c view/component/column_label.h)
+        view/component/scroll_bar.c view/component/scroll_bar.h view/component/select.c view/component/select.h view/winapi_bridge.c view/winapi_bridge.h view/component/column_label.c view/component/column_label.h data_types.c data_types.h view/logo.c view/logo.h)
 target_link_libraries(manufactury pdcurses)
 target_link_libraries(manufactury collectionsc)
 

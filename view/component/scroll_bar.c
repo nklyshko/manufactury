@@ -32,7 +32,7 @@ void ScrollBarHide(Component* handle) {
 }
 
 bool ScrollBarOnFocusGet(Component* handle) {
-    return false;
+    return true;
 }
 
 Component* CreateScrollBar(ScrollBarStyle* style, int x, int y, int height, Layout* layout) {
@@ -62,6 +62,7 @@ Component* CreateScrollBar(ScrollBarStyle* style, int x, int y, int height, Layo
     handle->id[10] = '\0';
     sprintf(handle->id, "%s %d", "Scroll", GetNextId());
 
+    handle->tabFocusing = false;
     handle->spec = scrollBar;
     handle->Show = ScrollBarShow;
     handle->Hide = ScrollBarHide;

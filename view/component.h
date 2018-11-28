@@ -10,6 +10,7 @@ struct Component {
     void* spec;
     void* custom;
     char* id; //debug???
+    bool visible;
     bool tabFocusing;
     Component* prevFocus;
     Component* nextFocus;

@@ -7,6 +7,8 @@
 #include <view/component/menu.h>
 #include <view/styles.h>
 #include <view/component/button.h>
+#include <view/winapi_bridge.h>
+#include <minwindef.h>
 #include "src/log.h"
 #include "view/hotkey.h"
 
@@ -20,7 +22,11 @@
 //File actions
 void FileNew(void) { log_debug("FileNew"); };
 
-void FileOpen(void) { log_debug("FileOpen"); };
+void FileOpen(void) {
+    log_debug("FileOpen");
+    char fileName[MAX_PATH] = {0};
+    ShowOpenFileDialog(fileName, MAX_PATH);
+};
 
 void FileSave(void) { log_debug("FileSave"); };
 
@@ -44,7 +50,7 @@ void EventHandler(HotKey* h) {
     //mvprintw(12, 1, "Event: %c %d          ", h->key, h->modifiers);
 }
 
-void ButtonAct(void) {
+void ButtonAct(Component* handle) {
     log_debug("Button clicked");
 }
 
@@ -63,14 +69,14 @@ int parseInt(const wchar_t* s) {
 
 void SetNum(Component* handle) {
     Edit* e = handle->spec;
-    int num = parseInt(e->data);
+    int num = parseInt(e->value);
 //    log_debug("SETNUM %d", num);
     ScrollBarSetNumber(scrollbar, num);
 }
 
 void SetCnt(Component* handle) {
     Edit* e = handle->spec;
-    int cnt = parseInt(e->data);
+    int cnt = parseInt(e->value);
 //    log_debug("SETCNT %d", cnt);
     ScrollBarSetCount(scrollbar, cnt);
     EditSetEnabled(handle, false);
@@ -92,7 +98,15 @@ void SetWindowSize(int width, int height) {
     doupdate();
 }
 
-int main() {
+void scrollUp(ScrollType type) {
+    log_debug("SCROLL UP %d", type);
+}
+
+void scrollDown(ScrollType type) {
+    log_debug("SCROLL DOWN %d", type);
+}
+
+int main(int argc, char **argv) {
     FILE* log = fopen("test.txt", "w");
     log_set_fp(log);
 
@@ -117,6 +131,12 @@ int main() {
 
     PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
 
+    log_debug("ARGC %d", argc);
+
+    if (argc > 1) {
+        log_debug("OPEN WITH: %s", argv[1]);
+    }
+
     resize_term(25, 80);
 
     InitStyle();
@@ -127,14 +147,16 @@ int main() {
     Layout* mainLayout = CreateLayout(0, 0, 80, 25);
     wbkgd(panel_window(mainLayout->panel), COLOR_PAIR(250) | L' ');
 
-    Component* button = CreateButton(buttonStyle, 1, 8, 10, L"Test ёЁ belmandsabhbsadbhb", ButtonAct);
+    Component* button = CreateButton(evenButtonStyle, 1, 8, 10, L"Test ёЁ belmandsabhbsadbhb", ButtonAct);
     ButtonSetEnabled(button, false);
-    Component* edit = CreateEdit(editStyle, 15, 8, 7);
+    Component* edit = CreateEdit(evenEditStyle, 15, 8, 7);
+    EditSetValue(edit, L"100");
     EditSetEnterAction(edit, SetCnt);
-    Component* edit2 = CreateEdit(editStyle, 27, 8, 4);
+    Component* edit2 = CreateEdit(evenEditStyle, 27, 8, 4);
     EditSetEnterAction(edit2, SetNum);
     scrollbar = CreateScrollBar(scrollBarStyle, 79, 1, 20, mainLayout);
-    Component* select = CreateSelect(selectStyle, 50, 8, 4, 3, L"М", L"Ж", L"Тест");
+    Component* select = CreateSelect(evenSelectStyle, 50, 8, 4, 3, L"М", L"Ж", L"Тест");
+    select->tabFocusing = false;
     LayoutAddComponent(mainLayout, button);
     LayoutAddComponent(mainLayout, edit);
     LayoutAddComponent(mainLayout, edit2);
@@ -161,10 +183,13 @@ int main() {
     LayoutAddComponent(mainLayout, menu2);
     LayoutAddComponent(mainLayout, menu3);
 
+    mainLayout->OnScrollUp = scrollUp;
+    mainLayout->OnScrollDown = scrollDown;
+
     InitLayouts(mainLayout);
 
     Layout* dialog = CreateLayout(5, 5, 16, 5);
-    Component* de = CreateEdit(editStyle, 6, 9, 12);
+    Component* de = CreateEdit(evenEditStyle, 6, 9, 12);
     LayoutAddComponent(dialog, de);
     Component* dl = CreateLabel(labelStyle, 6, 7, 12, L"Test dialog");
     LayoutAddComponent(dialog, dl);

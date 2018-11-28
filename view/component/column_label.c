@@ -38,7 +38,7 @@ void ColumnLabelOnMouseClick(InteractivePanel* handle, MEVENT event) {
 
 void ColumnLabelShow(Component* handle) {
     ColumnLabel* columnLabel = handle->spec;
-    wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->defaultColor));
+    updateStyle(handle);
     PanelShow(columnLabel->panel);
 }
 
@@ -61,8 +61,12 @@ void ColumnLabelOnKeyClick(Component* handle, int key, unsigned long modifiers) 
 
 bool ColumnLabelOnFocusGet(Component* handle) {
     ColumnLabel* columnLabel = handle->spec;
-    wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->focusedColor));
-    return true;
+    if (columnLabel->enabled) {
+        wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->focusedColor));
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void ColumnLabelOnFocusLost(Component* handle) {
@@ -77,6 +81,7 @@ Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wc
     Component* handle = CreateComponent();
     ColumnLabel* columnLabel = malloc(sizeof(ColumnLabel));
     columnLabel->style = style;
+    columnLabel->enabled = true;
     columnLabel->size = size;
     columnLabel->activeDirection = NONE;
     columnLabel->OnDirectionChange = defaultOnDirectionChange;
@@ -103,15 +108,27 @@ Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wc
     return handle;
 }
 
+void ColumnLabelSetEnabled(Component* handle, bool enabled) {
+    ColumnLabel* columnLabel = handle->spec;
+    columnLabel->enabled = enabled;
+    if (enabled) {
+        updateStyle(handle);
+    } else {
+        wbkgd(columnLabel->panel->window, COLOR_PAIR(columnLabel->style->disabledColor));
+        DefocusComponent(handle);
+    }
+}
+
 void ColumnLabelSetDirection(Component* handle, SortDirection direction) {
     setDirection(handle, direction);
     updateStyle(handle);
 }
 
-ColumnLabelStyle* CreateColumnLabelStyle(int defaultColor, int focusedColor, int activeColor) {
+ColumnLabelStyle* CreateColumnLabelStyle(int defaultColor, int focusedColor, int activeColor, int disabledColor) {
     ColumnLabelStyle* style = malloc(sizeof(ColumnLabelStyle));
     style->defaultColor = defaultColor;
     style->focusedColor = focusedColor;
     style->activeColor = activeColor;
+    style->disabledColor = disabledColor;
     return style;
 }

@@ -2,10 +2,13 @@
 #define MANUFACTURY_VIEW_CONTRACT_H
 
 #include <global.h>
+#include <array.h>
 #include "model_types.c"
 
 void InitView(void);
-void SetEntries(EmployeeList* employees);
+void ShowTable(Array* data, int pos);
+void StartControl(void);
+void SetEntries(struct EmployeeList* employees);
 void SetStatus(char* status);
 void ShowProcessing(void);
 void HideProcessing(void);

@@ -32,6 +32,7 @@ Component* focusedComponent = NULL;
 Component* CreateComponent() {
     Component* component = malloc(sizeof(Component));
     component->custom = NULL;
+    component->visible = false;
     component->prevFocus = NULL;
     component->nextFocus = NULL;
     component->tabFocusing = true;
@@ -45,11 +46,18 @@ Component* CreateComponent() {
 }
 
 void ShowComponent(Component* component) {
-    component->Show(component);
+    if (!component->visible) {
+        //TODO: проверить соответствие активного layout'a
+        component->Show(component);
+        component->visible = true;
+    }
 }
 
 void HideComponent(Component* component) {
-    component->Hide(component);
+    if (component->visible) {
+        component->Hide(component);
+        component->visible = false;
+    }
 }
 
 void FocusSingleComponent(Component* component) {
@@ -157,7 +165,7 @@ void ComponentHandleMouseEvent(MEVENT event) {
         component = interactivePanel->holder;
     }
     FocusSingleComponent(component);
-    if (interactivePanel != NULL) {
+    if (interactivePanel != NULL && focusedComponent == interactivePanel->holder) {
         interactivePanel->OnMouseClick(interactivePanel, event);
     }
 }
