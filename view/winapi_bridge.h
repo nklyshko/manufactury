@@ -1,8 +1,10 @@
 #ifndef MANUFACTURY_MESSAGE_BOX_H
 #define MANUFACTURY_MESSAGE_BOX_H
 
-#include <wchar.h>
+#include <curses.h>
 
 void ShowMessage(wchar_t* message);
+
+bool ShowOpenFileDialog(char* fileName, int maxLength);
 
 #endif //MANUFACTURY_MESSAGE_BOX_H
