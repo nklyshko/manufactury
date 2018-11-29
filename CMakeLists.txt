@@ -28,7 +28,8 @@ add_executable(manufactury main.c
         view/layout.c view/layout.h view/component/menu.c view/component/menu.h key_codes.h view/component/button.c view/component/button.h
         view/component/scroll_bar.c view/component/scroll_bar.h view/component/select.c view/component/select.h
         view/winapi_bridge.c view/winapi_bridge.h view/component/column_label.c view/component/column_label.h
-        model/data_types.c model/data_types.h view/logo.c view/logo.h model/data_source.c model/data_source.h model/array_ext.c model/array_ext.h)
+        model/data_types.c model/data_types.h view/logo.c view/logo.h model/data_source.c model/data_source.h model/array_ext.c model/array_ext.h
+        presenter.c presenter_contract.h model/comparator.c model/comparator.h)
 target_link_libraries(manufactury pdcurses)
 target_link_libraries(manufactury collectionsc)
 
@@ -38,6 +39,7 @@ add_executable(test test/test_gui.c ${LOGC}/src/log.c ${LOGC}/src/log.h
         view/component/edit.c view/component/edit.h view/component/label.c view/component/label.h
         view/layout.c view/layout.h view/component/menu.c view/component/menu.h key_codes.h view/component/button.c
         view/component/button.h view/component/scroll_bar.c view/component/scroll_bar.h view/component/select.c view/component/select.h
-        view/winapi_bridge.c view/winapi_bridge.h view/component/column_label.c view/component/column_label.h test/test_console.c test/test_console.h test/test.c test/test_gui.h)
+        view/winapi_bridge.c view/winapi_bridge.h view/component/column_label.c view/component/column_label.h test/test_console.c test/test_console.h test/test.c test/test_gui.h
+        model/array_ext.c model/array_ext.h)
 target_link_libraries(test pdcurses)
 target_link_libraries(test collectionsc)

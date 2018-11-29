@@ -3,10 +3,12 @@
 #include <src/log.h>
 #include <minmax.h>
 #include <model/data_types.h>
+#include <model/comparator.h>
 #include "styles.h"
 #include "view_contract.h"
 #include "winapi_bridge.h"
 #include "logo.h"
+#include "presenter_contract.h"
 
 #define MANUFACTURY_VERSION "0.5 Beta"
 
@@ -81,8 +83,6 @@ Component* colSalary[MAX_TABLE_SIZE];
 //File menu
 void FileNew(void);
 //Redirect to controller
-void FileOpen(void);
-//Show open dialog, request file open to controller with selected filename
 void FileSave(void);
 //Redirect to controller(check if file already have name, or its new...)
 void FileSaveAs(void);
@@ -113,7 +113,10 @@ void OnColumnDirectionChange(Component* handle) {
             ColumnLabelSetDirection(labels[i], NONE);
         }
     }
-    //TODO: sort using comparator from handle.custom
+    ColumnLabel* columnLabel = handle->spec;
+    if (columnLabel->comparator != NULL) {
+        SortData(columnLabel->comparator, columnLabel->activeDirection);
+    }
 }
 
 void OnIdButtonClick(Component* handle) {
@@ -126,6 +129,7 @@ void createIdCol() {
     labels[0] = idColLabel;
     columns[0] = colId;
     ColumnLabel* columnLabel = idColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeIdComparator, EmployeeIdComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, idColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -140,6 +144,7 @@ void createSurnameCol() {
     labels[1] = surnameColLabel;
     columns[1] = colSurname;
     ColumnLabel* columnLabel = surnameColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeSurnameComparator, EmployeeSurnameComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, surnameColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -156,6 +161,7 @@ void createNameCol() {
     labels[2] = nameColLabel;
     columns[2] = colName;
     ColumnLabel* columnLabel = nameColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeNameComparator, EmployeeNameComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, nameColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -172,6 +178,7 @@ void createPatronymicCol() {
     labels[3] = patronymicColLabel;
     columns[3] = colPatronymic;
     ColumnLabel* columnLabel = patronymicColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeePatronymicComparator, EmployeePatronymicComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, patronymicColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -188,6 +195,7 @@ void createYOBCol() {
     labels[4] = yobColLabel;
     columns[4] = colYOB;
     ColumnLabel* columnLabel = yobColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeYOBComparator, EmployeeYOBComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, yobColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -204,6 +212,7 @@ void createGenderCol() {
     labels[5] = genderColLabel;
     columns[5] = colGender;
     ColumnLabel* columnLabel = genderColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeGenderComparator, EmployeeGenderComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, genderColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -220,6 +229,7 @@ void createProfCol() {
     labels[6] = profColLabel;
     columns[6] = colProf;
     ColumnLabel* columnLabel = profColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeProfessionComparator, EmployeeProfessionComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, profColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -236,6 +246,7 @@ void createExpCol() {
     labels[7] = expColLabel;
     columns[7] = colExp;
     ColumnLabel* columnLabel = expColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeExperienceComparator, EmployeeExperienceComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, expColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -252,6 +263,7 @@ void createClassCol() {
     labels[8] = classColLabel;
     columns[8] = colClass;
     ColumnLabel* columnLabel = classColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeClassComparator, EmployeeClassComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, classColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -268,6 +280,7 @@ void createDeptCol() {
     labels[9] = deptColLabel;
     columns[9] = colDept;
     ColumnLabel* columnLabel = deptColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeDepartmentComparator, EmployeeDepartmentComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, deptColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -284,6 +297,7 @@ void createPlotCol() {
     labels[10] = plotColLabel;
     columns[10] = colPlot;
     ColumnLabel* columnLabel = plotColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeePlotComparator, EmployeePlotComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, plotColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -300,6 +314,7 @@ void createSalaryCol() {
     labels[11] = salaryColLabel;
     columns[11] = colSalary;
     ColumnLabel* columnLabel = salaryColLabel->spec;
+    columnLabel->comparator = CreateComparator(EmployeeSalaryComparator, EmployeeSalaryComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, salaryColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -381,6 +396,49 @@ void drawTableFooter(bool disabled) {
     mvwhline(w, TABLE_BODY_START_Y + MAX_TABLE_SIZE, 0, ACS_UBLOCK, WIDTH);
 }
 
+void showData(int pos) {
+    currentPos = pos;
+    int newSize = min((int) (array_size(currentData) - currentPos), MAX_TABLE_SIZE);
+    if (newSize != currentTableSize) {
+        if (newSize > currentTableSize) {
+            showLines(currentTableSize, newSize - currentTableSize);
+        } else {
+            hideLines(newSize);
+        }
+        currentTableSize = newSize;
+        drawTableBody();
+    }
+    for (int l = 0; l < currentTableSize; l++) {
+        Employee* employee;
+        array_get_at(currentData, (size_t) pos + l, (void**) &employee);
+        wchar_t id[COL_ID_WIDTH];
+        swprintf(id, COL_ID_WIDTH, L"%d", employee->id);
+        ButtonSetText(colId[l], id);
+        EditSetValue(colSurname[l], employee->surname);
+        EditSetValue(colName[l], employee->name);
+        EditSetValue(colPatronymic[l], employee->patronymic);
+        wchar_t yob[COL_YOB_WIDTH];
+        swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yearOfBirth);
+        EditSetValue(colYOB[l], yob);
+        SelectSetValue(colGender[l], employee->gender ? 1 : 0);
+        EditSetValue(colProf[l], employee->profession);
+        wchar_t exp[COL_EXP_WIDTH];
+        swprintf(exp, COL_EXP_WIDTH, L"%d", employee->experience);
+        EditSetValue(colExp[l], exp);
+        SelectSetValue(colClass[l], employee->class - 1);
+        wchar_t dept[COL_DEPT_WIDTH];
+        swprintf(dept, COL_DEPT_WIDTH, L"%d", employee->departmentId);
+        EditSetValue(colDept[l], dept);
+        wchar_t plot[COL_PLOT_WIDTH];
+        swprintf(plot, COL_PLOT_WIDTH, L"%d", employee->plotId);
+        EditSetValue(colPlot[l], plot);
+        wchar_t salary[COL_SALARY_WIDTH];
+        swprintf(salary, COL_SALARY_WIDTH, L"%d", employee->salary);
+        EditSetValue(colSalary[l], salary);
+    }
+    ScrollBarSetNumber(scrollBar, pos);
+}
+
 void InitView(void) {
     //инициализация главного окна
     initscr();
@@ -447,18 +505,10 @@ void InitView(void) {
     scrollBar = CreateScrollBar(scrollBarStyle, WIDTH - 1, TABLE_BODY_START_Y, MAX_TABLE_SIZE, mainLayout);
     LayoutAddComponent(mainLayout, scrollBar);
 
-    InitLayouts(mainLayout);
-    enableLabels(false);
-    HideComponent(scrollBar);
-    for (int c = 0; c < COLUMNS_COUNT; c++) {
-        for (int l = 0; l < MAX_TABLE_SIZE; l++) {
-            HideComponent(columns[c][l]);
-        }
-    }
+    mainLayout->OnScrollDown = TableOnScrollDown;
+    mainLayout->OnScrollUp = TableOnScrollUp;
 
-    drawTableHeader(true);
-    drawStarter();
-    drawTableFooter(true);
+    InitLayouts(mainLayout);
 
     update_panels();
     doupdate();
@@ -503,81 +553,40 @@ void StartControl(void) {
     }
 }
 
-void SetData(Array* data, int pos) {
-    currentData = data;
-    currentPos = pos;
-    int newSize = min((int) (array_size(currentData) - currentPos), MAX_TABLE_SIZE);
-    if (newSize > currentTableSize) {
-        showLines(currentTableSize, newSize - currentTableSize);
-    } else {
-        hideLines(newSize);
-    }
-    currentTableSize = newSize;
-    for (int l = 0; l < currentTableSize; l++) {
-        Employee* employee;
-        array_get_at(data, (size_t) pos + l, (void**) &employee);
-        wchar_t id[COL_ID_WIDTH];
-        swprintf(id, COL_ID_WIDTH, L"%d", employee->id);
-        ButtonSetText(colId[l], id);
-        EditSetValue(colSurname[l], employee->surname);
-        EditSetValue(colName[l], employee->name);
-        EditSetValue(colPatronymic[l], employee->patronymic);
-        wchar_t yob[COL_YOB_WIDTH];
-        swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yearOfBirth);
-        EditSetValue(colYOB[l], yob);
-        SelectSetValue(colGender[l], employee->gender ? 1 : 0);
-        EditSetValue(colProf[l], employee->profession);
-        wchar_t exp[COL_EXP_WIDTH];
-        swprintf(exp, COL_EXP_WIDTH, L"%d", employee->experience);
-        EditSetValue(colExp[l], exp);
-        SelectSetValue(colClass[l], employee->class - 1);
-        wchar_t dept[COL_DEPT_WIDTH];
-        swprintf(dept, COL_DEPT_WIDTH, L"%d", employee->departmentId);
-        EditSetValue(colDept[l], dept);
-        wchar_t plot[COL_PLOT_WIDTH];
-        swprintf(plot, COL_PLOT_WIDTH, L"%d", employee->plotId);
-        EditSetValue(colPlot[l], plot);
-        wchar_t salary[COL_SALARY_WIDTH];
-        swprintf(salary, COL_SALARY_WIDTH, L"%d", employee->salary);
-        EditSetValue(colSalary[l], salary);
-    }
-    ScrollBarSetCount(scrollBar, (int) array_size(data));
-    ScrollBarSetNumber(scrollBar, pos);
+void SetPos(int pos) {
+    showData(pos);
 }
 
-void ShowTable(Array* data, int pos) {
-    if (currentData == NULL) {
-        if (data != NULL) {
-            wclear(mainLayout->window);
-            enableLabels(true);
-            ShowComponent(scrollBar);
-            SetData(data, pos);
-            drawTableHeader(data == NULL);
-            //set size to draw body properly ----> show data
-            drawTableBody();
-            drawTableFooter(data == NULL);
-        }
-    } else {
-        if (data == NULL) {
-            wclear(mainLayout->window);
-            enableLabels(false);
-            HideComponent(scrollBar);
-            //hide lines
-            drawTableHeader(data == NULL);
-            drawStarter();
-            drawTableFooter(data == NULL);
-        } else {
-            SetData(data, pos);
-            drawTableBody();
-        }
-    }
+void SetData(Array* data) {
+    currentData = data;
+    ScrollBarSetCount(scrollBar, (int) array_size(currentData));
+    showData(currentPos);
+}
 
+void ShowStarter(void) {
+    enableLabels(false);
+    HideComponent(scrollBar);
+    hideLines(0);
+    currentTableSize = 0;
+    wclear(mainLayout->window);
+    drawTableHeader(true);
+    drawStarter();
+    drawTableFooter(true);
     update_panels();
     doupdate();
 }
 
-void FileOpen(void) {
-
+void ShowTable(void) {
+    enableLabels(true);
+    ShowComponent(scrollBar);
+    hideLines(0);
+    currentTableSize = 0;
+    wclear(mainLayout->window);
+    drawTableHeader(false);
+    drawTableBody();
+    drawTableFooter(false);
+    update_panels();
+    doupdate();
 }
 
 //File actions

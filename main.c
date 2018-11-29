@@ -9,10 +9,12 @@
 
 #define LOG_FILE "log.txt"
 
-int main() {
+int main(int argc, char** argv) {
     FILE* log = fopen(LOG_FILE, "a");
     log_set_fp(log);
     InitView();
+    InitApplication(NULL);
     StartControl();
+    DestroyView();
     fclose(log);
 }

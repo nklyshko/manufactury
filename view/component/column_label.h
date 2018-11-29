@@ -2,12 +2,11 @@
 #define MANUFACTURY_COLUMN_LABEL_H
 
 #include <view/interactive_panel.h>
+#include <model/data_types.h>
+#include <model/comparator.h>
 
 typedef struct ColumnLabel ColumnLabel;
 typedef struct ColumnLabelStyle ColumnLabelStyle;
-typedef enum SortDirection SortDirection;
-
-enum SortDirection { NONE, ASC, DSC};
 
 struct ColumnLabel {
     ColumnLabelStyle* style;
@@ -16,6 +15,7 @@ struct ColumnLabel {
     SortDirection activeDirection;
     wchar_t* text;
     InteractivePanel* panel;
+    Comparator* comparator;
     void (* OnDirectionChange)(Component* handle);
 };
 

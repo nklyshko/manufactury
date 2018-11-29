@@ -84,6 +84,7 @@ Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wc
     columnLabel->enabled = true;
     columnLabel->size = size;
     columnLabel->activeDirection = NONE;
+    columnLabel->comparator = NULL;
     columnLabel->OnDirectionChange = defaultOnDirectionChange;
     columnLabel->text = malloc(sizeof(wchar_t) * (size + 1));
     wmemcpy_s(columnLabel->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает

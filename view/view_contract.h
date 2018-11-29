@@ -6,8 +6,13 @@
 
 void InitView(void);
 void DestroyView(void);
-void ShowTable(Array* data, int pos);
 void StartControl(void);
+void SetPos(int pos);
+void SetData(Array* data);
+void ShowStarter(void);
+void ShowTable(void);
+void ResetActiveColumnLabel(void);
+
 void ShowProcessing(void);
 void HideProcessing(void);
 void ShowSaveDialog(); //Show WINAPI save dialog, save request to controller with selected filename
