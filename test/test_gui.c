@@ -9,6 +9,7 @@
 #include <view/component/button.h>
 #include <view/winapi_bridge.h>
 #include <minwindef.h>
+#include <array.h>
 #include "src/log.h"
 #include "view/hotkey.h"
 
@@ -106,10 +107,7 @@ void scrollDown(ScrollType type) {
     log_debug("SCROLL DOWN %d", type);
 }
 
-int main(int argc, char **argv) {
-    FILE* log = fopen("test.txt", "w");
-    log_set_fp(log);
-
+int mainGUI(int argc, char **argv) {
     //инициализация главного окна
     initscr();
     //режим распознавания каждого нажатия клавиши без ожадания Enter
@@ -150,11 +148,11 @@ int main(int argc, char **argv) {
     Component* button = CreateButton(evenButtonStyle, 1, 8, 10, L"Test ёЁ belmandsabhbsadbhb", ButtonAct);
     ButtonSetEnabled(button, false);
     Component* edit = CreateEdit(evenEditStyle, 15, 8, 7);
-    EditSetValue(edit, L"100");
+    EditSetValue(edit, L"90");
     EditSetEnterAction(edit, SetCnt);
     Component* edit2 = CreateEdit(evenEditStyle, 27, 8, 4);
     EditSetEnterAction(edit2, SetNum);
-    scrollbar = CreateScrollBar(scrollBarStyle, 79, 1, 20, mainLayout);
+    scrollbar = CreateScrollBar(scrollBarStyle, 79, 1, 23, mainLayout);
     Component* select = CreateSelect(evenSelectStyle, 50, 8, 4, 3, L"М", L"Ж", L"Тест");
     select->tabFocusing = false;
     LayoutAddComponent(mainLayout, button);
@@ -233,5 +231,4 @@ int main(int argc, char **argv) {
 
     //завершение работы curses
     endwin();
-    fclose(log);
 }

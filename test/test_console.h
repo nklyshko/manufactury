@@ -1,0 +1,6 @@
+#ifndef MANUFACTURY_TEST_CONSOLE_H
+#define MANUFACTURY_TEST_CONSOLE_H
+
+int mainConsole();
+
+#endif //MANUFACTURY_TEST_CONSOLE_H
