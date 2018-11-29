@@ -2,7 +2,7 @@
 #include <panel.h>
 #include <src/log.h>
 #include <minmax.h>
-#include <data_types.h>
+#include <model/data_types.h>
 #include "styles.h"
 #include "view_contract.h"
 #include "winapi_bridge.h"
@@ -381,10 +381,6 @@ void drawTableFooter(bool disabled) {
     mvwhline(w, TABLE_BODY_START_Y + MAX_TABLE_SIZE, 0, ACS_UBLOCK, WIDTH);
 }
 
-void drawMainLayout() {
-
-}
-
 void InitView(void) {
     //инициализация главного окна
     initscr();
@@ -517,9 +513,9 @@ void SetData(Array* data, int pos) {
         hideLines(newSize);
     }
     currentTableSize = newSize;
-    for (int l = pos; l < pos + currentTableSize; l++) {
+    for (int l = 0; l < currentTableSize; l++) {
         Employee* employee;
-        array_get_at(data, (size_t) l, (void**) &employee);
+        array_get_at(data, (size_t) pos + l, (void**) &employee);
         wchar_t id[COL_ID_WIDTH];
         swprintf(id, COL_ID_WIDTH, L"%d", employee->id);
         ButtonSetText(colId[l], id);

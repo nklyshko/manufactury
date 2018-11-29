@@ -23,6 +23,7 @@ struct Employee {
     int departmentId;
     int plotId;
     int salary;
+    bool changed;
 };
 
 bool valueOfGender(wchar_t* str);
