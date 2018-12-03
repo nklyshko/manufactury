@@ -8,9 +8,9 @@ int array_add_sorted(Array* a, void* e, int (* comparator)(void*, void*)) {
         array_get_at(a, 0, &left);
         void* right;
         array_get_last(a, &right);
-        if (comparator(e, left) < 0) {
+        if (comparator(&e, &left) < 0) {
             array_add_at(a, e, 0);
-        } else if (comparator(e, right) > 0) {
+        } else if (comparator(&e, &right) > 0) {
             array_add(a, e);
         } else {
             int l = 0;
@@ -20,7 +20,7 @@ int array_add_sorted(Array* a, void* e, int (* comparator)(void*, void*)) {
             while (r - l > 1) {
                 m = (r + l) / 2;
                 array_get_at(a, (size_t) m, &mid);
-                int c = comparator(e, mid);
+                int c = comparator(&e, &mid);
                 if (c == 0) {
                     array_add_at(a, e, (size_t) m);
                     return m;
