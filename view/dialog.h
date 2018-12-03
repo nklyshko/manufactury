@@ -3,8 +3,10 @@
 
 #include "layout.h"
 
-void InitDialogLayout(int color);
+void InitDialogsLayouts(int color);
 
-void ShowDialog(wchar_t* message, void (* onYes)(void), void (* onNo)(void), void (* onCancel)(void));
+void ShowConfirmationDialog(wchar_t* message, void (* onYes)(void), void (* onNo)(void), void (* onCancel)(void));
+
+void ShowMessageDialog(wchar_t* message, void (* onOk)(void));
 
 #endif //MANUFACTURY_DIALOG_H

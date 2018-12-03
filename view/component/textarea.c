@@ -1,3 +1,4 @@
+#include <src/log.h>
 #include "textarea.h"
 
 
@@ -43,8 +44,8 @@ void TextAreaSetContent(Component* handle, wchar_t* text) {
     TextArea* textArea = handle->spec;
     WINDOW* w = textArea->panel->window;
     wmemcpy_s(textArea->text, (size_t) textArea->size, text, (size_t) textArea->size); //wcscpy_s не работает
-    wchar_t* word = malloc(sizeof(char) * textArea->size);
-    wmemset(word, L'\0', (size_t) textArea->size);
+    wchar_t* word = malloc(sizeof(char) * textArea->width + 1);
+    wmemset(word, L'\0', (size_t) textArea->width + 1);
     int len = (int) wcslen(text);
     int pos = 0;
 
@@ -54,21 +55,7 @@ void TextAreaSetContent(Component* handle, wchar_t* text) {
     int wordLen = 0;
     wclear(w);
     wmove(w, 0, 0);
-    while (len) {
-        if (pos >= len) {
-            if (lineLen != 0) {
-                waddch(w, ' ');
-                lineLen++;
-            }
-            waddwstr(w, word);
-            lineLen += wordLen;
-            int offset = (textArea->width - lineLen) / 2;
-            wmove(w, line, 0);
-            for (int i = 0; i < offset; i++) {
-                winsch(w, ' ');
-            }
-            break;
-        }
+    while (pos < len) {
         if (text[pos] == L' ') {
             if (lineLen != 0) {
                 waddch(w, ' ');
@@ -76,14 +63,20 @@ void TextAreaSetContent(Component* handle, wchar_t* text) {
             }
             waddwstr(w, word);
             lineLen += wordLen;
-            wmemset(word, L'\0', (size_t) textArea->size);
+            wmemset(word, L'\0', (size_t) textArea->width + 1);
             wordLen = 0;
         } else {
             if (lineLen + wordLen >= textArea->width) {
-                int offset = (textArea->width - (lineLen - wordLen)) / 2;
-                wmove(w, line, 0);
-                for (int i = 0; i < offset; i++) {
-                    winsch(w, ' ');
+                if (lineLen == 0) { //слово не помещается в строке целиком
+                    waddwstr(w, word);
+                    wordLen = 0;
+                    wmemset(word, L'\0', (size_t) textArea->width + 1);
+                } else {
+                    int offset = (textArea->width - lineLen) / 2;
+                    wmove(w, line, 0);
+                    for (int i = 0; i < offset; i++) {
+                        winsch(w, ' ');
+                    }
                 }
                 lineLen = 0;
                 line++;
@@ -94,6 +87,19 @@ void TextAreaSetContent(Component* handle, wchar_t* text) {
             wordLen++;
         }
         pos++;
+    }
+    if (wordLen != 0) {
+        if (lineLen != 0) {
+            waddch(w, ' ');
+            lineLen++;
+        }
+        waddwstr(w, word);
+        lineLen += wordLen;
+        int offset = (textArea->width - lineLen) / 2;
+        wmove(w, line, 0);
+        for (int i = 0; i < offset; i++) {
+            winsch(w, ' ');
+        }
     }
     free(word);
 }
