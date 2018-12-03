@@ -40,7 +40,7 @@ void insertChar(wchar_t* s, int length, int pos, wchar_t c) {
     s[pos] = c;
 }
 
-bool allowedSymbol(int s) {
+bool defaultFilter(int s) {
     return (s >= NUM_BEGIN && s <= NUM_END) || (s >= EN_BEGIN && s <= EN_END) || (s >= RU_BEGIN && s <= RU_END) || s == 1025 || s == 1105;
 }
 
@@ -83,7 +83,7 @@ void EditOnKeyClick(Component* handle, int key, unsigned long modifiers) {
 //            default:
 //                break;
 //        } else
-    if (allowedSymbol(key)) {
+    if ((edit->filter == NULL && defaultFilter(key)) || (edit->filter != NULL && edit->filter(key))) {
         wchar_t ch = (wchar_t) key;
         if (replaceMode) {
             if (edit->pos == edit->length) {
@@ -221,6 +221,11 @@ void EditSetEnabled(Component* handle, bool enabled) {
         wbkgd(edit->panel->window, COLOR_PAIR(edit->style->disabledColor));
         DefocusComponent(handle);
     }
+}
+
+void EditSetFilter(Component* handle, bool (* filter)(int s)) {
+    Edit* edit = handle->spec;
+    edit->filter = filter;
 }
 
 void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle)) {
