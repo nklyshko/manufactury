@@ -186,6 +186,7 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     edit->length = 0;
     edit->value = malloc((size + 1) * sizeof(wchar_t));
     edit->value[0] = L'\0';
+    edit->filter = NULL;
     edit->OnValueEnter = defaultOnValueEnter;
 
     InteractivePanel* panel = CreateInteractivePanel(handle, x, y, size + 1, 1);
@@ -231,6 +232,11 @@ void EditSetFilter(Component* handle, bool (* filter)(int s)) {
 void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle)) {
     Edit* edit = handle->spec;
     edit->OnValueEnter = OnValueEnter;
+}
+
+wchar_t* EditGetValue(Component* handle) {
+    Edit* edit = handle->spec;
+    return edit->value;
 }
 
 EditStyle* CreateEditStyle(int defaultColor, int disabledColor, int activeColor) {

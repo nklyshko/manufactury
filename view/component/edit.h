@@ -36,6 +36,8 @@ void EditSetFilter(Component* handle, bool (* filter)(int s));
 
 void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle));
 
+wchar_t* EditGetValue(Component* handle);
+
 EditStyle* CreateEditStyle(int defaultColor, int disabledColor, int activeColor);
 
 #endif //MANUFACTURY_EDIT_H
