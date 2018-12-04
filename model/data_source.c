@@ -41,6 +41,10 @@ void RemoveEmployee(Employee* e) {
     array_remove(employees, e, NULL);
 }
 
+bool EmployeeIdExists(Employee* e) {
+    return array_sorted_contains(employees, e, (int (*)(void*, void*)) EmployeeIdComparator);
+}
+
 Array* GetEmployees(void) {
     return employees;
 }

@@ -8,6 +8,7 @@
 #include <view/component/scroll_bar.h>
 #include <view/component/select.h>
 #include <view/component/column_label.h>
+#include <view/component/textarea.h>
 
 #undef COLOR_WHITE
 #define COLOR_WHITE 15
@@ -34,6 +35,15 @@ extern ButtonStyle* oddButtonStyle;
 extern SelectStyle* evenSelectStyle;
 extern SelectStyle* oddSelectStyle;
 extern ColumnLabelStyle* columnLabelStyle;
+extern TextAreaStyle* textAreaStyle;
+extern ButtonStyle* yesButtonStyle;
+extern ButtonStyle* noButtonStyle;
+extern ButtonStyle* cancelButtonStyle;
+
+extern LabelStyle* addLabelStyle;
+extern EditStyle* addEditStyle;
+extern SelectStyle* addSelectStyle;
+extern ButtonStyle* addButtonStyle;
 
 extern int mainBackground;
 extern int tableEvenColor;
@@ -41,6 +51,7 @@ extern int tableOddColor;
 extern int tableDisabledColor;
 extern int transitionMenuTable;
 extern int transitionMenuTableDisabled;
+extern int dialogBackground;
 
 extern LabelStyle* labelStyle;
 extern ScrollBarStyle* scrollBarStyle;

@@ -415,7 +415,7 @@ void showData(int pos) {
         wchar_t yob[COL_YOB_WIDTH];
         swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yearOfBirth);
         EditSetValue(colYOB[l], yob);
-        SelectSetValue(colGender[l], employee->gender ? 1 : 0);
+        SelectSetValue(colGender[l], employee->gender ? 0 : 1);
         EditSetValue(colProf[l], employee->profession);
         wchar_t exp[COL_EXP_WIDTH];
         swprintf(exp, COL_EXP_WIDTH, L"%d", employee->experience);
@@ -506,7 +506,7 @@ void InitView(void) {
     InitLayouts(mainLayout);
 
     InitDialogsLayouts(dialogBackground);
-    InitDataDialog();
+    InitDataDialog(dialogBackground);
 
     update_panels();
     doupdate();

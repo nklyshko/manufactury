@@ -10,6 +10,8 @@ void AddEmployee(Employee* e);
 
 void RemoveEmployee(Employee* e);
 
+bool EmployeeIdExists(Employee* e);
+
 Array* GetEmployees(void);
 
 bool ReadFile(char* fileName);

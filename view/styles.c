@@ -1,5 +1,4 @@
 #include <curses.h>
-#include <view/component/column_label.h>
 #include "styles.h"
 
 EditStyle* evenEditStyle;
@@ -13,6 +12,15 @@ LabelStyle* labelStyle;
 MenuStyle* menuStyle;
 ScrollBarStyle* scrollBarStyle;
 ColumnLabelStyle* columnLabelStyle;
+TextAreaStyle* textAreaStyle;
+ButtonStyle* yesButtonStyle;
+ButtonStyle* noButtonStyle;
+ButtonStyle* cancelButtonStyle;
+
+LabelStyle* addLabelStyle;
+EditStyle* addEditStyle;
+SelectStyle* addSelectStyle;
+ButtonStyle* addButtonStyle;
 
 int mainBackground;
 int tableEvenColor;
@@ -20,6 +28,7 @@ int tableOddColor;
 int tableDisabledColor;
 int transitionMenuTable;
 int transitionMenuTableDisabled;
+int dialogBackground;
 
 void InitStyle(void) {
     evenEditStyle = CreateEditStyle(11, 12, 13);
@@ -42,10 +51,38 @@ void InitStyle(void) {
     transitionMenuTable = 85;
     transitionMenuTableDisabled = 86;
 
+    yesButtonStyle = CreateButtonStyle(91, 42, 43);
+    noButtonStyle = CreateButtonStyle(92, 42, 43);
+    cancelButtonStyle = CreateButtonStyle(93, 42, 43);
+
+    textAreaStyle = CreateTextAreaStyle(dialogBackground);
+
     labelStyle = CreateLabelStyle(21);
 
     scrollBarStyle = CreateScrollBarStyle(51);
 
+    dialogBackground = 87;
+    init_pair(87, COLOR_BLACK, COLOR_GRAY_DARK);
+
+    addLabelStyle = CreateLabelStyle(101);
+    init_pair(101, COLOR_BLACK, COLOR_GRAY_DARK);
+
+    addEditStyle = CreateEditStyle(111, 112, 113);
+    init_pair(111, COLOR_BLACK, COLOR_GRAY_LIGHT);
+    init_pair(112, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
+    init_pair(113, COLOR_GRAY_LIGHT, COLOR_BLACK);
+
+    addSelectStyle = CreateSelectStyle(121, 122, 123, 124, 125);
+    init_pair(121, COLOR_BLACK, COLOR_GRAY_LIGHT);
+    init_pair(122, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
+    init_pair(123, COLOR_GRAY_LIGHT, COLOR_BLACK);
+    init_pair(124, COLOR_GRAY_LIGHT, COLOR_BLACK);
+    init_pair(125, COLOR_BLACK, COLOR_CYAN_LIGHT);
+
+    addButtonStyle = CreateButtonStyle(131, 132, 133);
+    init_pair(131, COLOR_BLACK, COLOR_GRAY_LIGHT);
+    init_pair(132, COLOR_BLACK, COLOR_GRAY_LIGHT);
+    init_pair(133, COLOR_BLACK, COLOR_CYAN_LIGHT);
 
     init_pair(11, COLOR_BLACK, COLOR_WHITE);
     init_pair(12, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
@@ -85,6 +122,10 @@ void InitStyle(void) {
     init_pair(85, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
     init_pair(86, COLOR_GRAY_LIGHT, COLOR_WHITE);
 
+    init_pair(91, COLOR_GRAY_DARK, COLOR_GREEN_LIGHT);
+    init_pair(92, COLOR_GRAY_DARK, COLOR_RED_LIGHT);
+    init_pair(93, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
+
     init_pair(21, COLOR_BLACK, COLOR_WHITE);
-    init_pair(51, COLOR_BLACK, COLOR_WHITE);
+    init_pair(51, COLOR_BLACK, COLOR_GRAY_LIGHT);
 }

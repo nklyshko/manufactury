@@ -8,7 +8,17 @@
 
 void InitApplication(char* param);
 
+void FileNew(void);
+
 void FileOpen(void);
+
+void FileSave(void);
+
+void FileSaveAs(void);
+
+void EditAdd(void);;
+
+void ToolsExportCSV(void);
 
 void TableOnScrollDown(ScrollType scrollType);
 
@@ -16,8 +26,6 @@ void TableOnScrollUp(ScrollType scrollType);
 
 void SortData(Comparator* comparator, SortDirection direction);
 
-////Show open dialog, request file open to controller with selected filename
-//void FileSave(void);
 ////Redirect to controller(check if file already have name, or its new...)
 //void FileSaveAs(void);
 ////Show save dialog, request file save to controller with selected filename
@@ -32,7 +40,6 @@ void SortData(Comparator* comparator, SortDirection direction);
 //void EditChange(void);
 //
 ////Tools menu
-//void ToolsExportCSV(void);
 //
 //void ToolsCreateReport(void);
 
