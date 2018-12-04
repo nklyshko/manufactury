@@ -44,7 +44,7 @@ void TextAreaSetContent(Component* handle, wchar_t* text) {
     TextArea* textArea = handle->spec;
     WINDOW* w = textArea->panel->window;
     wmemcpy_s(textArea->text, (size_t) textArea->size, text, (size_t) textArea->size); //wcscpy_s не работает
-    wchar_t* word = malloc(sizeof(char) * textArea->width + 1);
+    wchar_t* word = malloc(sizeof(wchar_t) * (textArea->width + 1));
     wmemset(word, L'\0', (size_t) textArea->width + 1);
     int len = (int) wcslen(text);
     int pos = 0;
