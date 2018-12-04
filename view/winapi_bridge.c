@@ -17,7 +17,6 @@ bool ShowOpenFileDialog(char* fileName, int maxLength) {
     ofn.lpstrFile = fileName;
     ofn.nMaxFile = (DWORD) maxLength;
     ofn.lpstrTitle = "Open file";
-    //ofn.lpstrDefExt = "mnf";
     ofn.Flags = OFN_NONETWORKBUTTON |
                 OFN_FILEMUSTEXIST |
                 OFN_HIDEREADONLY;
@@ -25,4 +24,22 @@ bool ShowOpenFileDialog(char* fileName, int maxLength) {
         return false;
     }
     return true;
+}
+
+bool ShowSaveFileDialog(char* fileName, int maxLength) {
+    OPENFILENAME ofn;
+    memset(&ofn, 0, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = NULL;
+    ofn.lpstrFilter = "Manufactury Files\0*.mnf\0All files\0*.*\0\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFile = fileName;
+    ofn.nMaxFile = (DWORD) maxLength;
+    ofn.lpstrTitle = "Save file";
+    ofn.lpstrDefExt = "mnf";
+    ofn.Flags = OFN_NONETWORKBUTTON |
+                OFN_FILEMUSTEXIST |
+                OFN_HIDEREADONLY;
+    if (GetSaveFileName(&ofn)) return true;
+    return false;
 }
