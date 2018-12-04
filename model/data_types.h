@@ -2,6 +2,12 @@
 #define MANUFACTURY_DATA_TYPES_H
 
 #include <curses.h>
+#include <time.h>
+
+#define SURNAME_LENGTH 16
+#define NAME_LENGTH 16
+#define PATRONYMIC_LENGTH 16
+#define PROFESSION_LENGTH 16
 
 typedef struct Employee Employee;
 typedef enum ProfClass ProfClass;
@@ -12,22 +18,31 @@ enum ProfClass {
 
 struct Employee {
     int id;
-    wchar_t surname[16];
-    wchar_t name[16];
-    wchar_t patronymic[16];
+    wchar_t surname[SURNAME_LENGTH];
+    wchar_t name[NAME_LENGTH];
+    wchar_t patronymic[PATRONYMIC_LENGTH];
     short yearOfBirth;
     bool gender;
-    wchar_t profession[16];
-    short experience;
+    wchar_t profession[PROFESSION_LENGTH];
+    char experience;
     ProfClass class;
-    int departmentId;
-    int plotId;
+    char departmentId;
+    char plotId;
     int salary;
-    bool changed;
 };
 
-bool valueOfGender(wchar_t* str);
+void EmployeeSetSurname(Employee* e, wchar_t* surname);
 
-ProfClass valueOfProfClass(wchar_t* str);
+void EmployeeSetName(Employee* e, wchar_t* name);
+
+void EmployeeSetPatronymic(Employee* e, wchar_t* patronymic);
+
+void EmployeeSetProfession(Employee* e, wchar_t* profession);
+
+bool ValueOfGender(int v);
+
+ProfClass ValueOfProfClass(int v);
+
+int parseInt(wchar_t* str);
 
 #endif //MANUFACTURY_DATA_TYPES_H

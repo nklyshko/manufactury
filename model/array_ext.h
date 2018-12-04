@@ -5,6 +5,10 @@
 #include <list.h>
 #include <src/log.h>
 
-int array_add_sorted(Array* a, void* e, int (* comparator)(void* e1, void* e2));
+bool array_sorted_contains(Array* a, void*e, int (*comparator)(void* e1, void *e2));
+
+int array_sorted_add(Array* a, void* e, int (* comparator)(void* e1, void* e2));
+
+void array_remove_single(Array* a, void* e, int (* comparator)(void* e1, void* e2));
 
 #endif //MANUFACTURY_ARRAY_EXT_H

@@ -1,6 +1,48 @@
 #include "array_ext.h"
 
-int array_add_sorted(Array* a, void* e, int (* comparator)(void*, void*)) {
+bool array_sorted_contains(Array* a, void*e, int (*comparator)(void* e1, void *e2)) {
+    if (array_size(a) == 0) {
+        return false;
+    } else if (array_size(a) == 1) {
+        void* c;
+        array_get_last(a, &c);
+        return comparator(&e, &c) == 0;
+    } else {
+        void* left;
+        array_get_at(a, 0, &left);
+        void* right;
+        array_get_last(a, &right);
+        if (comparator(&e, &left) < 0 || comparator(&e, &right) > 0) {
+            return false;
+        } else {
+            int l = 0;
+            int r = (int) (array_size(a) - 1);
+            int m = 0;
+            void* mid;
+            while (r - l > 1) {
+                m = (r + l) / 2;
+                array_get_at(a, (size_t) m, &mid);
+                int c = comparator(&e, &mid);
+                if (c == 0) {
+                    return true;
+                } else if (c < 0) {
+                    r = m;
+                    right = mid;
+                } else {
+                    l = m;
+                    left = mid;
+                }
+            }
+            if (r == m) {
+                return comparator(&e, &left) == 0;
+            } else {
+                return comparator(&e, &right) == 0;
+            }
+        }
+    }
+}
+
+int array_sorted_add(Array* a, void* e, int (* comparator)(void* e1, void* e2)) {
     if (array_size(a) == 0) {
         array_add(a, e);
     } else {
@@ -15,14 +57,14 @@ int array_add_sorted(Array* a, void* e, int (* comparator)(void*, void*)) {
         } else {
             int l = 0;
             int r = (int) (array_size(a) - 1);
-            int m;
+            int m = 0;
             void* mid;
             while (r - l > 1) {
                 m = (r + l) / 2;
                 array_get_at(a, (size_t) m, &mid);
                 int c = comparator(&e, &mid);
                 if (c == 0) {
-                    array_add_at(a, e, (size_t) m);
+                    array_replace_at(a, e, (size_t) m, NULL);
                     return m;
                 } else if (c < 0) {
                     r = m;
@@ -32,8 +74,32 @@ int array_add_sorted(Array* a, void* e, int (* comparator)(void*, void*)) {
                     left = mid;
                 }
             }
-            array_add_at(a, e, (size_t) r);
+            if (r == m) {
+                if (comparator(&e, &left) == 0) {
+                    array_replace_at(a, e, (size_t) l, NULL);
+                } else {
+                    array_add_at(a, e, (size_t) r);
+                }
+            } else {
+                if (comparator(&e, &right) == 0) {
+                    array_replace_at(a, e, (size_t) r, NULL);
+                } else {
+                    array_add_at(a, e, (size_t) r);
+                }
+            }
             return r;
+        }
+    }
+}
+
+void array_remove_single(Array* a, void* e, int (* comparator)(void* e1, void* e2)) {
+    ArrayIter iter;
+    array_iter_init(&iter, a);
+    void* next;
+    while(array_iter_next(&iter, &next) != CC_ITER_END) {
+        if (comparator(&e, &next) == 0) {
+            array_iter_remove(&iter, NULL);
+            break;
         }
     }
 }
