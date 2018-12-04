@@ -4,13 +4,16 @@
 #include <minmax.h>
 #include <model/data_types.h>
 #include <model/comparator.h>
+#include <model/filter.h>
 #include "styles.h"
 #include "view_contract.h"
 #include "winapi_bridge.h"
 #include "logo.h"
 #include "presenter_contract.h"
+#include "dialog.h"
+#include "data_dialog.h"
 
-#define MANUFACTURY_VERSION "0.5 Beta"
+#define MANUFACTURY_VERSION "0.7 Beta"
 
 #define HEIGHT 30
 #define WIDTH 115
@@ -80,26 +83,14 @@ Component* colPlot[MAX_TABLE_SIZE];
 Component* salaryColLabel;
 Component* colSalary[MAX_TABLE_SIZE];
 
-//File menu
-void FileNew(void);
-//Redirect to controller
-void FileSave(void);
-//Redirect to controller(check if file already have name, or its new...)
-void FileSaveAs(void);
-//Show save dialog, request file save to controller with selected filename
-
 //Edit menu
 void EditFind(void);
-
-void EditAdd(void);
 
 void EditDelete(void);
 
 void EditChange(void);
 
 //Tools menu
-void ToolsExportCSV(void);
-
 void ToolsCreateReport(void);
 
 bool running = true;
@@ -202,6 +193,7 @@ void createYOBCol() {
         colYOB[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_YOB_X, TABLE_BODY_START_Y + i, COL_YOB_WIDTH - 1);
         colYOB[i]->tabFocusing = false;
+        EditSetFilter(colYOB[i], PositiveNumberFilter);
         LayoutAddComponent(mainLayout, colYOB[i]);
     }
 }
@@ -253,6 +245,7 @@ void createExpCol() {
         colExp[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_EXP_X, TABLE_BODY_START_Y + i, COL_EXP_WIDTH - 1);
         colExp[i]->tabFocusing = false;
+        EditSetFilter(colExp[i], PositiveNumberFilter);
         LayoutAddComponent(mainLayout, colExp[i]);
     }
 }
@@ -287,6 +280,7 @@ void createDeptCol() {
         colDept[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_DEPT_X, TABLE_BODY_START_Y + i, COL_DEPT_WIDTH - 1);
         colDept[i]->tabFocusing = false;
+        EditSetFilter(colDept[i], PositiveNumberFilter);
         LayoutAddComponent(mainLayout, colDept[i]);
     }
 }
@@ -304,6 +298,7 @@ void createPlotCol() {
         colPlot[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_PLOT_X, TABLE_BODY_START_Y + i, COL_PLOT_WIDTH - 1);
         colPlot[i]->tabFocusing = false;
+        EditSetFilter(colPlot[i], PositiveNumberFilter);
         LayoutAddComponent(mainLayout, colPlot[i]);
     }
 }
@@ -510,6 +505,9 @@ void InitView(void) {
 
     InitLayouts(mainLayout);
 
+    InitDialogsLayouts(dialogBackground);
+    InitDataDialog();
+
     update_panels();
     doupdate();
 }
@@ -534,7 +532,7 @@ void StartControl(void) {
                     return;
                 }
                 resize_term(HEIGHT, WIDTH);
-                PANEL* panel = stack_top_panel();
+                PANEL* panel = panel_below(NULL);
                 while (panel != NULL) {
                     touchwin(panel_window(panel));
                     panel = panel_below(panel);
@@ -589,23 +587,19 @@ void ShowTable(void) {
     doupdate();
 }
 
-//File actions
-void FileNew(void) {};
+void ShowFileReadError(void) {
+    ShowMessageDialog(L"Ошибка чтения файла", NULL);
+}
 
-void FileSave(void) {};
-
-void FileSaveAs(void) {};
+void ShowFileWriteError(void) {
+    ShowMessageDialog(L"Ошибка записи файла", NULL);
+}
 
 //Edit actions
 void EditFind(void) {};
 
-void EditAdd(void) {};
-
 void EditDelete(void) {};
 
 void EditChange(void) {};
-
-//Tools actions
-void ToolsExportCSV(void) {};
 
 void ToolsCreateReport(void) {};

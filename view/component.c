@@ -140,7 +140,7 @@ Component* GetFocusedComponent(void) {
 void ComponentHandleMouseEvent(MEVENT event) {
     int mouseX = event.x;
     int mouseY = event.y;
-    PANEL* panel = stack_top_panel();
+    PANEL* panel = panel_below(NULL);
     if (panel == NULL) return;
 
     while (panel != NULL) {

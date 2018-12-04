@@ -12,12 +12,7 @@ void SetData(Array* data);
 void ShowStarter(void);
 void ShowTable(void);
 void ResetActiveColumnLabel(void);
-
-void ShowProcessing(void);
-void HideProcessing(void);
-void ShowSaveDialog(); //Show WINAPI save dialog, save request to controller with selected filename
-//void ShowError(chtype* error);
-//void ShowEditor();
-//void setTitle(string s);
+void ShowFileReadError(void);
+void ShowFileWriteError(void);
 
 #endif //MANUFACTURY_VIEW_CONTRACT_H
