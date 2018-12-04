@@ -129,7 +129,11 @@ void FocusNextComponent(Component* resetComponent) {
 
 void DefocusComponent(Component* component) {
     if (focusedComponent == component) {
-        FocusNextComponent(NULL);
+        if (component->tabFocusing) {
+            FocusNextComponent(NULL);
+        } else {
+            FocusSingleComponent(NULL);
+        }
     }
 }
 

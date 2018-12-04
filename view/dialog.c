@@ -68,11 +68,11 @@ void InitDialogsLayouts(int color) {
 }
 
 void ShowConfirmationDialog(wchar_t* message, void (* onYes)(void), void (* onNo)(void), void (* onCancel)(void)) {
-    TextAreaSetContent(confirmationText, message);
     yesAction = onYes;
     noAction = onNo;
     cancelAction = onCancel;
     ActivateLayout(confirmationDialog);
+    TextAreaSetContent(confirmationText, message);
 }
 
 void ShowMessageDialog(wchar_t* message, void (* onOk)(void)) {

@@ -4,8 +4,8 @@
 #include "interactive_panel.h"
 
 
-Layout* activeLayout;
-Layout* mainLayout; //Основное окно программы. Если открыты другие, то оно на фоне
+Layout* activeLayout = NULL;
+Layout* mainLayout = NULL; //Основное окно программы. Если открыты другие, то оно на фоне
 
 void DefaultOnScrollUp(ScrollType type) {
     //noop
@@ -71,7 +71,7 @@ void ActivateLayout(Layout* layout) {
         HideLayout(activeLayout);
         activeLayout = mainLayout;
     }
-    if (layout != NULL && layout != mainLayout) {
+    if (layout != NULL) {
         ShowLayout(layout);
         activeLayout = layout;
     }
