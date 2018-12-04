@@ -178,6 +178,11 @@ void SelectSetValue(Component* handle, int value) {
     setSelected(select, value);
 }
 
+int SelectGetValue(Component* handle) {
+    Select* select = handle->spec;
+    return select->selected;
+}
+
 SelectStyle* CreateSelectStyle(int defaultColor, int disabledColor, int focusedColor, int listColor, int activeItemColor) {
     SelectStyle* style = malloc(sizeof(SelectStyle));
     style->defaultColor = defaultColor;

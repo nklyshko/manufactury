@@ -33,6 +33,8 @@ void SelectSetEnabled(Component* handle, bool enabled);
 
 void SelectSetValue(Component* handle, int value);
 
+int SelectGetValue(Component* handle);
+
 SelectStyle* CreateSelectStyle(int defaultColor, int disabledColor, int focusedColor, int listColor, int activeItemColor);
 
 #endif //MANUFACTURY_SELECT_H
