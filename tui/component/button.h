@@ -1,7 +1,7 @@
 #ifndef MANUFACTURY_BUTTON_H
 #define MANUFACTURY_BUTTON_H
 
-#include <view/interactive_panel.h>
+#include <tui/interactive_panel.h>
 
 typedef struct Button Button;
 typedef struct ButtonStyle ButtonStyle;

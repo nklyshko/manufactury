@@ -1,13 +1,13 @@
 #include <model/data_types.h>
 #include <src/log.h>
-#include <view/winapi_bridge.h>
 #include <model/data_source.h>
-#include <view/dialog.h>
-#include <view/data_dialog.h>
+#include <edit/edit_view.h>
 #include <model/array_ext.h>
-#include "presenter_contract.h"
-#include "model_contract.h"
-#include "view/view_contract.h"
+#include <tui/winapi_bridge.h>
+#include <tui/dialog.h>
+#include <edit/edit_presenter.h>
+#include "main_presenter.h"
+#include "main_view.h"
 
 #define TESTS 400
 
@@ -29,14 +29,16 @@ bool currentChanged = false;
 void updateData(Array* data) {
     if (data == NULL) {
         if (sorted != NULL) {
-            array_remove_all_free(sorted);
-            array_destroy(sorted);
+            array_destroy_cb(sorted, free);
             sorted = NULL;
             ShowStarter();
         }
     } else {
         if (sorted == NULL) {
             ShowTable();
+        } else {
+            array_destroy_cb(sorted, free);
+            sorted = NULL;
         }
         array_copy_shallow(data, &sorted);
         SetData(sorted);
@@ -207,11 +209,10 @@ void FileSaveAs(void) {
 
 void newEmployee(void) {
     currentChanged = true;
-    Employee* e = GetEnteredData();
-    if (EmployeeIdExists(e)) {
+    if (EmployeeIdExists(GetEmployeeId())) {
         //TODO: показать ошибку в диалоге добавления(т.е. не закрывать диалог автоматически по нажатию ОК)
     } else {
-        AddEmployee(e);
+        Employee* e = AddEmployee(GetEnteredData());
         int updated = 0;
         if (sortComparator == NULL) {
             updated = array_sorted_add(sorted, e, (int (*)(void*, void*)) EmployeeIdComparator);
@@ -230,7 +231,7 @@ void newEmployee(void) {
 
 void EditAdd(void) {
     if (sorted == NULL) return;
-    ShowAddDialog(newEmployee, NULL);
+    ShowAddDialog();
 }
 
 void ToolsExportCSV(void) {

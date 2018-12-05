@@ -1,8 +1,7 @@
 #ifndef MANUFACTURY_EDIT_H
 #define MANUFACTURY_EDIT_H
 
-#include <view/component.h>
-#include <view/interactive_panel.h>
+#include <tui/interactive_panel.h>
 
 typedef struct Edit Edit;
 typedef struct EditStyle EditStyle;

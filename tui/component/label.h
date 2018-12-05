@@ -1,7 +1,7 @@
 #ifndef MANUFACTURY_LABEL_H
 #define MANUFACTURY_LABEL_H
 
-#include <view/interactive_panel.h>
+#include <tui/interactive_panel.h>
 
 typedef struct Label Label;
 typedef struct LabelStyle LabelStyle;

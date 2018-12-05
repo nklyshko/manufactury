@@ -1,7 +1,7 @@
 #ifndef MANUFACTURY_SELECT_H
 #define MANUFACTURY_SELECT_H
 
-#include <view/interactive_panel.h>
+#include <tui/interactive_panel.h>
 
 typedef struct Select Select;
 typedef struct SelectStyle SelectStyle;

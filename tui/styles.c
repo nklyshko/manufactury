@@ -17,10 +17,11 @@ ButtonStyle* yesButtonStyle;
 ButtonStyle* noButtonStyle;
 ButtonStyle* cancelButtonStyle;
 
-LabelStyle* addLabelStyle;
-EditStyle* addEditStyle;
-SelectStyle* addSelectStyle;
-ButtonStyle* addButtonStyle;
+LabelStyle* dataDialogLabelStyle;
+EditStyle* dataDialogEditStyle;
+SelectStyle* dataDialogSelectStyle;
+ButtonStyle* dataDialogButtonStyle;
+LabelStyle* dataDialogErrorLabelStyle;
 
 int mainBackground;
 int tableEvenColor;
@@ -64,25 +65,28 @@ void InitStyle(void) {
     dialogBackground = 87;
     init_pair(87, COLOR_BLACK, COLOR_GRAY_DARK);
 
-    addLabelStyle = CreateLabelStyle(101);
+    dataDialogLabelStyle = CreateLabelStyle(101);
     init_pair(101, COLOR_BLACK, COLOR_GRAY_DARK);
 
-    addEditStyle = CreateEditStyle(111, 112, 113);
+    dataDialogEditStyle = CreateEditStyle(111, 112, 113);
     init_pair(111, COLOR_BLACK, COLOR_GRAY_LIGHT);
     init_pair(112, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
     init_pair(113, COLOR_GRAY_LIGHT, COLOR_BLACK);
 
-    addSelectStyle = CreateSelectStyle(121, 122, 123, 124, 125);
+    dataDialogSelectStyle = CreateSelectStyle(121, 122, 123, 124, 125);
     init_pair(121, COLOR_BLACK, COLOR_GRAY_LIGHT);
     init_pair(122, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
     init_pair(123, COLOR_GRAY_LIGHT, COLOR_BLACK);
     init_pair(124, COLOR_GRAY_LIGHT, COLOR_BLACK);
     init_pair(125, COLOR_BLACK, COLOR_CYAN_LIGHT);
 
-    addButtonStyle = CreateButtonStyle(131, 132, 133);
+    dataDialogButtonStyle = CreateButtonStyle(131, 132, 133);
     init_pair(131, COLOR_BLACK, COLOR_GRAY_LIGHT);
     init_pair(132, COLOR_BLACK, COLOR_GRAY_LIGHT);
     init_pair(133, COLOR_BLACK, COLOR_CYAN_LIGHT);
+
+    dataDialogErrorLabelStyle = CreateLabelStyle(141);
+    init_pair(141, COLOR_RED_DARK, COLOR_GRAY_LIGHT);
 
     init_pair(11, COLOR_BLACK, COLOR_WHITE);
     init_pair(12, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);

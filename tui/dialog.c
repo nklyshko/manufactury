@@ -1,4 +1,3 @@
-#include <view/component/textarea.h>
 #include <src/log.h>
 #include "dialog.h"
 #include "styles.h"

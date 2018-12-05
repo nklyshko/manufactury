@@ -1,10 +1,10 @@
-#ifndef MANUFACTURY_VIEW_CONTRACT_H
-#define MANUFACTURY_VIEW_CONTRACT_H
+#ifndef MANUFACTURY_MAIN_VIEW_H
+#define MANUFACTURY_MAIN_VIEW_H
 
 #include <global.h>
 #include <array.h>
 
-void InitView(void);
+void InitMainView(void);
 void DestroyView(void);
 void StartControl(void);
 void SetPos(int pos);
@@ -15,4 +15,4 @@ void ResetActiveColumnLabel(void);
 void ShowFileReadError(void);
 void ShowFileWriteError(void);
 
-#endif //MANUFACTURY_VIEW_CONTRACT_H
+#endif //MANUFACTURY_MAIN_VIEW_H

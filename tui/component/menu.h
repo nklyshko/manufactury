@@ -1,8 +1,8 @@
 #ifndef MANUFACTURY_MENU_H
 #define MANUFACTURY_MENU_H
 
-#include <view/hotkey.h>
-#include <view/interactive_panel.h>
+#include <tui/interactive_panel.h>
+#include <tui/hotkey.h>
 
 typedef struct Menu Menu;
 typedef struct MenuItem MenuItem;

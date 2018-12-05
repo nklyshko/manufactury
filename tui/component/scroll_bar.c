@@ -1,4 +1,6 @@
 #include <src/log.h>
+#include <tui/interactive_panel.h>
+#include <tui/layout.h>
 #include "scroll_bar.h"
 
 int divUp(int a, int b) {

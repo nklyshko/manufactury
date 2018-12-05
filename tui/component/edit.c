@@ -1,6 +1,5 @@
 #include <src/log.h>
 #include <global.h>
-#include <view/hotkey.h>
 #include "edit.h"
 
 #define RU_BEGIN 1040

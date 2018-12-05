@@ -1,14 +1,15 @@
 #ifndef MANUFACTURY_STYLES_H
 #define MANUFACTURY_STYLES_H
 
-#include <view/component/edit.h>
-#include <view/component/label.h>
-#include <view/component/menu.h>
-#include <view/component/button.h>
-#include <view/component/scroll_bar.h>
-#include <view/component/select.h>
-#include <view/component/column_label.h>
-#include <view/component/textarea.h>
+
+#include <tui/component/menu.h>
+#include <tui/component/edit.h>
+#include <tui/component/button.h>
+#include <tui/component/select.h>
+#include <tui/component/column_label.h>
+#include <tui/component/textarea.h>
+#include <tui/component/label.h>
+#include <tui/component/scroll_bar.h>
 
 #undef COLOR_WHITE
 #define COLOR_WHITE 15
@@ -40,10 +41,11 @@ extern ButtonStyle* yesButtonStyle;
 extern ButtonStyle* noButtonStyle;
 extern ButtonStyle* cancelButtonStyle;
 
-extern LabelStyle* addLabelStyle;
-extern EditStyle* addEditStyle;
-extern SelectStyle* addSelectStyle;
-extern ButtonStyle* addButtonStyle;
+extern LabelStyle* dataDialogLabelStyle;
+extern EditStyle* dataDialogEditStyle;
+extern SelectStyle* dataDialogSelectStyle;
+extern ButtonStyle* dataDialogButtonStyle;
+extern LabelStyle* dataDialogErrorLabelStyle;
 
 extern int mainBackground;
 extern int tableEvenColor;

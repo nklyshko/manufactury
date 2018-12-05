@@ -1,9 +1,9 @@
 #ifndef MANUFACTURY_COLUMN_LABEL_H
 #define MANUFACTURY_COLUMN_LABEL_H
 
-#include <view/interactive_panel.h>
 #include <model/data_types.h>
 #include <model/comparator.h>
+#include <tui/interactive_panel.h>
 
 typedef struct ColumnLabel ColumnLabel;
 typedef struct ColumnLabelStyle ColumnLabelStyle;

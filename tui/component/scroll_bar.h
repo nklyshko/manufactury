@@ -1,8 +1,8 @@
 #ifndef MANUFACTURY_SCROLL_BAR_H
 #define MANUFACTURY_SCROLL_BAR_H
 
-#include <view/interactive_panel.h>
-#include <view/layout.h>
+#include <tui/layout.h>
+#include <tui/interactive_panel.h>
 
 typedef struct ScrollBar ScrollBar;
 typedef struct ScrollBarStyle ScrollBarStyle;

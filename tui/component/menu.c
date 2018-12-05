@@ -1,4 +1,3 @@
-#include <view/component.h>
 #include <malloc.h>
 #include <src/log.h>
 #include "menu.h"

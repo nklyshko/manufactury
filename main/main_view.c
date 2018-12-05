@@ -5,15 +5,16 @@
 #include <model/data_types.h>
 #include <model/comparator.h>
 #include <model/filter.h>
-#include "styles.h"
-#include "view_contract.h"
-#include "winapi_bridge.h"
+#include <tui/layout.h>
+#include <tui/styles.h>
+#include <tui/hotkey.h>
+#include <tui/dialog.h>
+#include <tui/winapi_bridge.h>
+#include <version.h>
+#include "main_view.h"
+#include "main_presenter.h"
+#include "edit/edit_view.h"
 #include "logo.h"
-#include "presenter_contract.h"
-#include "dialog.h"
-#include "data_dialog.h"
-
-#define MANUFACTURY_VERSION "0.7 Beta"
 
 #define HEIGHT 30
 #define WIDTH 115
@@ -434,34 +435,12 @@ void showData(int pos) {
     ScrollBarSetNumber(scrollBar, pos);
 }
 
-void InitView(void) {
-    //инициализация главного окна
-    initscr();
-    //режим распознавания каждого нажатия клавиши без ожадания Enter
-    cbreak();
-    //отключение отображения введенного символа
-    noecho();
-    //отключение курсора
-    curs_set(0);
-    //неблокирующий ввод
-    nodelay(stdscr, TRUE);
-    //распознавание функциональных кнопок клавиатуры(F1, ...)
-    keypad(stdscr, TRUE);
-    //сохранение модификаторов нажатых клавиш при чтении(Ctrl, Alt, Shift, ...)
-    PDC_save_key_modifiers(TRUE);
-    //поддержка цвета
-    start_color();
-    //поддержка мыши
-    mouse_set(ALL_MOUSE_EVENTS);
-    //установка заголовка окна программы
-    PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
-
+void InitMainView(void) {
     resize_term(HEIGHT, WIDTH);
 
-    InitStyle();
-    InitHotKeyHandler(NULL);
-
     mainLayout = CreateLayout(0, 0, WIDTH, HEIGHT);
+    log_debug("color id %d", mainBackground);
+    log_debug("color value %d %d", COLOR_PAIR(mainBackground), COLOR_PAIR(0));
     wbkgd(mainLayout->window, COLOR_PAIR(mainBackground));
 
     Component* menu1 = CreateMenu(menuStyle, 0, 0, L"Файл", 4,
@@ -504,9 +483,6 @@ void InitView(void) {
     mainLayout->OnScrollUp = TableOnScrollUp;
 
     InitLayouts(mainLayout);
-
-    InitDialogsLayouts(dialogBackground);
-    InitDataDialog(dialogBackground);
 
     update_panels();
     doupdate();

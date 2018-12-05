@@ -1,7 +1,7 @@
 #ifndef MANUFACTURY_TEXTAREA_H
 #define MANUFACTURY_TEXTAREA_H
 
-#include <view/interactive_panel.h>
+#include <tui/interactive_panel.h>
 
 typedef struct TextArea TextArea;
 typedef struct TextAreaStyle TextAreaStyle;
