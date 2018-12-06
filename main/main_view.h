@@ -5,7 +5,6 @@
 #include <array.h>
 
 void InitMainView(void);
-void DestroyView(void);
 void StartControl(void);
 void SetPos(int pos);
 void SetData(Array* data);

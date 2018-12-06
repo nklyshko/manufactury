@@ -7,6 +7,7 @@
 #include <tui/dialog.h>
 #include <edit/edit_presenter.h>
 #include <tui/component/edit.h>
+#include <tui/component/select.h>
 #include "main_presenter.h"
 #include "main_view.h"
 
@@ -16,7 +17,7 @@ Array* sorted = NULL;
 int pos = 0;
 int pageSize = 23;
 int sortField = 0;
-SortDirection sortDirection = NONE;
+SortDirection sortDirection = ASC;
 Comparator* comparators[FIELDS_COUNT];
 
 /*
@@ -110,8 +111,8 @@ void openSaveChanges(void) {
     char fileName[PATH_MAX] = { '\0' };
     if (currentOpened) {
         if (WriteFile(currentFileName)) {
-            if (ShowSaveFileDialog(fileName, PATH_MAX)) {
-                if (WriteFile(fileName)) {
+            if (ShowOpenFileDialog(fileName, PATH_MAX)) {
+                if (ReadFile(fileName)) {
                     setCurrentFile(fileName);
                 } else {
                     ShowFileWriteError();
@@ -225,6 +226,10 @@ void EditAdd(void) {
     ShowAddDialog();
 }
 
+void EditChange(Employee* employee) {
+    ShowChangeDialog(employee);
+}
+
 void ToolsExportCSV(void) {
 
 }
@@ -284,8 +289,112 @@ void SortData(int fieldId, SortDirection direction) {
 
 void ChangeSurname(Component* handle) {
     Employee* e = handle->custom;
-    EmployeeSetSurname(e, EditGetValue(handle));
+    wchar_t* surname = EditGetValue(handle);
+    if (wcscmp(surname, e->surname) != 0) {
+        EmployeeSetSurname(e, surname);
+        ColumnChanged(FIELD_SURNAME);
+    }
+}
+
+void ChangeName(Component* handle) {
+    Employee* e = handle->custom;
+    wchar_t* name = EditGetValue(handle);
+    if (wcscmp(name, e->name) != 0) {
+        EmployeeSetName(e, name);
+        ColumnChanged(FIELD_NAME);
+    }
+}
+
+void ChangePatronymic(Component* handle) {
+    Employee* e = handle->custom;
+    wchar_t* patronymic = EditGetValue(handle);
+    if (wcscmp(patronymic, e->patronymic) != 0) {
+        EmployeeSetPatronymic(e, patronymic);
+        ColumnChanged(FIELD_PATRONYMIC);
+    }
+}
+
+void ChangeYOB(Component* handle) {
+    Employee* e = handle->custom;
+    int yob = parseInt(EditGetValue(handle));
+    if (yob != e->yob) {
+        e->yob = (short) yob;
+        ColumnChanged(FIELD_YOB);
+    }
+}
+
+void ChangeGender(Component* handle) {
+    Employee* e = handle->custom;
+    bool gender = ValueOfGender(SelectGetValue(handle));
+    if (gender != e->gender) {
+        e->gender = gender;
+        ColumnChanged(FIELD_GENDER);
+    }
+}
+
+void ChangeProfession(Component* handle) {
+    Employee* e = handle->custom;
+    wchar_t* profession = EditGetValue(handle);
+    if (wcscmp(profession, e->profession) != 0) {
+        EmployeeSetName(e, profession);
+        ColumnChanged(FIELD_PROFESSION);
+    }
+}
+
+void ChangeExperience(Component* handle) {
+    Employee* e = handle->custom;
+    int experience = parseInt(EditGetValue(handle));
+    if (experience != e->experience) {
+        e->experience = (char) experience;
+        ColumnChanged(FIELD_EXPERIENCE);
+    }
+}
+
+void ChangeClass(Component* handle) {
+    Employee* e = handle->custom;
+    ProfClass class = ValueOfProfClass(SelectGetValue(handle));
+    if (class != e->class) {
+        e->class = class;
+        ColumnChanged(FIELD_CLASS);
+    }
+}
+
+void ChangeDepartment(Component* handle) {
+    Employee* e = handle->custom;
+    int department = parseInt(EditGetValue(handle));
+    if (department != e->department) {
+        e->department = (char) department;
+        ColumnChanged(FIELD_DEPARTMENT);
+    }
+}
+
+void ChangePlot(Component* handle) {
+    Employee* e = handle->custom;
+    int plot = parseInt(EditGetValue(handle));
+    if (plot != e->plot) {
+        e->plot = (char) plot;
+        ColumnChanged(FIELD_PLOT);
+    }
+}
+
+void ChangeSalary(Component* handle) {
+    Employee* e = handle->custom;
+    int salary = parseInt(EditGetValue(handle));
+    if (salary != e->salary) {
+        e->salary = (char) salary;
+        ColumnChanged(FIELD_SALARY);
+    }
+}
+
+void ColumnChanged(int fieldId) {
     currentChanged = true;
+    if (sortField == fieldId) {
+        if (sortDirection == ASC) {
+            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compare);
+        } else {
+            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compareReversed);
+        }
+    }
 }
 
 void EntryAdded(Employee* e) {

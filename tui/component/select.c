@@ -109,7 +109,7 @@ void SelectOnFocusLost(Component* handle) {
             closeList(select);
         }
         hideArrow(select);
-        select->action(handle);
+        select->OnEnter(handle);
     } else {
         wbkgd(select->selectedPanel->window, COLOR_PAIR(select->style->disabledColor));
     }
@@ -124,7 +124,7 @@ Component* CreateSelect(SelectStyle* style, int x, int y, int width, int count, 
     select->width = width;
     select->count = count;
     select->options = malloc(sizeof(wchar_t*) * count);
-    select->action = defaultSelectEnterAction;
+    select->OnEnter = defaultSelectEnterAction;
 
     InteractivePanel* listPanel = CreateInteractivePanel(handle, x, y + 1, width, count);
     wbkgd(listPanel->window, COLOR_PAIR(select->style->listColor));
@@ -170,6 +170,11 @@ void SelectSetEnabled(Component* handle, bool enabled) {
     } else {
         wbkgd(w, COLOR_PAIR(select->style->disabledColor));
     }
+}
+
+void SelectSetEnterAction(Component* handle, void (* OnEnter)(Component* handle)) {
+    Select* select = handle->spec;
+    select->OnEnter = OnEnter;
 }
 
 void SelectSetValue(Component* handle, int value) {

@@ -22,4 +22,6 @@ bool BackupFile(char* fileName);
 
 void WipeData(void);
 
+void KeyFieldChanged(void);
+
 #endif //MANUFACTURY_DATA_SOURCE_H

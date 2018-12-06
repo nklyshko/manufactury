@@ -15,8 +15,8 @@ struct Edit {
     int length;
     wchar_t* value;
     bool (* filter)(int s);
-    void (* OnValueEnter)(Component* handle);
     InteractivePanel* panel;
+    void (* OnEnter)(Component* handle);
 };
 
 struct EditStyle {
@@ -33,7 +33,7 @@ void EditSetValue(Component* handle, wchar_t* value);
 
 void EditSetFilter(Component* handle, bool (* filter)(int s));
 
-void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle));
+void EditSetEnterAction(Component* handle, void (* OnEnter)(Component* handle));
 
 wchar_t* EditGetValue(Component* handle);
 

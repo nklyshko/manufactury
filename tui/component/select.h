@@ -16,7 +16,7 @@ struct Select {
     wchar_t** options;
     InteractivePanel* selectedPanel;
     InteractivePanel* listPanel;
-    void (* action)(Component* handle);
+    void (* OnEnter)(Component* handle);
 };
 
 struct SelectStyle {
@@ -30,6 +30,8 @@ struct SelectStyle {
 Component* CreateSelect(SelectStyle* style, int x, int y, int width, int count, ...);
 
 void SelectSetEnabled(Component* handle, bool enabled);
+
+void SelectSetEnterAction(Component* handle, void (* OnEnter)(Component* handle));
 
 void SelectSetValue(Component* handle, int value);
 

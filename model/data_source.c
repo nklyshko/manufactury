@@ -133,7 +133,10 @@ bool BackupFile(char* fileName) {
     return rename(fileName, backupFileName) == 0;
 }
 
-void WipeData() {
+void WipeData(void) {
     array_remove_all_free(employees);
+}
 
+void KeyFieldChanged(void) {
+    array_sort(employees, (int (*)(const void*, const void*)) EmployeeIdComparator);
 }

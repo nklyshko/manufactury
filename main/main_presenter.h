@@ -16,7 +16,9 @@ void FileSave(void);
 
 void FileSaveAs(void);
 
-void EditAdd(void);;
+void EditAdd(void);
+
+void EditChange(Employee* employee);
 
 void ToolsExportCSV(void);
 
@@ -26,9 +28,29 @@ void TableOnScrollUp(ScrollType scrollType);
 
 void SortData(int fieldId, SortDirection direction);
 
-void ColumnUpdated(int fieldId);
+void ColumnChanged(int fieldId);
 
 void ChangeSurname(Component* handle);
+
+void ChangeName(Component* handle);
+
+void ChangePatronymic(Component* handle);
+
+void ChangeYOB(Component* handle);
+
+void ChangeGender(Component* handle);
+
+void ChangeProfession(Component* handle);
+
+void ChangeExperience(Component* handle);
+
+void ChangeClass(Component* handle);
+
+void ChangeDepartment(Component* handle);
+
+void ChangePlot(Component* handle);
+
+void ChangeSalary(Component* handle);
 
 void EntryAdded(Employee* e);
 
@@ -42,9 +64,7 @@ void EntryAdded(Employee* e);
 //void EditAdd(void);
 //
 //void EditDelete(void);
-//
-//void EditChange(void);
-//
+
 ////Tools menu
 //
 //void ToolsCreateReport(void);

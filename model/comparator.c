@@ -25,7 +25,7 @@ int EmployeePatronymicComparator(Employee** e1, Employee** e2) {
 }
 
 int EmployeeYOBComparator(Employee** e1, Employee** e2) {
-    return (*e1)->yearOfBirth - (*e2)->yearOfBirth;
+    return (*e1)->yob - (*e2)->yob;
 }
 
 int EmployeeGenderComparator(Employee** e1, Employee** e2) {
@@ -45,11 +45,11 @@ int EmployeeClassComparator(Employee** e1, Employee** e2) {
 }
 
 int EmployeeDepartmentComparator(Employee** e1, Employee** e2) {
-    return (*e1)->departmentId - (*e2)->departmentId;
+    return (*e1)->department - (*e2)->department;
 }
 
 int EmployeePlotComparator(Employee** e1, Employee** e2) {
-    return (*e1)->plotId - (*e2)->plotId;
+    return (*e1)->plot - (*e2)->plot;
 }
 
 int EmployeeSalaryComparator(Employee** e1, Employee** e2) {

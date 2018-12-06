@@ -171,7 +171,7 @@ void EditOnFocusLost(Component* handle) {
     } else {
         wbkgd(edit->panel->window, COLOR_PAIR(edit->style->disabledColor));
     }
-    edit->OnValueEnter(handle);
+    edit->OnEnter(handle);
 }
 
 Component* CreateEdit(EditStyle* style, int x, int y, int size) {
@@ -186,7 +186,7 @@ Component* CreateEdit(EditStyle* style, int x, int y, int size) {
     edit->value = malloc((size + 1) * sizeof(wchar_t));
     edit->value[0] = L'\0';
     edit->filter = NULL;
-    edit->OnValueEnter = defaultOnValueEnter;
+    edit->OnEnter = defaultOnValueEnter;
 
     InteractivePanel* panel = CreateInteractivePanel(handle, x, y, size + 1, 1);
     edit->panel = panel;
@@ -228,9 +228,9 @@ void EditSetFilter(Component* handle, bool (* filter)(int s)) {
     edit->filter = filter;
 }
 
-void EditSetEnterAction(Component* handle, void (* OnValueEnter)(Component* handle)) {
+void EditSetEnterAction(Component* handle, void (* OnEnter)(Component* handle)) {
     Edit* edit = handle->spec;
-    edit->OnValueEnter = OnValueEnter;
+    edit->OnEnter = OnEnter;
 }
 
 wchar_t* EditGetValue(Component* handle) {

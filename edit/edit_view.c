@@ -212,7 +212,7 @@ void ShowDataDialog(Employee* e, void (*onIdChange)(int id), void (* onConfirm)(
         EditSetValue(nameEdit, e->name);
         EditSetValue(patronymicEdit, e->patronymic);
         wchar_t yob[YOB_INPUT_WIDTH];
-        swprintf(yob, YOB_INPUT_WIDTH, L"%d", e->yearOfBirth);
+        swprintf(yob, YOB_INPUT_WIDTH, L"%d", e->yob);
         EditSetValue(yobEdit, yob);
         SelectSetValue(genderSelect, e->gender ? 0 : 1);
         EditSetValue(profEdit, e->profession);
@@ -221,10 +221,10 @@ void ShowDataDialog(Employee* e, void (*onIdChange)(int id), void (* onConfirm)(
         EditSetValue(expEdit, exp);
         SelectSetValue(classSelect, 0);
         wchar_t dept[DEPT_INPUT_WIDTH];
-        swprintf(dept, DEPT_INPUT_WIDTH, L"%d", e->departmentId);
+        swprintf(dept, DEPT_INPUT_WIDTH, L"%d", e->department);
         EditSetValue(deptEdit, dept);
         wchar_t plot[PLOT_INPUT_WIDTH];
-        swprintf(plot, PLOT_INPUT_WIDTH, L"%d", e->plotId);
+        swprintf(plot, PLOT_INPUT_WIDTH, L"%d", e->plot);
         EditSetValue(plotEdit, plot);
         wchar_t salary[SALARY_INPUT_WIDTH];
         swprintf(salary, SALARY_INPUT_WIDTH, L"%d", e->salary);
@@ -298,7 +298,6 @@ int GetEmployeeSalary(void) {
 Employee* GetEnteredData(void) {
     Employee* e = malloc(sizeof(Employee));
     int id = parseInt(EditGetValue(idEdit));
-//    if (id <= 0 || id > INT_MAX) return NULL; //show error message, free(e)
     e->id = id;
 
     EmployeeSetSurname(e, EditGetValue(surnameEdit));
@@ -308,30 +307,26 @@ Employee* GetEnteredData(void) {
     EmployeeSetPatronymic(e, EditGetValue(patronymicEdit));
 
     int yob = parseInt(EditGetValue(yobEdit));
-//    if (yob <= 0 || yob > INT16_MAX) return;
-    e->yearOfBirth = (short) yob;
+    e->yob = (short) yob;
 
     e->gender = ValueOfGender(SelectGetValue(genderSelect));
 
     EmployeeSetProfession(e, EditGetValue(profEdit));
 
     int exp = parseInt(EditGetValue(expEdit));
-//    if (exp < 0 || exp > CHAR_MAX) return;
     e->experience = (char) exp;
 
     e->class = ValueOfProfClass(SelectGetValue(classSelect));
 
     int dept = parseInt(EditGetValue(deptEdit));
-//    if (dept <= 0 || dept > CHAR_MAX) return;
-    e->departmentId = (char) dept;
+    e->department = (char) dept;
 
     int plot = parseInt(EditGetValue(plotEdit));
-//    if (plot <= 0 || plot > CHAR_MAX) return;
-    e->plotId = (char) plot;
+    e->plot = (char) plot;
 
     int salary = parseInt(EditGetValue(salaryEdit));
-//    if (salary <= 0 || salary > INT_MAX) return;
     e->salary = salary;
+
     return e;
 }
 

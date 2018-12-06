@@ -88,8 +88,6 @@ void EditFind(void);
 
 void EditDelete(void);
 
-void EditChange(void);
-
 //Tools menu
 void ToolsCreateReport(void);
 
@@ -109,7 +107,7 @@ void OnColumnDirectionChange(Component* handle) {
 }
 
 void OnIdButtonClick(Component* handle) {
-    log_debug("Click");
+    //ShowChangeDialog(handle.custom);
 }
 
 void createIdCol() {
@@ -155,6 +153,7 @@ void createNameCol() {
         colName[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_NAME_X, TABLE_BODY_START_Y + i, COL_NAME_WIDTH - 1);
         colName[i]->tabFocusing = false;
+        EditSetEnterAction(colName[i], ChangeName);
         LayoutAddComponent(mainLayout, colName[i]);
     }
 }
@@ -171,6 +170,7 @@ void createPatronymicCol() {
         colPatronymic[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_PATRONYMIC_X, TABLE_BODY_START_Y + i, COL_PATRONYMIC_WIDTH - 1);
         colPatronymic[i]->tabFocusing = false;
+        EditSetEnterAction(colPatronymic[i], ChangePatronymic);
         LayoutAddComponent(mainLayout, colPatronymic[i]);
     }
 }
@@ -188,6 +188,7 @@ void createYOBCol() {
                 COL_YOB_X, TABLE_BODY_START_Y + i, COL_YOB_WIDTH - 1);
         colYOB[i]->tabFocusing = false;
         EditSetFilter(colYOB[i], PositiveNumberFilter);
+        EditSetEnterAction(colYOB[i], ChangeYOB);
         LayoutAddComponent(mainLayout, colYOB[i]);
     }
 }
@@ -204,6 +205,7 @@ void createGenderCol() {
         colGender[i] = CreateSelect(i % 2 == 0 ? evenSelectStyle : oddSelectStyle,
                 COL_GENDER_X, TABLE_BODY_START_Y + i, COL_GENDER_WIDTH, 2, L"М", L"Ж");
         colGender[i]->tabFocusing = false;
+        SelectSetEnterAction(colGender[i], ChangeGender);
         LayoutAddComponent(mainLayout, colGender[i]);
     }
 }
@@ -220,6 +222,7 @@ void createProfCol() {
         colProf[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_PROF_X, TABLE_BODY_START_Y + i, COL_PROF_WIDTH - 1);
         colProf[i]->tabFocusing = false;
+        EditSetEnterAction(colProf[i], ChangeProfession);
         LayoutAddComponent(mainLayout, colProf[i]);
     }
 }
@@ -237,6 +240,7 @@ void createExpCol() {
                 COL_EXP_X, TABLE_BODY_START_Y + i, COL_EXP_WIDTH - 1);
         colExp[i]->tabFocusing = false;
         EditSetFilter(colExp[i], PositiveNumberFilter);
+        EditSetEnterAction(colExp[i], ChangeExperience);
         LayoutAddComponent(mainLayout, colExp[i]);
     }
 }
@@ -253,6 +257,7 @@ void createClassCol() {
         colClass[i] = CreateSelect(i % 2 == 0 ? evenSelectStyle : oddSelectStyle,
                 COL_CLASS_X, TABLE_BODY_START_Y + i, COL_CLASS_WIDTH, 3, L"1", L"2", L"3");
         colClass[i]->tabFocusing = false;
+        SelectSetEnterAction(colClass[i], ChangeClass);
         LayoutAddComponent(mainLayout, colClass[i]);
     }
 }
@@ -270,6 +275,7 @@ void createDeptCol() {
                 COL_DEPT_X, TABLE_BODY_START_Y + i, COL_DEPT_WIDTH - 1);
         colDept[i]->tabFocusing = false;
         EditSetFilter(colDept[i], PositiveNumberFilter);
+        EditSetEnterAction(colDept[i], ChangeDepartment);
         LayoutAddComponent(mainLayout, colDept[i]);
     }
 }
@@ -287,6 +293,7 @@ void createPlotCol() {
                 COL_PLOT_X, TABLE_BODY_START_Y + i, COL_PLOT_WIDTH - 1);
         colPlot[i]->tabFocusing = false;
         EditSetFilter(colPlot[i], PositiveNumberFilter);
+        EditSetEnterAction(colPlot[i], ChangePlot);
         LayoutAddComponent(mainLayout, colPlot[i]);
     }
 }
@@ -303,6 +310,7 @@ void createSalaryCol() {
         colSalary[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_SALARY_X, TABLE_BODY_START_Y + i, COL_SALARY_WIDTH - 1);
         colSalary[i]->tabFocusing = false;
+        EditSetEnterAction(colSalary[i], ChangeSalary);
         LayoutAddComponent(mainLayout, colSalary[i]);
     }
 }
@@ -403,7 +411,7 @@ void showData(int pos) {
         EditSetValue(colName[l], employee->name);
         EditSetValue(colPatronymic[l], employee->patronymic);
         wchar_t yob[COL_YOB_WIDTH];
-        swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yearOfBirth);
+        swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yob);
         EditSetValue(colYOB[l], yob);
         SelectSetValue(colGender[l], employee->gender ? 0 : 1);
         EditSetValue(colProf[l], employee->profession);
@@ -412,10 +420,10 @@ void showData(int pos) {
         EditSetValue(colExp[l], exp);
         SelectSetValue(colClass[l], employee->class - 1);
         wchar_t dept[COL_DEPT_WIDTH];
-        swprintf(dept, COL_DEPT_WIDTH, L"%d", employee->departmentId);
+        swprintf(dept, COL_DEPT_WIDTH, L"%d", employee->department);
         EditSetValue(colDept[l], dept);
         wchar_t plot[COL_PLOT_WIDTH];
-        swprintf(plot, COL_PLOT_WIDTH, L"%d", employee->plotId);
+        swprintf(plot, COL_PLOT_WIDTH, L"%d", employee->plot);
         EditSetValue(colPlot[l], plot);
         wchar_t salary[COL_SALARY_WIDTH];
         swprintf(salary, COL_SALARY_WIDTH, L"%d", employee->salary);
@@ -473,11 +481,6 @@ void InitMainView(void) {
 
     update_panels();
     doupdate();
-}
-
-void DestroyView(void) {
-    //завершение работы curses
-    endwin();
 }
 
 void StartControl(void) {
@@ -562,7 +565,5 @@ void ShowFileWriteError(void) {
 void EditFind(void) {};
 
 void EditDelete(void) {};
-
-void EditChange(void) {};
 
 void ToolsCreateReport(void) {};

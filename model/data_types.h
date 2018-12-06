@@ -36,13 +36,13 @@ struct Employee {
     wchar_t surname[SURNAME_LENGTH];
     wchar_t name[NAME_LENGTH];
     wchar_t patronymic[PATRONYMIC_LENGTH];
-    short yearOfBirth;
+    short yob;
     bool gender;
     wchar_t profession[PROFESSION_LENGTH];
     char experience;
     ProfClass class;
-    char departmentId;
-    char plotId;
+    char department;
+    char plot;
     int salary;
 };
 

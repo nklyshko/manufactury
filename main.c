@@ -36,6 +36,11 @@ void initPDCurses() {
     PDC_set_title("Manufactury v" MANUFACTURY_VERSION);
 }
 
+void endCurses() {
+    //завершение работы curses
+    endwin();
+}
+
 int main(int argc, char** argv) {
     FILE* log = fopen(LOG_FILE, "wt");
     log_set_fp(log);
@@ -48,6 +53,6 @@ int main(int argc, char** argv) {
     InitDataDialog(dialogBackground);
     InitApplication(NULL);
     StartControl();
-    DestroyView();
+    endCurses();
     fclose(log);
 }

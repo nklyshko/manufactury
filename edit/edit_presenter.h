@@ -5,6 +5,6 @@
 
 void ShowAddDialog(void);
 
-void ShoEditDialog(Employee* e);
+void ShowChangeDialog(Employee* e);
 
 #endif //MANUFACTURY_EDIT_PRESENTER_H
