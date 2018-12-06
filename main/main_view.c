@@ -3,7 +3,6 @@
 #include <src/log.h>
 #include <minmax.h>
 #include <model/data_types.h>
-#include <model/comparator.h>
 #include <model/filter.h>
 #include <tui/layout.h>
 #include <tui/styles.h>
@@ -106,10 +105,6 @@ void OnColumnDirectionChange(Component* handle) {
     SortData(columnLabel->fieldId, columnLabel->activeDirection);
 }
 
-void OnIdButtonClick(Component* handle) {
-    //ShowChangeDialog(handle.custom);
-}
-
 void createIdCol() {
     idColLabel = CreateColumnLabel(columnLabelStyle,
             COL_ID_X, TABLE_LABEL_Y, COL_ID_WIDTH, FIELD_ID, L"Т/Н");
@@ -120,7 +115,7 @@ void createIdCol() {
     LayoutAddComponent(mainLayout, idColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
         colId[i] = CreateButton(i % 2 == 0 ? evenButtonStyle : oddButtonStyle,
-                COL_ID_X, TABLE_BODY_START_Y + i, COL_ID_WIDTH, L"", OnIdButtonClick);
+                COL_ID_X, TABLE_BODY_START_Y + i, COL_ID_WIDTH, L"", EditEntry);
     }
 }
 
@@ -386,6 +381,33 @@ void drawTableFooter(bool disabled) {
     mvwhline(w, TABLE_BODY_START_Y + MAX_TABLE_SIZE, 0, ACS_UBLOCK, WIDTH);
 }
 
+void showLine(int l, Employee* employee) {
+    wchar_t id[COL_ID_WIDTH];
+    swprintf(id, COL_ID_WIDTH, L"%d", employee->id);
+    ButtonSetText(colId[l], id);
+    EditSetValue(colSurname[l], employee->surname);
+    EditSetValue(colName[l], employee->name);
+    EditSetValue(colPatronymic[l], employee->patronymic);
+    wchar_t yob[COL_YOB_WIDTH];
+    swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yob);
+    EditSetValue(colYOB[l], yob);
+    SelectSetValue(colGender[l], employee->gender ? 0 : 1);
+    EditSetValue(colProf[l], employee->profession);
+    wchar_t exp[COL_EXP_WIDTH];
+    swprintf(exp, COL_EXP_WIDTH, L"%d", employee->experience);
+    EditSetValue(colExp[l], exp);
+    SelectSetValue(colClass[l], employee->class - 1);
+    wchar_t dept[COL_DEPT_WIDTH];
+    swprintf(dept, COL_DEPT_WIDTH, L"%d", employee->department);
+    EditSetValue(colDept[l], dept);
+    wchar_t plot[COL_PLOT_WIDTH];
+    swprintf(plot, COL_PLOT_WIDTH, L"%d", employee->plot);
+    EditSetValue(colPlot[l], plot);
+    wchar_t salary[COL_SALARY_WIDTH];
+    swprintf(salary, COL_SALARY_WIDTH, L"%d", employee->salary);
+    EditSetValue(colSalary[l], salary);
+}
+
 void showData(int pos) {
     currentPos = pos;
     int newSize = min((int) (array_size(currentData) - currentPos), MAX_TABLE_SIZE);
@@ -404,30 +426,7 @@ void showData(int pos) {
         for (int c = 0; c < COLUMNS_COUNT; c++) {
             columns[c][l]->custom = employee;
         }
-        wchar_t id[COL_ID_WIDTH];
-        swprintf(id, COL_ID_WIDTH, L"%d", employee->id);
-        ButtonSetText(colId[l], id);
-        EditSetValue(colSurname[l], employee->surname);
-        EditSetValue(colName[l], employee->name);
-        EditSetValue(colPatronymic[l], employee->patronymic);
-        wchar_t yob[COL_YOB_WIDTH];
-        swprintf(yob, COL_YOB_WIDTH, L"%d", employee->yob);
-        EditSetValue(colYOB[l], yob);
-        SelectSetValue(colGender[l], employee->gender ? 0 : 1);
-        EditSetValue(colProf[l], employee->profession);
-        wchar_t exp[COL_EXP_WIDTH];
-        swprintf(exp, COL_EXP_WIDTH, L"%d", employee->experience);
-        EditSetValue(colExp[l], exp);
-        SelectSetValue(colClass[l], employee->class - 1);
-        wchar_t dept[COL_DEPT_WIDTH];
-        swprintf(dept, COL_DEPT_WIDTH, L"%d", employee->department);
-        EditSetValue(colDept[l], dept);
-        wchar_t plot[COL_PLOT_WIDTH];
-        swprintf(plot, COL_PLOT_WIDTH, L"%d", employee->plot);
-        EditSetValue(colPlot[l], plot);
-        wchar_t salary[COL_SALARY_WIDTH];
-        swprintf(salary, COL_SALARY_WIDTH, L"%d", employee->salary);
-        EditSetValue(colSalary[l], salary);
+        showLine(l, employee);
     }
     ScrollBarSetNumber(scrollBar, pos);
 }
@@ -559,6 +558,17 @@ void ShowFileReadError(void) {
 
 void ShowFileWriteError(void) {
     ShowMessageDialog(L"Ошибка записи файла", NULL);
+}
+
+void ShowEntryChanges(Employee* e) {
+    for (int l = 0; l < currentTableSize; l++) {
+        Employee* employee;
+        array_get_at(currentData, (size_t) currentPos + l, (void**) &employee);
+        if (employee == e) {
+            showLine(l, employee);
+            break;
+        }
+    }
 }
 
 //Edit actions

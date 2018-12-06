@@ -203,52 +203,59 @@ void InitDataDialog(int color) {
     LayoutAddComponent(dialog, errorText);
 }
 
-void ShowDataDialog(Employee* e, void (*onIdChange)(int id), void (* onConfirm)(void), void (* onCancel)(void)) {
-    if (e != NULL) {
-        wchar_t id[ID_INPUT_WIDTH];
-        swprintf(id, ID_INPUT_WIDTH, L"%d", e->id);
-        EditSetValue(idEdit, id);
-        EditSetValue(surnameEdit, e->surname);
-        EditSetValue(nameEdit, e->name);
-        EditSetValue(patronymicEdit, e->patronymic);
-        wchar_t yob[YOB_INPUT_WIDTH];
-        swprintf(yob, YOB_INPUT_WIDTH, L"%d", e->yob);
-        EditSetValue(yobEdit, yob);
-        SelectSetValue(genderSelect, e->gender ? 0 : 1);
-        EditSetValue(profEdit, e->profession);
-        wchar_t exp[EXP_INPUT_WIDTH];
-        swprintf(exp, EXP_INPUT_WIDTH, L"%d", e->experience);
-        EditSetValue(expEdit, exp);
-        SelectSetValue(classSelect, 0);
-        wchar_t dept[DEPT_INPUT_WIDTH];
-        swprintf(dept, DEPT_INPUT_WIDTH, L"%d", e->department);
-        EditSetValue(deptEdit, dept);
-        wchar_t plot[PLOT_INPUT_WIDTH];
-        swprintf(plot, PLOT_INPUT_WIDTH, L"%d", e->plot);
-        EditSetValue(plotEdit, plot);
-        wchar_t salary[SALARY_INPUT_WIDTH];
-        swprintf(salary, SALARY_INPUT_WIDTH, L"%d", e->salary);
-        EditSetValue(salaryEdit, salary);
-    } else {
-        EditSetValue(idEdit, L"");
-        EditSetValue(surnameEdit, L"");
-        EditSetValue(nameEdit, L"");
-        EditSetValue(patronymicEdit, L"");
-        EditSetValue(yobEdit, L"");
-        SelectSetValue(genderSelect, 0);
-        EditSetValue(profEdit, L"");
-        EditSetValue(expEdit, L"");
-        SelectSetValue(classSelect, 0);
-        EditSetValue(deptEdit, L"");
-        EditSetValue(plotEdit, L"");
-        EditSetValue(salaryEdit, L"");
-    }
+void ShowEmptyDialog(int recommendedId, void (*onIdChange)(int id), void (* onConfirm)(void), void (* onCancel)(void)) {
+    wchar_t id[ID_INPUT_WIDTH];
+    swprintf(id, ID_INPUT_WIDTH, L"%d", recommendedId);
+    EditSetValue(idEdit, id);
+    EditSetValue(surnameEdit, L"");
+    EditSetValue(nameEdit, L"");
+    EditSetValue(patronymicEdit, L"");
+    EditSetValue(yobEdit, L"");
+    SelectSetValue(genderSelect, 0);
+    EditSetValue(profEdit, L"");
+    EditSetValue(expEdit, L"");
+    SelectSetValue(classSelect, 0);
+    EditSetValue(deptEdit, L"");
+    EditSetValue(plotEdit, L"");
+    EditSetValue(salaryEdit, L"");
     idChangeAction = onIdChange;
     confirmAction = onConfirm;
     cancelAction = onCancel;
+    ComponentSetVisibility(errorText, false);
     ActivateLayout(dialog);
+}
 
-    DataIdCorrectness(false);
+void ShowDataDialog(Employee* e, void (*onIdChange)(int id), void (* onConfirm)(void), void (* onCancel)(void)) {
+    if (e == NULL) return;
+    wchar_t id[ID_INPUT_WIDTH];
+    swprintf(id, ID_INPUT_WIDTH, L"%d", e->id);
+    EditSetValue(idEdit, id);
+    EditSetValue(surnameEdit, e->surname);
+    EditSetValue(nameEdit, e->name);
+    EditSetValue(patronymicEdit, e->patronymic);
+    wchar_t yob[YOB_INPUT_WIDTH];
+    swprintf(yob, YOB_INPUT_WIDTH, L"%d", e->yob);
+    EditSetValue(yobEdit, yob);
+    SelectSetValue(genderSelect, e->gender ? 0 : 1);
+    EditSetValue(profEdit, e->profession);
+    wchar_t exp[EXP_INPUT_WIDTH];
+    swprintf(exp, EXP_INPUT_WIDTH, L"%d", e->experience);
+    EditSetValue(expEdit, exp);
+    SelectSetValue(classSelect, 0);
+    wchar_t dept[DEPT_INPUT_WIDTH];
+    swprintf(dept, DEPT_INPUT_WIDTH, L"%d", e->department);
+    EditSetValue(deptEdit, dept);
+    wchar_t plot[PLOT_INPUT_WIDTH];
+    swprintf(plot, PLOT_INPUT_WIDTH, L"%d", e->plot);
+    EditSetValue(plotEdit, plot);
+    wchar_t salary[SALARY_INPUT_WIDTH];
+    swprintf(salary, SALARY_INPUT_WIDTH, L"%d", e->salary);
+    EditSetValue(salaryEdit, salary);
+    idChangeAction = onIdChange;
+    confirmAction = onConfirm;
+    cancelAction = onCancel;
+    ComponentSetVisibility(errorText, false);
+    ActivateLayout(dialog);
 }
 
 int GetEmployeeId(void) {
@@ -273,6 +280,10 @@ int GetEmployeeYOB(void) {
 
 bool GetEmployeeGender(void) {
     return ValueOfGender(SelectGetValue(genderSelect));
+}
+
+wchar_t* GetEmployeeProfession(void) {
+    return EditGetValue(profEdit);
 }
 
 int GetEmployeeExperience(void) {
@@ -333,10 +344,10 @@ Employee* GetEnteredData(void) {
 void DataIdCorrectness(bool correct) {
     if (correct) {
         ButtonSetEnabled(confirmButton, true);
-        HideComponent(errorText);
+        ComponentSetVisibility(errorText, false);
     } else {
         ButtonSetEnabled(confirmButton, false);
-        ShowComponent(errorText);
+        ComponentSetVisibility(errorText, true);
     }
 }
 

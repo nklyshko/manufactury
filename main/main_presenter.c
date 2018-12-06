@@ -8,6 +8,7 @@
 #include <edit/edit_presenter.h>
 #include <tui/component/edit.h>
 #include <tui/component/select.h>
+#include <minmax.h>
 #include "main_presenter.h"
 #include "main_view.h"
 
@@ -287,6 +288,10 @@ void SortData(int fieldId, SortDirection direction) {
     }
 }
 
+void EditEntry(Component* handle) {
+    ShowChangeDialog(handle->custom);
+}
+
 void ChangeSurname(Component* handle) {
     Employee* e = handle->custom;
     wchar_t* surname = EditGetValue(handle);
@@ -386,14 +391,12 @@ void ChangeSalary(Component* handle) {
     }
 }
 
+bool needSorting = false;
+
 void ColumnChanged(int fieldId) {
     currentChanged = true;
     if (sortField == fieldId) {
-        if (sortDirection == ASC) {
-            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compare);
-        } else {
-            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compareReversed);
-        }
+        needSorting = true;
     }
 }
 
@@ -407,5 +410,26 @@ void EntryAdded(Employee* e) {
     }
     if (updated >= pos && updated < pos + pageSize) {
         SetPos(pos);
+    }
+}
+
+void EntryChanged(Employee* e) {
+    if (needSorting) {
+        needSorting = false;
+        size_t oldPos;
+        if (array_index_of(sorted, e, &oldPos) != 0) oldPos = 0;
+        if (sortDirection == ASC) {
+            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compare);
+        } else {
+            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compareReversed);
+        }
+        size_t newPos;
+        if (array_index_of(sorted, e, &newPos) != 0) newPos = 0;
+        if (newPos != oldPos) {
+            pos = (int) (newPos - max((oldPos - pos), 0));
+            SetPos(pos);
+        }
+    } else {
+        ShowEntryChanges(e);
     }
 }

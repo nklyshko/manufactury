@@ -32,6 +32,7 @@ Component* focusedComponent = NULL;
 Component* CreateComponent() {
     Component* component = malloc(sizeof(Component));
     component->custom = NULL;
+    component->visibility = true;
     component->visible = false;
     component->prevFocus = NULL;
     component->nextFocus = NULL;
@@ -46,7 +47,7 @@ Component* CreateComponent() {
 }
 
 void ShowComponent(Component* component) {
-    if (!component->visible) {
+    if (component->visibility && !component->visible) {
         //TODO: проверить соответствие активного layout'a
         component->Show(component);
         component->visible = true;
@@ -85,7 +86,7 @@ void FocusPrevComponent(Component* resetComponent) {
         component->OnFocusLost(component);
     }
     if (focusedComponent != NULL) {
-        while (!focusedComponent->tabFocusing || !focusedComponent->OnFocusGet(focusedComponent)) {
+        while (!focusedComponent->visible || !focusedComponent->tabFocusing || !focusedComponent->OnFocusGet(focusedComponent)) {
             if (focusedComponent->prevFocus == NULL) {
                 if (resetComponent != NULL) {
                     focusedComponent = resetComponent;
@@ -112,7 +113,7 @@ void FocusNextComponent(Component* resetComponent) {
         component->OnFocusLost(component);
     }
     if (focusedComponent != NULL) {
-        while (!focusedComponent->tabFocusing || !focusedComponent->OnFocusGet(focusedComponent)) {
+        while (!focusedComponent->visible || !focusedComponent->tabFocusing || !focusedComponent->OnFocusGet(focusedComponent)) {
             if (focusedComponent->nextFocus == NULL) {
                 if (resetComponent != NULL) {
                     focusedComponent = resetComponent;
@@ -139,6 +140,15 @@ void DefocusComponent(Component* component) {
 
 Component* GetFocusedComponent(void) {
     return focusedComponent;
+}
+
+void ComponentSetVisibility(Component* component, bool visibility) {
+    component->visibility = visibility;
+    if (component->visibility) {
+        ShowComponent(component);
+    } else {
+        HideComponent(component);
+    }
 }
 
 void ComponentHandleMouseEvent(MEVENT event) {

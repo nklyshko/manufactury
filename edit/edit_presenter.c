@@ -27,7 +27,14 @@ void addOnCancel(void) {
 
 
 void ShowAddDialog(void) {
-    ShowDataDialog(NULL, addOnIdChange, addOnConfirm, addOnCancel);
+    Array* data = GetEmployees();
+    int recommendedId = 1;
+    if (array_size(data) > 0) {
+        Employee* last;
+        array_get_last(data, (void**) &last);
+        recommendedId = last->id + 1;
+    }
+    ShowEmptyDialog(recommendedId, addOnIdChange, addOnConfirm, addOnCancel);
 }
 
 void editOnIdChange(int id) {
@@ -70,7 +77,7 @@ void editOnConfirm(void) {
         currentEntry->gender = gender;
         ColumnChanged(FIELD_GENDER);
     }
-    wchar_t* profession = GetEmployeeSurname();
+    wchar_t* profession = GetEmployeeProfession();
     if (wcscmp(profession, currentEntry->profession) != 0) {
         EmployeeSetProfession(currentEntry, profession);
         ColumnChanged(FIELD_PROFESSION);
@@ -100,6 +107,7 @@ void editOnConfirm(void) {
         currentEntry->salary = salary;
         ColumnChanged(FIELD_SALARY);
     }
+    EntryChanged(currentEntry);
     currentEntry = NULL;
 }
 

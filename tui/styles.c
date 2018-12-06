@@ -55,8 +55,12 @@ void InitStyle(void) {
     yesButtonStyle = CreateButtonStyle(91, 42, 43);
     noButtonStyle = CreateButtonStyle(92, 42, 43);
     cancelButtonStyle = CreateButtonStyle(93, 42, 43);
+    init_pair(91, COLOR_BLACK, COLOR_GREEN_LIGHT);
+    init_pair(92, COLOR_BLACK, COLOR_RED_LIGHT);
+    init_pair(93, COLOR_BLACK, COLOR_GRAY_LIGHT);
 
-    textAreaStyle = CreateTextAreaStyle(dialogBackground);
+    textAreaStyle = CreateTextAreaStyle(99);
+    init_pair(99, COLOR_BLACK, COLOR_GRAY_LIGHT);
 
     labelStyle = CreateLabelStyle(21);
 
@@ -125,10 +129,6 @@ void InitStyle(void) {
     init_pair(84, COLOR_GRAY_DARK, COLOR_WHITE);
     init_pair(85, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
     init_pair(86, COLOR_GRAY_LIGHT, COLOR_WHITE);
-
-    init_pair(91, COLOR_GRAY_DARK, COLOR_GREEN_LIGHT);
-    init_pair(92, COLOR_GRAY_DARK, COLOR_RED_LIGHT);
-    init_pair(93, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
 
     init_pair(21, COLOR_BLACK, COLOR_WHITE);
     init_pair(51, COLOR_BLACK, COLOR_GRAY_LIGHT);

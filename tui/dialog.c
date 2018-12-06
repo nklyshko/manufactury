@@ -60,7 +60,7 @@ void InitDialogsLayouts(int color) {
 
     messageDialog = CreateLayout(x, y, DIALOG_WIDTH, DIALOG_HEIGHT);
     wbkgd(messageDialog->window, COLOR_PAIR(color));
-    messageText = CreateTextArea(textAreaStyle, x + 1, y + 1, DIALOG_WIDTH - 2, DIALOG_HEIGHT - 2);
+    messageText = CreateTextArea(textAreaStyle, x + 1, y + 1, DIALOG_WIDTH - 2, DIALOG_HEIGHT - 4);
     okButton = CreateButton(cancelButtonStyle, x + (DIALOG_WIDTH - 4) / 2, btnY, 4, L" Ок ", OnOkClick);
     LayoutAddComponent(messageDialog, messageText);
     LayoutAddComponent(messageDialog, okButton);

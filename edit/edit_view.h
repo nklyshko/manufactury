@@ -6,7 +6,9 @@
 
 void InitDataDialog(int color);
 
-void ShowDataDialog(Employee* e, void (*onIdEnter)(int id), void (* onConfirm)(void), void (* onCancel)(void));
+void ShowEmptyDialog(int recommendedId, void (*onIdChange)(int id), void (* onConfirm)(void), void (* onCancel)(void));
+
+void ShowDataDialog(Employee* e, void (*onIdChange)(int id), void (* onConfirm)(void), void (* onCancel)(void));
 
 int GetEmployeeId(void);
 
@@ -19,6 +21,8 @@ wchar_t* GetEmployeePatronymic(void);
 int GetEmployeeYOB(void);
 
 bool GetEmployeeGender(void);
+
+wchar_t* GetEmployeeProfession(void);
 
 int GetEmployeeExperience(void);
 

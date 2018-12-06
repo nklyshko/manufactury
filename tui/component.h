@@ -10,6 +10,7 @@ struct Component {
     void* spec;
     void* custom;
     char* id; //debug???
+    bool visibility;
     bool visible;
     bool tabFocusing;
     Component* prevFocus;
@@ -39,6 +40,8 @@ void FocusNextComponent(Component* resetComponent);
 void DefocusComponent(Component* component);
 
 Component* GetFocusedComponent(void);
+
+void ComponentSetVisibility(Component* component, bool visibility);
 
 void ComponentHandleMouseEvent(MEVENT event);
 

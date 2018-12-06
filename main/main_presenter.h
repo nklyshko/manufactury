@@ -28,6 +28,8 @@ void TableOnScrollUp(ScrollType scrollType);
 
 void SortData(int fieldId, SortDirection direction);
 
+void EditEntry(Component* handle);
+
 void ColumnChanged(int fieldId);
 
 void ChangeSurname(Component* handle);
@@ -53,6 +55,8 @@ void ChangePlot(Component* handle);
 void ChangeSalary(Component* handle);
 
 void EntryAdded(Employee* e);
+
+void EntryChanged(Employee* e);
 
 ////Redirect to controller(check if file already have name, or its new...)
 //void FileSaveAs(void);

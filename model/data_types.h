@@ -33,12 +33,12 @@ enum ProfClass {
 
 struct Employee {
     int id;
-    wchar_t surname[SURNAME_LENGTH];
-    wchar_t name[NAME_LENGTH];
-    wchar_t patronymic[PATRONYMIC_LENGTH];
+    wchar_t surname[SURNAME_LENGTH + 1];
+    wchar_t name[NAME_LENGTH + 1];
+    wchar_t patronymic[PATRONYMIC_LENGTH + 1];
     short yob;
     bool gender;
-    wchar_t profession[PROFESSION_LENGTH];
+    wchar_t profession[PROFESSION_LENGTH + 1];
     char experience;
     ProfClass class;
     char department;
