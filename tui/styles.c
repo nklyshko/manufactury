@@ -63,6 +63,7 @@ void InitStyle(void) {
     init_pair(99, COLOR_BLACK, COLOR_GRAY_LIGHT);
 
     labelStyle = CreateLabelStyle(21);
+    init_pair(21, COLOR_BLACK, COLOR_GRAY_LIGHT);
 
     scrollBarStyle = CreateScrollBarStyle(51);
 
@@ -130,6 +131,5 @@ void InitStyle(void) {
     init_pair(85, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
     init_pair(86, COLOR_GRAY_LIGHT, COLOR_WHITE);
 
-    init_pair(21, COLOR_BLACK, COLOR_WHITE);
     init_pair(51, COLOR_BLACK, COLOR_GRAY_LIGHT);
 }

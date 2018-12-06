@@ -4,6 +4,7 @@
 #include <model/data_types.h>
 #include <model/comparator.h>
 #include <tui/layout.h>
+#include <tui/interactive_panel.h>
 #include "global.h"
 
 void InitApplication(char* param);
@@ -18,7 +19,9 @@ void FileSaveAs(void);
 
 void EditAdd(void);
 
-void EditChange(Employee* employee);
+void EditDelete(void);
+
+void EditChange(void);
 
 void ToolsExportCSV(void);
 
@@ -29,6 +32,10 @@ void TableOnScrollUp(ScrollType scrollType);
 void SortData(int fieldId, SortDirection direction);
 
 void EditEntry(Component* handle);
+
+void OnIdButtonMouseClick(InteractivePanel* handle, MEVENT event);
+
+void OnIdButtonKeyClick(Component* handle, int key, unsigned long modifiers);
 
 void ColumnChanged(int fieldId);
 
@@ -64,10 +71,6 @@ void EntryChanged(Employee* e);
 //
 ////Edit menu
 //void EditFind(void);
-//
-//void EditAdd(void);
-//
-//void EditDelete(void);
 
 ////Tools menu
 //

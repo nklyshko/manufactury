@@ -6,6 +6,7 @@
 #include <tui/dialog.h>
 #include <edit/edit_view.h>
 #include <model/data_source.h>
+#include <edit/id_input_dialog.h>
 #include "global.h"
 #include "main/main_view.h"
 #include "main/main_presenter.h"
@@ -51,6 +52,7 @@ int main(int argc, char** argv) {
     InitMainView();
     InitDialogsLayouts(dialogBackground);
     InitDataDialog(dialogBackground);
+    InitIdInputDialog(dialogBackground);
     InitApplication(NULL);
     StartControl();
     endCurses();

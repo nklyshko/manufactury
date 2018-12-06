@@ -116,6 +116,8 @@ void createIdCol() {
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
         colId[i] = CreateButton(i % 2 == 0 ? evenButtonStyle : oddButtonStyle,
                 COL_ID_X, TABLE_BODY_START_Y + i, COL_ID_WIDTH, L"", EditEntry);
+        colId[i]->OnKeyClick = OnIdButtonKeyClick;
+        ((Button*) colId[i]->spec)->panel->OnMouseClick = OnIdButtonMouseClick;
     }
 }
 
@@ -573,7 +575,5 @@ void ShowEntryChanges(Employee* e) {
 
 //Edit actions
 void EditFind(void) {};
-
-void EditDelete(void) {};
 
 void ToolsCreateReport(void) {};

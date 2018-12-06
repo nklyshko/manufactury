@@ -79,8 +79,10 @@ void ActivateLayout(Layout* layout) {
 
 void LayoutHandleMouseEvent(MEVENT event) {
     if (event.bstate & BUTTON4_PRESSED) {
+        FocusSingleComponent(NULL);
         activeLayout->OnScrollUp(SINGLE);
     } else if (event.bstate & BUTTON5_PRESSED) {
+        FocusSingleComponent(NULL);
         activeLayout->OnScrollDown(SINGLE);
     } else {
         int mouseX = event.x;
@@ -113,8 +115,10 @@ void LayoutHandleKeyboardEvent(int key, unsigned long modifiers) {
     } else if (key == KEY_ESC) {
         FocusSingleComponent(NULL);
     } else if (key == KEY_PGUP) {
+        FocusSingleComponent(NULL);
         activeLayout->OnScrollUp(PAGE);
     } else if (key == KEY_PGDOWN) {
+        FocusSingleComponent(NULL);
         activeLayout->OnScrollDown(PAGE);
     } else {
         ComponentHandleKeyboardEvent(key, modifiers);

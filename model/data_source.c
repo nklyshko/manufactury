@@ -29,7 +29,7 @@ int namePos(char* path, int len) {
     return 0;
 }
 
-int idEqualComparator(void* id, void* e) {
+int idEqualPredicate(void* id, void* e) {
     return **((int**)id) - (*((Employee**)e))->id;
 }
 
@@ -46,7 +46,13 @@ void RemoveEmployee(Employee* e) {
 }
 
 bool EmployeeIdExists(int id) {
-    return array_sorted_contains(employees, &id, idEqualComparator);
+    return array_sorted_contains(employees, &id, idEqualPredicate);
+}
+
+Employee* GetEmployee(int id) {
+    Employee* e = NULL;
+    array_get_tagged(employees, &id, idEqualPredicate, (void**) &e);
+    return e;
 }
 
 Array* GetEmployees(void) {

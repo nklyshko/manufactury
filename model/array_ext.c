@@ -1,19 +1,19 @@
 #include "array_ext.h"
 
-bool array_sorted_contains(Array* a, void* e, int (*comparator)(void* e1, void *e2)) {
+bool array_sorted_contains(Array* a, void* e, int (*predicate)(void* e1, void *e2)) {
     if (array_size(a) == 0) {
         return false;
     } else if (array_size(a) == 1) {
         void* c;
         array_get_last(a, &c);
-        return comparator(&e, &c) == 0;
+        return predicate(&e, &c) == 0;
     } else {
         void* left;
         array_get_at(a, 0, &left);
         void* right;
         array_get_last(a, &right);
         int cl, cr;
-        if ((cl = comparator(&e, &left)) == 0 || (cr = comparator(&e, &right)) == 0) {
+        if ((cl = predicate(&e, &left)) == 0 || (cr = predicate(&e, &right)) == 0) {
             return true;
         } else if (cl < 0 || cr > 0) {
             return false;
@@ -25,7 +25,7 @@ bool array_sorted_contains(Array* a, void* e, int (*comparator)(void* e1, void *
             while (r - l > 1) {
                 m = (r + l) / 2;
                 array_get_at(a, (size_t) m, &mid);
-                int c = comparator(&e, &mid);
+                int c = predicate(&e, &mid);
                 if (c == 0) {
                     return true;
                 } else if (c < 0) {
@@ -37,9 +37,9 @@ bool array_sorted_contains(Array* a, void* e, int (*comparator)(void* e1, void *
                 }
             }
             if (r == m) {
-                return comparator(&e, &left) == 0;
+                return predicate(&e, &left) == 0;
             } else {
-                return comparator(&e, &right) == 0;
+                return predicate(&e, &right) == 0;
             }
         }
     }
@@ -97,13 +97,13 @@ int array_sorted_add(Array* a, void* e, int (* comparator)(void* e1, void* e2), 
     }
 }
 
-void array_remove_single(Array* a, void* e, int (* comparator)(void* e1, void* e2)) {
+void array_get_tagged(Array* a, void* tag, int (* predicate)(void* tag, void* e), void** out) {
     ArrayIter iter;
     array_iter_init(&iter, a);
     void* next;
-    while(array_iter_next(&iter, &next) != CC_ITER_END) {
-        if (comparator(&e, &next) == 0) {
-            array_iter_remove(&iter, NULL);
+    while (array_iter_next(&iter, &next) != CC_ITER_END) {
+        if (predicate(&tag, &next) == 0) {
+            *out = next;
             break;
         }
     }

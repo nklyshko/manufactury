@@ -12,6 +12,8 @@ void RemoveEmployee(Employee* e);
 
 bool EmployeeIdExists(int id);
 
+Employee* GetEmployee(int id);
+
 Array* GetEmployees(void);
 
 bool ReadFile(char* fileName);

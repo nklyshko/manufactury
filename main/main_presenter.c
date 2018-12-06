@@ -9,10 +9,10 @@
 #include <tui/component/edit.h>
 #include <tui/component/select.h>
 #include <minmax.h>
+#include <tui/component/button.h>
+#include <edit/id_input_dialog.h>
 #include "main_presenter.h"
 #include "main_view.h"
-
-#define TESTS 400
 
 Array* sorted = NULL;
 int pos = 0;
@@ -29,6 +29,7 @@ bool currentOpened = false;
 
 char currentFileName[PATH_MAX] = { '\0' };
 bool currentChanged = false;
+bool needSorting = false;
 
 void updateData(Array* data) {
     if (data == NULL) {
@@ -63,6 +64,35 @@ void newFile(void) {
     setCurrentFile(NULL);
     WipeData();
     updateData(GetEmployees());
+}
+
+void deleteEntry(Employee* e) {
+    currentChanged = true;
+    RemoveEmployee(e);
+    size_t removePos = 0;
+    array_index_of(sorted, e, &removePos);
+    array_remove(sorted, e, NULL);
+    if (removePos >= pos && removePos < pos + pageSize) {
+        SetPos(pos);
+    }
+}
+
+void deleteById(int id) {
+    Employee* e = GetEmployee(id);
+    if (e == NULL) {
+        ShowMessageDialog(L"Работник с таким табельным номером не найден", NULL);
+    } else {
+        deleteEntry(e);
+    }
+}
+
+void changeById(int id) {
+    Employee* e = GetEmployee(id);
+    if (e == NULL) {
+        ShowMessageDialog(L"Работник с таким табельным номером не найден", NULL);
+    } else {
+        ShowChangeDialog(e);
+    }
 }
 
 void InitApplication(char* param) {
@@ -227,8 +257,22 @@ void EditAdd(void) {
     ShowAddDialog();
 }
 
-void EditChange(Employee* employee) {
-    ShowChangeDialog(employee);
+void EditDelete(void) {
+    Component* component = GetFocusedComponent();
+    if (component != NULL && component->custom != NULL) {
+        deleteEntry(component->custom);
+    } else {
+        ShowIdInputDialog(deleteById);
+    }
+}
+
+void EditChange(void) {
+    Component* component = GetFocusedComponent();
+    if (component != NULL && component->custom != NULL) {
+        EditEntry(component);
+    } else {
+        ShowIdInputDialog(changeById);
+    }
 }
 
 void ToolsExportCSV(void) {
@@ -292,6 +336,23 @@ void EditEntry(Component* handle) {
     ShowChangeDialog(handle->custom);
 }
 
+void OnIdButtonMouseClick(InteractivePanel* handle, MEVENT event) {
+    if (event.bstate & BUTTON1_DOUBLE_CLICKED) {
+        FocusSingleComponent(NULL);
+        EditEntry(handle->holder);
+    }
+}
+
+void OnIdButtonKeyClick(Component* handle, int key, unsigned long modifiers) {
+    if (key == KEY_DELETE) {
+        FocusSingleComponent(NULL);
+        deleteEntry(handle->custom);
+    } else if (key == KEY_ENTER) {
+        FocusSingleComponent(NULL);
+        EditEntry(handle);
+    }
+}
+
 void ChangeSurname(Component* handle) {
     Employee* e = handle->custom;
     wchar_t* surname = EditGetValue(handle);
@@ -341,7 +402,7 @@ void ChangeProfession(Component* handle) {
     Employee* e = handle->custom;
     wchar_t* profession = EditGetValue(handle);
     if (wcscmp(profession, e->profession) != 0) {
-        EmployeeSetName(e, profession);
+        EmployeeSetProfession(e, profession);
         ColumnChanged(FIELD_PROFESSION);
     }
 }
@@ -391,8 +452,6 @@ void ChangeSalary(Component* handle) {
     }
 }
 
-bool needSorting = false;
-
 void ColumnChanged(int fieldId) {
     currentChanged = true;
     if (sortField == fieldId) {
@@ -417,14 +476,14 @@ void EntryChanged(Employee* e) {
     if (needSorting) {
         needSorting = false;
         size_t oldPos;
-        if (array_index_of(sorted, e, &oldPos) != 0) oldPos = 0;
+        if (array_index_of(sorted, e, &oldPos) != CC_OK) oldPos = 0;
         if (sortDirection == ASC) {
             array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compare);
         } else {
             array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compareReversed);
         }
         size_t newPos;
-        if (array_index_of(sorted, e, &newPos) != 0) newPos = 0;
+        if (array_index_of(sorted, e, &newPos) != CC_OK) newPos = 0;
         if (newPos != oldPos) {
             pos = (int) (newPos - max((oldPos - pos), 0));
             SetPos(pos);
