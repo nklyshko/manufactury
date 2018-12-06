@@ -45,7 +45,7 @@ extern LabelStyle* dataDialogLabelStyle;
 extern EditStyle* dataDialogEditStyle;
 extern SelectStyle* dataDialogSelectStyle;
 extern ButtonStyle* dataDialogButtonStyle;
-extern LabelStyle* dataDialogErrorLabelStyle;
+extern TextAreaStyle* dataDialogErrorTextStyle;
 
 extern int mainBackground;
 extern int tableEvenColor;

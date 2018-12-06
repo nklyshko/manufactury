@@ -21,7 +21,7 @@ LabelStyle* dataDialogLabelStyle;
 EditStyle* dataDialogEditStyle;
 SelectStyle* dataDialogSelectStyle;
 ButtonStyle* dataDialogButtonStyle;
-LabelStyle* dataDialogErrorLabelStyle;
+TextAreaStyle* dataDialogErrorTextStyle;
 
 int mainBackground;
 int tableEvenColor;
@@ -82,10 +82,10 @@ void InitStyle(void) {
 
     dataDialogButtonStyle = CreateButtonStyle(131, 132, 133);
     init_pair(131, COLOR_BLACK, COLOR_GRAY_LIGHT);
-    init_pair(132, COLOR_BLACK, COLOR_GRAY_LIGHT);
+    init_pair(132, COLOR_GRAY_DARK, COLOR_GRAY_LIGHT);
     init_pair(133, COLOR_BLACK, COLOR_CYAN_LIGHT);
 
-    dataDialogErrorLabelStyle = CreateLabelStyle(141);
+    dataDialogErrorTextStyle = CreateTextAreaStyle(141);
     init_pair(141, COLOR_RED_DARK, COLOR_GRAY_LIGHT);
 
     init_pair(11, COLOR_BLACK, COLOR_WHITE);

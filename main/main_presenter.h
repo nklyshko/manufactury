@@ -24,9 +24,13 @@ void TableOnScrollDown(ScrollType scrollType);
 
 void TableOnScrollUp(ScrollType scrollType);
 
-void SortData(Comparator* comparator, SortDirection direction);
-//TODO: передавать идентификатор(компаратор?) столбца, в котором произошли измеения
-//void ColumnUpdated(...);
+void SortData(int fieldId, SortDirection direction);
+
+void ColumnUpdated(int fieldId);
+
+void ChangeSurname(Component* handle);
+
+void EntryAdded(Employee* e);
 
 ////Redirect to controller(check if file already have name, or its new...)
 //void FileSaveAs(void);

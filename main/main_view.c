@@ -24,8 +24,7 @@
 #define HELP_Y 19
 
 #define MAX_TABLE_SIZE 23
-#define TABLE_WIDTH WIDTH - 1
-#define COLUMNS_COUNT 12
+#define COLUMNS_COUNT FIELDS_COUNT
 #define TABLE_LABEL_Y 2
 #define TABLE_BODY_START_Y TABLE_LABEL_Y + 2
 
@@ -106,9 +105,7 @@ void OnColumnDirectionChange(Component* handle) {
         }
     }
     ColumnLabel* columnLabel = handle->spec;
-    if (columnLabel->comparator != NULL) {
-        SortData(columnLabel->comparator, columnLabel->activeDirection);
-    }
+    SortData(columnLabel->fieldId, columnLabel->activeDirection);
 }
 
 void OnIdButtonClick(Component* handle) {
@@ -117,11 +114,10 @@ void OnIdButtonClick(Component* handle) {
 
 void createIdCol() {
     idColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_ID_X, TABLE_LABEL_Y, COL_ID_WIDTH, L"Т/Н");
-    labels[0] = idColLabel;
-    columns[0] = colId;
+            COL_ID_X, TABLE_LABEL_Y, COL_ID_WIDTH, FIELD_ID, L"Т/Н");
+    labels[FIELD_ID] = idColLabel;
+    columns[FIELD_ID] = colId;
     ColumnLabel* columnLabel = idColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeIdComparator, EmployeeIdComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, idColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -132,28 +128,27 @@ void createIdCol() {
 
 void createSurnameCol() {
     surnameColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_SURNAME_X, TABLE_LABEL_Y, COL_SURNAME_WIDTH, L"Фамилия");
-    labels[1] = surnameColLabel;
-    columns[1] = colSurname;
+            COL_SURNAME_X, TABLE_LABEL_Y, COL_SURNAME_WIDTH, FIELD_SURNAME, L"Фамилия");
+    labels[FIELD_SURNAME] = surnameColLabel;
+    columns[FIELD_SURNAME] = colSurname;
     ColumnLabel* columnLabel = surnameColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeSurnameComparator, EmployeeSurnameComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, surnameColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
         colSurname[i] = CreateEdit(i % 2 == 0 ? evenEditStyle : oddEditStyle,
                 COL_SURNAME_X, TABLE_BODY_START_Y + i, COL_SURNAME_WIDTH - 1);
         colSurname[i]->tabFocusing = false;
+        EditSetEnterAction(colSurname[i], ChangeSurname);
         LayoutAddComponent(mainLayout, colSurname[i]);
     }
 }
 
 void createNameCol() {
     nameColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_NAME_X, TABLE_LABEL_Y, COL_NAME_WIDTH, L"Имя");
-    labels[2] = nameColLabel;
-    columns[2] = colName;
+            COL_NAME_X, TABLE_LABEL_Y, COL_NAME_WIDTH, FIELD_NAME, L"Имя");
+    labels[FIELD_NAME] = nameColLabel;
+    columns[FIELD_NAME] = colName;
     ColumnLabel* columnLabel = nameColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeNameComparator, EmployeeNameComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, nameColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -166,11 +161,10 @@ void createNameCol() {
 
 void createPatronymicCol() {
     patronymicColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_PATRONYMIC_X, TABLE_LABEL_Y, COL_PATRONYMIC_WIDTH, L"Отчество");
-    labels[3] = patronymicColLabel;
-    columns[3] = colPatronymic;
+            COL_PATRONYMIC_X, TABLE_LABEL_Y, COL_PATRONYMIC_WIDTH, FIELD_PATRONYMIC, L"Отчество");
+    labels[FIELD_PATRONYMIC] = patronymicColLabel;
+    columns[FIELD_PATRONYMIC] = colPatronymic;
     ColumnLabel* columnLabel = patronymicColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeePatronymicComparator, EmployeePatronymicComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, patronymicColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -183,11 +177,10 @@ void createPatronymicCol() {
 
 void createYOBCol() {
     yobColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_YOB_X, TABLE_LABEL_Y, COL_YOB_WIDTH, L"Г.р.");
-    labels[4] = yobColLabel;
-    columns[4] = colYOB;
+            COL_YOB_X, TABLE_LABEL_Y, COL_YOB_WIDTH, FIELD_YOB, L"Г.р.");
+    labels[FIELD_YOB] = yobColLabel;
+    columns[FIELD_YOB] = colYOB;
     ColumnLabel* columnLabel = yobColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeYOBComparator, EmployeeYOBComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, yobColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -201,11 +194,10 @@ void createYOBCol() {
 
 void createGenderCol() {
     genderColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_GENDER_X, TABLE_LABEL_Y, COL_GENDER_WIDTH, L"Пол");
-    labels[5] = genderColLabel;
-    columns[5] = colGender;
+            COL_GENDER_X, TABLE_LABEL_Y, COL_GENDER_WIDTH, FIELD_GENDER, L"Пол");
+    labels[FIELD_GENDER] = genderColLabel;
+    columns[FIELD_GENDER] = colGender;
     ColumnLabel* columnLabel = genderColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeGenderComparator, EmployeeGenderComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, genderColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -218,11 +210,10 @@ void createGenderCol() {
 
 void createProfCol() {
     profColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_PROF_X, TABLE_LABEL_Y, COL_PROF_WIDTH, L"Профессия");
-    labels[6] = profColLabel;
-    columns[6] = colProf;
+            COL_PROF_X, TABLE_LABEL_Y, COL_PROF_WIDTH, FIELD_PROFESSION, L"Профессия");
+    labels[FIELD_PROFESSION] = profColLabel;
+    columns[FIELD_PROFESSION] = colProf;
     ColumnLabel* columnLabel = profColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeProfessionComparator, EmployeeProfessionComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, profColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -235,11 +226,10 @@ void createProfCol() {
 
 void createExpCol() {
     expColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_EXP_X, TABLE_LABEL_Y, COL_EXP_WIDTH, L"Оп.");
-    labels[7] = expColLabel;
-    columns[7] = colExp;
+            COL_EXP_X, TABLE_LABEL_Y, COL_EXP_WIDTH, FIELD_EXPERIENCE, L"Оп.");
+    labels[FIELD_EXPERIENCE] = expColLabel;
+    columns[FIELD_EXPERIENCE] = colExp;
     ColumnLabel* columnLabel = expColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeExperienceComparator, EmployeeExperienceComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, expColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -253,11 +243,10 @@ void createExpCol() {
 
 void createClassCol() {
     classColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_CLASS_X, TABLE_LABEL_Y, COL_CLASS_WIDTH, L"Р-д");
-    labels[8] = classColLabel;
-    columns[8] = colClass;
+            COL_CLASS_X, TABLE_LABEL_Y, COL_CLASS_WIDTH, FIELD_CLASS, L"Р-д");
+    labels[FIELD_CLASS] = classColLabel;
+    columns[FIELD_CLASS] = colClass;
     ColumnLabel* columnLabel = classColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeClassComparator, EmployeeClassComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, classColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -270,11 +259,10 @@ void createClassCol() {
 
 void createDeptCol() {
     deptColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_DEPT_X, TABLE_LABEL_Y, COL_DEPT_WIDTH, L"Цех");
-    labels[9] = deptColLabel;
-    columns[9] = colDept;
+            COL_DEPT_X, TABLE_LABEL_Y, COL_DEPT_WIDTH, FIELD_DEPARTMENT, L"Цех");
+    labels[FIELD_DEPARTMENT] = deptColLabel;
+    columns[FIELD_DEPARTMENT] = colDept;
     ColumnLabel* columnLabel = deptColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeDepartmentComparator, EmployeeDepartmentComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, deptColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -288,11 +276,10 @@ void createDeptCol() {
 
 void createPlotCol() {
     plotColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_PLOT_X, TABLE_LABEL_Y, COL_PLOT_WIDTH, L"Уч.");
-    labels[10] = plotColLabel;
-    columns[10] = colPlot;
+            COL_PLOT_X, TABLE_LABEL_Y, COL_PLOT_WIDTH, FIELD_PLOT, L"Уч.");
+    labels[FIELD_PLOT] = plotColLabel;
+    columns[FIELD_PLOT] = colPlot;
     ColumnLabel* columnLabel = plotColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeePlotComparator, EmployeePlotComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, plotColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -306,11 +293,10 @@ void createPlotCol() {
 
 void createSalaryCol() {
     salaryColLabel = CreateColumnLabel(columnLabelStyle,
-            COL_SALARY_X, TABLE_LABEL_Y, COL_SALARY_WIDTH, L"Зарплата");
-    labels[11] = salaryColLabel;
-    columns[11] = colSalary;
+            COL_SALARY_X, TABLE_LABEL_Y, COL_SALARY_WIDTH, FIELD_SALARY, L"Зарплата");
+    labels[FIELD_SALARY] = salaryColLabel;
+    columns[FIELD_SALARY] = colSalary;
     ColumnLabel* columnLabel = salaryColLabel->spec;
-    columnLabel->comparator = CreateComparator(EmployeeSalaryComparator, EmployeeSalaryComparatorReversed);
     columnLabel->OnDirectionChange = OnColumnDirectionChange;
     LayoutAddComponent(mainLayout, salaryColLabel);
     for (int i = 0; i < MAX_TABLE_SIZE; i++) {
@@ -407,6 +393,9 @@ void showData(int pos) {
     for (int l = 0; l < currentTableSize; l++) {
         Employee* employee;
         array_get_at(currentData, (size_t) pos + l, (void**) &employee);
+        for (int c = 0; c < COLUMNS_COUNT; c++) {
+            columns[c][l]->custom = employee;
+        }
         wchar_t id[COL_ID_WIDTH];
         swprintf(id, COL_ID_WIDTH, L"%d", employee->id);
         ButtonSetText(colId[l], id);
@@ -439,8 +428,6 @@ void InitMainView(void) {
     resize_term(HEIGHT, WIDTH);
 
     mainLayout = CreateLayout(0, 0, WIDTH, HEIGHT);
-    log_debug("color id %d", mainBackground);
-    log_debug("color value %d %d", COLOR_PAIR(mainBackground), COLOR_PAIR(0));
     wbkgd(mainLayout->window, COLOR_PAIR(mainBackground));
 
     Component* menu1 = CreateMenu(menuStyle, 0, 0, L"Файл", 4,

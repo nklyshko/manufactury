@@ -6,6 +6,7 @@
 #include <tui/winapi_bridge.h>
 #include <tui/dialog.h>
 #include <edit/edit_presenter.h>
+#include <tui/component/edit.h>
 #include "main_presenter.h"
 #include "main_view.h"
 
@@ -14,8 +15,9 @@
 Array* sorted = NULL;
 int pos = 0;
 int pageSize = 23;
-Comparator* sortComparator = NULL;
+int sortField = 0;
 SortDirection sortDirection = NONE;
+Comparator* comparators[FIELDS_COUNT];
 
 /*
  * true - Работа с данными, сохраненными в существующий файл
@@ -29,15 +31,15 @@ bool currentChanged = false;
 void updateData(Array* data) {
     if (data == NULL) {
         if (sorted != NULL) {
-            array_destroy_cb(sorted, free);
+            array_destroy(sorted);
             sorted = NULL;
             ShowStarter();
         }
-    } else {
+    } else { ;
         if (sorted == NULL) {
             ShowTable();
         } else {
-            array_destroy_cb(sorted, free);
+            array_destroy(sorted);
             sorted = NULL;
         }
         array_copy_shallow(data, &sorted);
@@ -62,7 +64,19 @@ void newFile(void) {
 }
 
 void InitApplication(char* param) {
-    InitDataSource();
+    comparators[FIELD_ID] = CreateComparator(EmployeeIdComparator, EmployeeIdComparatorReversed);
+    comparators[FIELD_SURNAME] = CreateComparator(EmployeeSurnameComparator, EmployeeSurnameComparatorReversed);
+    comparators[FIELD_NAME] = CreateComparator(EmployeeNameComparator, EmployeeNameComparatorReversed);
+    comparators[FIELD_PATRONYMIC] = CreateComparator(EmployeePatronymicComparator, EmployeePatronymicComparatorReversed);
+    comparators[FIELD_YOB] = CreateComparator(EmployeeYOBComparator, EmployeeYOBComparatorReversed);
+    comparators[FIELD_GENDER] = CreateComparator(EmployeeGenderComparator, EmployeeGenderComparatorReversed);
+    comparators[FIELD_PROFESSION] = CreateComparator(EmployeeProfessionComparator, EmployeeProfessionComparatorReversed);
+    comparators[FIELD_EXPERIENCE] = CreateComparator(EmployeeExperienceComparator, EmployeeExperienceComparatorReversed);
+    comparators[FIELD_CLASS] = CreateComparator(EmployeeClassComparator, EmployeeClassComparatorReversed);
+    comparators[FIELD_DEPARTMENT] = CreateComparator(EmployeeDepartmentComparator, EmployeeDepartmentComparatorReversed);
+    comparators[FIELD_PLOT] = CreateComparator(EmployeePlotComparator, EmployeePlotComparatorReversed);
+    comparators[FIELD_SALARY] = CreateComparator(EmployeeSalaryComparator, EmployeeSalaryComparatorReversed);
+
     currentFileName[0] = '\0';
     if (param == NULL) {
         ShowStarter();
@@ -79,8 +93,7 @@ void newSaveChanges(void) {
     } else {
         char fileName[PATH_MAX] = { '\0' };
         if (ShowSaveFileDialog(fileName, PATH_MAX)) {
-            setCurrentFile(fileName);
-            if (WriteFile(currentFileName)) {
+            if (WriteFile(fileName)) {
                 newFile();
             } else {
                 ShowFileWriteError();
@@ -207,28 +220,6 @@ void FileSaveAs(void) {
     }
 }
 
-void newEmployee(void) {
-    currentChanged = true;
-    if (EmployeeIdExists(GetEmployeeId())) {
-        //TODO: показать ошибку в диалоге добавления(т.е. не закрывать диалог автоматически по нажатию ОК)
-    } else {
-        Employee* e = AddEmployee(GetEnteredData());
-        int updated = 0;
-        if (sortComparator == NULL) {
-            updated = array_sorted_add(sorted, e, (int (*)(void*, void*)) EmployeeIdComparator);
-        } else {
-            if (sortDirection == ASC) {
-                updated = array_sorted_add(sorted, e, (int (*)(void*, void*)) sortComparator->compare);
-            } else {
-                updated = array_sorted_add(sorted, e, (int (*)(void*, void*)) sortComparator->compareReversed);
-            }
-        };
-        if (updated >= pos && updated < pos + pageSize) {
-            SetPos(pos);
-        }
-    }
-}
-
 void EditAdd(void) {
     if (sorted == NULL) return;
     ShowAddDialog();
@@ -268,10 +259,10 @@ void TableOnScrollUp(ScrollType scrollType) {
     SetPos(pos);
 }
 
-void SortData(Comparator* comparator, SortDirection direction) {
+void SortData(int fieldId, SortDirection direction) {
     if (sorted == NULL) return;
     if (direction == NONE) return;
-    if (sortComparator == comparator) { //признак сортировки не изменился
+    if (sortField == fieldId) { //признак сортировки не изменился
         if (sortDirection != direction) { //сортировка не требуется, дотстаочно перевернуть массив
             sortDirection = direction;
             array_reverse(sorted);
@@ -279,14 +270,33 @@ void SortData(Comparator* comparator, SortDirection direction) {
             SetPos(0);
         }
     } else { //признак сортировки изменился, требуется сортировка
-        sortComparator = comparator;
+        sortField = fieldId;
         sortDirection = direction;
         if (sortDirection == ASC) {
-            array_sort(sorted, (int (*)(const void*, const void*)) sortComparator->compare);
+            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compare);
         } else {
-            array_sort(sorted, (int (*)(const void*, const void*)) sortComparator->compareReversed);
+            array_sort(sorted, (int (*)(const void*, const void*)) comparators[sortField]->compareReversed);
         }
         pos = 0;
         SetPos(0);
+    }
+}
+
+void ChangeSurname(Component* handle) {
+    Employee* e = handle->custom;
+    EmployeeSetSurname(e, EditGetValue(handle));
+    currentChanged = true;
+}
+
+void EntryAdded(Employee* e) {
+    currentChanged = true;
+    int updated = 0;
+    if (sortDirection == ASC) {
+        updated = array_sorted_add(sorted, e, (int (*)(void*, void*)) comparators[sortField]->compare, NULL);
+    } else {
+        updated = array_sorted_add(sorted, e, (int (*)(void*, void*)) comparators[sortField]->compareReversed, NULL);
+    }
+    if (updated >= pos && updated < pos + pageSize) {
+        SetPos(pos);
     }
 }

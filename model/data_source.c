@@ -29,20 +29,24 @@ int namePos(char* path, int len) {
     return 0;
 }
 
+int idEqualComparator(void* id, void* e) {
+    return **((int**)id) - (*((Employee**)e))->id;
+}
+
 void InitDataSource(void) {
     array_new(&employees);
 }
 
 void AddEmployee(Employee* e) {
-    array_sorted_add(employees, e, (int (*)(void*, void*)) EmployeeIdComparator);
+    array_sorted_add(employees, e, (int (*)(void*, void*)) EmployeeIdComparator, NULL);
 }
 
 void RemoveEmployee(Employee* e) {
     array_remove(employees, e, NULL);
 }
 
-bool EmployeeIdExists(Employee* e) {
-    return array_sorted_contains(employees, e, (int (*)(void*, void*)) EmployeeIdComparator);
+bool EmployeeIdExists(int id) {
+    return array_sorted_contains(employees, &id, idEqualComparator);
 }
 
 Array* GetEmployees(void) {
@@ -131,4 +135,5 @@ bool BackupFile(char* fileName) {
 
 void WipeData() {
     array_remove_all_free(employees);
+
 }

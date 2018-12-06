@@ -5,6 +5,7 @@
 #include <tui/styles.h>
 #include <tui/dialog.h>
 #include <edit/edit_view.h>
+#include <model/data_source.h>
 #include "global.h"
 #include "main/main_view.h"
 #include "main/main_presenter.h"
@@ -41,6 +42,7 @@ int main(int argc, char** argv) {
     initPDCurses();
     InitStyle();
     InitHotKeyHandler(NULL);
+    InitDataSource();
     InitMainView();
     InitDialogsLayouts(dialogBackground);
     InitDataDialog(dialogBackground);

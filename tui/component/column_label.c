@@ -77,14 +77,14 @@ void ColumnLabelOnFocusLost(Component* handle) {
     }
 }
 
-Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wchar_t* text) {
+Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, int fieldId, wchar_t* text) {
     Component* handle = CreateComponent();
     ColumnLabel* columnLabel = malloc(sizeof(ColumnLabel));
     columnLabel->style = style;
     columnLabel->enabled = true;
     columnLabel->size = size;
+    columnLabel->fieldId = fieldId;
     columnLabel->activeDirection = NONE;
-    columnLabel->comparator = NULL;
     columnLabel->OnDirectionChange = defaultOnDirectionChange;
     columnLabel->text = malloc(sizeof(wchar_t) * (size + 1));
     wmemcpy_s(columnLabel->text, (size_t) size, text, (size_t) size); //wcscpy_s не работает

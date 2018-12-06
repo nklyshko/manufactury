@@ -10,7 +10,7 @@ void AddEmployee(Employee* e);
 
 void RemoveEmployee(Employee* e);
 
-bool EmployeeIdExists(Employee* e);
+bool EmployeeIdExists(int id);
 
 Array* GetEmployees(void);
 

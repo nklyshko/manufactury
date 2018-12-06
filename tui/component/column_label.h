@@ -12,10 +12,10 @@ struct ColumnLabel {
     ColumnLabelStyle* style;
     bool enabled;
     int size;
+    int fieldId;
     SortDirection activeDirection;
     wchar_t* text;
     InteractivePanel* panel;
-    Comparator* comparator;
     void (* OnDirectionChange)(Component* handle);
 };
 
@@ -26,7 +26,7 @@ struct ColumnLabelStyle {
     int disabledColor;
 };
 
-Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, wchar_t* text);
+Component* CreateColumnLabel(ColumnLabelStyle* style, int x, int y, int size, int fieldId, wchar_t* text);
 
 void ColumnLabelSetEnabled(Component* handle, bool enabled);
 

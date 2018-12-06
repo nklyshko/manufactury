@@ -9,6 +9,21 @@
 #define PATRONYMIC_LENGTH 16
 #define PROFESSION_LENGTH 16
 
+#define FIELDS_COUNT 12
+
+#define FIELD_ID 0
+#define FIELD_SURNAME 1
+#define FIELD_NAME 2
+#define FIELD_PATRONYMIC 3
+#define FIELD_YOB 4
+#define FIELD_GENDER 5
+#define FIELD_PROFESSION 6
+#define FIELD_EXPERIENCE 7
+#define FIELD_CLASS 8
+#define FIELD_DEPARTMENT 9
+#define FIELD_PLOT 10
+#define FIELD_SALARY 11
+
 typedef struct Employee Employee;
 typedef enum ProfClass ProfClass;
 
