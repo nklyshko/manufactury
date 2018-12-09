@@ -25,6 +25,8 @@ void EditChange(void);
 
 void ToolsExportCSV(void);
 
+void ToolsCreateReport(void);
+
 void TableOnScrollDown(ScrollType scrollType);
 
 void TableOnScrollUp(ScrollType scrollType);
@@ -65,15 +67,7 @@ void EntryAdded(Employee* e);
 
 void EntryChanged(Employee* e);
 
-////Redirect to controller(check if file already have name, or its new...)
-//void FileSaveAs(void);
-////Show save dialog, request file save to controller with selected filename
-//
 ////Edit menu
 //void EditFind(void);
-
-////Tools menu
-//
-//void ToolsCreateReport(void);
 
 #endif //MANUFACTURY_MAIN_PRESENTER_H

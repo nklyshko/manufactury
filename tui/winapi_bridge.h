@@ -9,4 +9,6 @@ bool ShowOpenFileDialog(char* fileName, int maxLength);
 
 bool ShowSaveFileDialog(char* fileName, int maxLength);
 
+bool ShowSaveReportDialog(char* fileName, int maxLength);
+
 #endif //MANUFACTURY_MESSAGE_BOX_H

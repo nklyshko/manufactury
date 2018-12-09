@@ -44,6 +44,7 @@ Component* CreateLabel(LabelStyle* style, int x, int y, int size, wchar_t* text)
 void LabelSetText(Component* handle, wchar_t* text) {
     Label* label = handle->spec;
     wmemcpy_s(label->text, (size_t) label->size, text, (size_t) label->size);
+    wclear(label->panel->window);
     mvwaddwstr(label->panel->window, 0, 0, label->text);
 }
 

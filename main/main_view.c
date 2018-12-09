@@ -85,11 +85,6 @@ Component* colSalary[MAX_TABLE_SIZE];
 //Edit menu
 void EditFind(void);
 
-void EditDelete(void);
-
-//Tools menu
-void ToolsCreateReport(void);
-
 bool running = true;
 int currentTableSize = 0;
 Array* currentData = NULL;
@@ -575,5 +570,3 @@ void ShowEntryChanges(Employee* e) {
 
 //Edit actions
 void EditFind(void) {};
-
-void ToolsCreateReport(void) {};

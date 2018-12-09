@@ -7,6 +7,8 @@
 #include <edit/edit_view.h>
 #include <model/data_source.h>
 #include <edit/id_input_dialog.h>
+#include <report/report_view.h>
+#include <report/report_param_dialog.h>
 #include "global.h"
 #include "main/main_view.h"
 #include "main/main_presenter.h"
@@ -53,6 +55,8 @@ int main(int argc, char** argv) {
     InitDialogsLayouts(dialogBackground);
     InitDataDialog(dialogBackground);
     InitIdInputDialog(dialogBackground);
+    InitReportParamDialog(dialogBackground);
+    InitReportView(dialogBackground);
     InitApplication(NULL);
     StartControl();
     endCurses();

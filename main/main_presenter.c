@@ -11,6 +11,7 @@
 #include <minmax.h>
 #include <tui/component/button.h>
 #include <edit/id_input_dialog.h>
+#include <report/report_presenter.h>
 #include "main_presenter.h"
 #include "main_view.h"
 
@@ -277,6 +278,10 @@ void EditChange(void) {
 
 void ToolsExportCSV(void) {
 
+}
+
+void ToolsCreateReport(void) {
+    ShowReportDialog();
 }
 
 void TableOnScrollDown(ScrollType scrollType) {

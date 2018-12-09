@@ -38,7 +38,25 @@ bool ShowSaveFileDialog(char* fileName, int maxLength) {
     ofn.lpstrTitle = "Save file";
     ofn.lpstrDefExt = "mnf";
     ofn.Flags = OFN_NONETWORKBUTTON |
-                OFN_FILEMUSTEXIST |
+                OFN_OVERWRITEPROMPT |
+                OFN_HIDEREADONLY;
+    if (GetSaveFileName(&ofn)) return true;
+    return false;
+}
+
+bool ShowSaveReportDialog(char* fileName, int maxLength) {
+    OPENFILENAME ofn;
+    memset(&ofn, 0, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = NULL;
+    ofn.lpstrFilter = "Text files\0*.txt\0All files\0*.*\0\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFile = fileName;
+    ofn.nMaxFile = (DWORD) maxLength;
+    ofn.lpstrTitle = "Save report";
+    ofn.lpstrDefExt = "txt";
+    ofn.Flags = OFN_NONETWORKBUTTON |
+                OFN_OVERWRITEPROMPT |
                 OFN_HIDEREADONLY;
     if (GetSaveFileName(&ofn)) return true;
     return false;
