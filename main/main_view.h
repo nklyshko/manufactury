@@ -15,5 +15,6 @@ void ResetActiveColumnLabel(void);
 void ShowFileReadError(void);
 void ShowFileWriteError(void);
 void ShowEntryChanges(Employee* e);
+void ShowFilterError(void);
 
 #endif //MANUFACTURY_MAIN_VIEW_H

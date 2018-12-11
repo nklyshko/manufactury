@@ -12,8 +12,10 @@
 #include <tui/component/button.h>
 #include <edit/id_input_dialog.h>
 #include <report/report_presenter.h>
+#include <model/predicate.h>
 #include "main_presenter.h"
 #include "main_view.h"
+#include "filter_dialog.h"
 
 Array* sorted = NULL;
 int pos = 0;
@@ -32,6 +34,10 @@ char currentFileName[PATH_MAX] = { '\0' };
 bool currentChanged = false;
 bool needSorting = false;
 
+int (* predicates[FIELDS_COUNT]) (void* value, void* e);
+void* predicateParameter = NULL;
+int (* predicate)(void* value, void* e);
+
 void updateData(Array* data) {
     if (data == NULL) {
         if (sorted != NULL) {
@@ -39,7 +45,7 @@ void updateData(Array* data) {
             sorted = NULL;
             ShowStarter();
         }
-    } else { ;
+    } else {
         if (sorted == NULL) {
             ShowTable();
         } else {
@@ -47,7 +53,9 @@ void updateData(Array* data) {
             sorted = NULL;
         }
         array_copy_shallow(data, &sorted);
+        sortField = 0;
         SetData(sorted);
+        ResetActiveColumnLabel();
     }
 }
 
@@ -96,6 +104,83 @@ void changeById(int id) {
     }
 }
 
+bool filterData(const void* e) {
+    return predicate(predicateParameter, (void*) e) == 0;
+}
+
+void filterAll(int fieldId, wchar_t* value) {
+    bool mem = false;
+    bool filter = true;
+    switch (fieldId) {
+        case FIELD_ID:
+        case FIELD_YOB:
+        case FIELD_EXPERIENCE:
+        case FIELD_DEPARTMENT:
+        case FIELD_PLOT:
+        case FIELD_SALARY:
+            predicateParameter = malloc(sizeof(int));
+            mem = true;
+            *((int*) predicateParameter) = parseInt(value);
+            if (*((int*) predicateParameter) == -1) {
+                 filter = false;
+            }
+            break;
+        case FIELD_GENDER:
+            predicateParameter = malloc(sizeof(bool));
+            mem = true;
+            switch (value[0]) {
+                case L'М':
+                    *((bool*) predicateParameter) = true;
+                    break;
+                case L'Ж':
+                    *((bool*) predicateParameter) = false;
+                    break;
+                default:
+                    filter = false;
+                    break;
+            }
+            break;
+        case FIELD_CLASS:
+            predicateParameter = malloc(sizeof(ProfClass));
+            mem = true;
+            switch (value[0]) {
+                case L'1':
+                    *((ProfClass*) predicateParameter) = FIRST;
+                    break;
+                case L'2':
+                    *((ProfClass*) predicateParameter) = SECOND;
+                    break;
+                case L'3':
+                    *((ProfClass*) predicateParameter) = THIRD;
+                    break;
+                default:
+                    filter = false;
+                    break;
+            }
+            break;
+        default:
+            predicateParameter = value;
+            break;
+    }
+    if (filter) {
+        predicate = predicates[fieldId];
+        Array* filtered;
+        array_copy_shallow(GetEmployees(), &filtered);
+        array_filter_mut(filtered, filterData);
+        if (array_size(filtered) == 0) {
+            ShowFilterError();
+        } else {
+            updateData(filtered);
+        }
+    } else {
+        ShowFilterError();
+    }
+    if (mem) {
+        free(predicateParameter);
+        predicateParameter = NULL;
+    }
+}
+
 void InitApplication(char* param) {
     comparators[FIELD_ID] = CreateComparator(EmployeeIdComparator, EmployeeIdComparatorReversed);
     comparators[FIELD_SURNAME] = CreateComparator(EmployeeSurnameComparator, EmployeeSurnameComparatorReversed);
@@ -109,6 +194,19 @@ void InitApplication(char* param) {
     comparators[FIELD_DEPARTMENT] = CreateComparator(EmployeeDepartmentComparator, EmployeeDepartmentComparatorReversed);
     comparators[FIELD_PLOT] = CreateComparator(EmployeePlotComparator, EmployeePlotComparatorReversed);
     comparators[FIELD_SALARY] = CreateComparator(EmployeeSalaryComparator, EmployeeSalaryComparatorReversed);
+
+    predicates[FIELD_ID] = (int (*)(void*, void*)) EmployeeIdPredicate;
+    predicates[FIELD_SURNAME] = (int (*)(void*, void*)) EmployeeSurnamePredicate;
+    predicates[FIELD_NAME] = (int (*)(void*, void*)) EmployeeNamePredicate;
+    predicates[FIELD_PATRONYMIC] = (int (*)(void*, void*)) EmployeePatronymicPredicate;
+    predicates[FIELD_YOB] = (int (*)(void*, void*)) EmployeeYOBPredicate;
+    predicates[FIELD_GENDER] = (int (*)(void*, void*)) EmployeeGenderPredicate;
+    predicates[FIELD_PROFESSION] = (int (*)(void*, void*)) EmployeeProfessionPredicate;
+    predicates[FIELD_EXPERIENCE] = (int (*)(void*, void*)) EmployeeExperiencePredicate;
+    predicates[FIELD_CLASS] = (int (*)(void*, void*)) EmployeeClassPredicate;
+    predicates[FIELD_DEPARTMENT] = (int (*)(void*, void*)) EmployeeDepartmentPredicate;
+    predicates[FIELD_PLOT] = (int (*)(void*, void*)) EmployeePlotPredicate;
+    predicates[FIELD_SALARY] = (int (*)(void*, void*)) EmployeeSalaryPredicate;
 
     currentFileName[0] = '\0';
     if (param == NULL) {
@@ -253,12 +351,23 @@ void FileSaveAs(void) {
     }
 }
 
+void EditFind(void) {
+    if (sorted == NULL) return;
+    ShowFilterDialog(filterAll);
+}
+
+void EditCancelFind(void) {
+    if (sorted == NULL) return;
+    updateData(GetEmployees());
+}
+
 void EditAdd(void) {
     if (sorted == NULL) return;
     ShowAddDialog();
 }
 
 void EditDelete(void) {
+    if (sorted == NULL) return;
     Component* component = GetFocusedComponent();
     if (component != NULL && component->custom != NULL) {
         deleteEntry(component->custom);
@@ -268,6 +377,7 @@ void EditDelete(void) {
 }
 
 void EditChange(void) {
+    if (sorted == NULL) return;
     Component* component = GetFocusedComponent();
     if (component != NULL && component->custom != NULL) {
         EditEntry(component);
@@ -281,6 +391,7 @@ void ToolsExportCSV(void) {
 }
 
 void ToolsCreateReport(void) {
+    if (sorted == NULL) return;
     ShowReportDialog();
 }
 
@@ -290,7 +401,7 @@ void TableOnScrollDown(ScrollType scrollType) {
     if (scrollType == PAGE) {
         step = pageSize;
     }
-    if (pos == array_size(sorted) - 1) return;
+    if (array_size(sorted) == 0 || pos == array_size(sorted) - 1) return;
     if (pos + step > array_size(sorted) - 1) {
         pos = (int) (array_size(sorted) - 1);
     } else {
@@ -305,7 +416,7 @@ void TableOnScrollUp(ScrollType scrollType) {
     if (scrollType == PAGE) {
         step = pageSize;
     }
-    if (pos == 0) return;
+    if (array_size(sorted) == 0 || pos == 0) return;
     if (pos - step < 0) {
         pos = 0;
     } else {

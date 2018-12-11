@@ -82,9 +82,6 @@ Component* colPlot[MAX_TABLE_SIZE];
 Component* salaryColLabel;
 Component* colSalary[MAX_TABLE_SIZE];
 
-//Edit menu
-void EditFind(void);
-
 bool running = true;
 int currentTableSize = 0;
 Array* currentData = NULL;
@@ -439,8 +436,9 @@ void InitMainView(void) {
                                   L"Открыть", CreateHotKey('O', KEY_CTRL), FileOpen,
                                   L"Сохранить", CreateHotKey('S', KEY_CTRL), FileSave,
                                   L"Сохранить как...", CreateHotKey('S', KEY_CTRL | KEY_SHIFT), FileSaveAs);
-    Component* menu2 = CreateMenu(menuStyle, 6, 0, L"Правка", 4,
+    Component* menu2 = CreateMenu(menuStyle, 6, 0, L"Правка", 5,
                                   L"Найти", CreateHotKey('F', KEY_CTRL), EditFind,
+                                  L"Отменить поиск", CreateHotKey('F', KEY_ALT), EditCancelFind,
                                   L"Добавить", CreateHotKey('I', KEY_CTRL), EditAdd,
                                   L"Удалить", CreateHotKey('D', KEY_CTRL), EditDelete,
                                   L"Изменить", CreateHotKey('E', KEY_CTRL), EditChange);
@@ -488,8 +486,8 @@ void StartControl(void) {
             unsigned long modifiers = PDC_get_key_modifiers();
             if (input == KEY_RESIZE) {
                 resize_term(0, 0);
-                if (LINES < HEIGHT || COLS < WIDTH) {
-                    ShowMessage(L"Уменьшение окна не поддерживается");
+                if (LINES != HEIGHT || COLS != WIDTH) {
+                    ShowMessage(L"Изменение размеров окна не поддерживается");
                     running = false;
                     return;
                 }
@@ -549,12 +547,22 @@ void ShowTable(void) {
     doupdate();
 }
 
+void ResetActiveColumnLabel(void) {
+    for (int i = 0; i < COLUMNS_COUNT; i++) {
+        ColumnLabelSetDirection(labels[i], NONE);
+    }
+}
+
 void ShowFileReadError(void) {
     ShowMessageDialog(L"Ошибка чтения файла", NULL);
 }
 
 void ShowFileWriteError(void) {
     ShowMessageDialog(L"Ошибка записи файла", NULL);
+}
+
+void ShowFilterError(void) {
+    ShowMessageDialog(L"Записи не найдены", NULL);
 }
 
 void ShowEntryChanges(Employee* e) {
@@ -567,6 +575,3 @@ void ShowEntryChanges(Employee* e) {
         }
     }
 }
-
-//Edit actions
-void EditFind(void) {};

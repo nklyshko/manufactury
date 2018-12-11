@@ -9,6 +9,7 @@
 #include <edit/id_input_dialog.h>
 #include <report/report_view.h>
 #include <report/report_param_dialog.h>
+#include <main/filter_dialog.h>
 #include "global.h"
 #include "main/main_view.h"
 #include "main/main_presenter.h"
@@ -56,6 +57,7 @@ int main(int argc, char** argv) {
     InitDataDialog(dialogBackground);
     InitIdInputDialog(dialogBackground);
     InitReportParamDialog(dialogBackground);
+    InitFilterDialog(dialogBackground);
     InitReportView(dialogBackground);
     InitApplication(NULL);
     StartControl();

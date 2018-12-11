@@ -31,7 +31,7 @@ add_executable(manufactury main.c
         model/data_types.c model/data_types.h main/logo.c main/logo.h model/data_source.c model/data_source.h model/array_ext.c model/array_ext.h
         main/main_presenter.c main/main_presenter.h model/comparator.c model/comparator.h tui/dialog.c tui/dialog.h tui/component/textarea.c tui/component/textarea.h
         edit/edit_view.c edit/edit_view.h model/filter.c model/filter.h edit/edit_presenter.c edit/edit_presenter.h version.h edit/id_input_dialog.c edit/id_input_dialog.h
-        report/report_view.c report/report_view.h report/report_param_dialog.c report/report_param_dialog.h main/filter_dialog.c main/filter_dialog.h report/report_presenter.c report/report_presenter.h)
+        report/report_view.c report/report_view.h report/report_param_dialog.c report/report_param_dialog.h main/filter_dialog.c main/filter_dialog.h report/report_presenter.c report/report_presenter.h model/predicate.c model/predicate.h)
 target_link_libraries(manufactury pdcurses)
 target_link_libraries(manufactury collectionsc)
 

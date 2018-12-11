@@ -17,6 +17,10 @@ void FileSave(void);
 
 void FileSaveAs(void);
 
+void EditFind(void);
+
+void EditCancelFind(void);
+
 void EditAdd(void);
 
 void EditDelete(void);
@@ -66,8 +70,5 @@ void ChangeSalary(Component* handle);
 void EntryAdded(Employee* e);
 
 void EntryChanged(Employee* e);
-
-////Edit menu
-//void EditFind(void);
 
 #endif //MANUFACTURY_MAIN_PRESENTER_H
