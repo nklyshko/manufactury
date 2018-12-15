@@ -15,7 +15,9 @@
 #include "main/main_presenter.h"
 #include "version.h"
 
-#define LOG_FILE "log.txt"
+#ifdef DEBUG_LOG
+    #define LOG_FILE "log.txt"
+#endif
 
 void initPDCurses() {
     //инициализация главного окна
@@ -46,8 +48,10 @@ void endCurses() {
 }
 
 int main(int argc, char** argv) {
+#ifdef DEBUG_LOG
     FILE* log = fopen(LOG_FILE, "wt");
     log_set_fp(log);
+#endif
     initPDCurses();
     InitStyle();
     InitHotKeyHandler(NULL);
@@ -62,5 +66,7 @@ int main(int argc, char** argv) {
     InitApplication(NULL);
     StartControl();
     endCurses();
+#ifdef DEBUG_LOG
     fclose(log);
+#endif
 }

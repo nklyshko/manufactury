@@ -518,7 +518,7 @@ void SetPos(int pos) {
 void SetData(Array* data) {
     currentData = data;
     ScrollBarSetCount(scrollBar, (int) array_size(currentData));
-    showData(currentPos);
+    showData(0);
 }
 
 void ShowStarter(void) {

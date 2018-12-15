@@ -1,5 +1,6 @@
 #include <tui/layout.h>
 #include <tui/styles.h>
+#include <model/filter.h>
 #include "id_input_dialog.h"
 
 #define DIALOG_WIDTH 33
@@ -29,6 +30,7 @@ void InitIdInputDialog(int color) {
     Component* label = CreateLabel(labelStyle, x + 1, y + 1, 23, L"Введите табельный номер");
     LayoutAddComponent(idInputDialog, label);
     idInput = CreateEdit(dataDialogEditStyle, x + 25, y + 1, 5);
+    EditSetFilter(idInput, PositiveNumberFilter);
     LayoutAddComponent(idInputDialog, idInput);
     Component* okButton = CreateButton(cancelButtonStyle, x + 6, y + DIALOG_HEIGHT - 2, 6, L"  Ок  ", OnIdConfirm);
     LayoutAddComponent(idInputDialog, okButton);

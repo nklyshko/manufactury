@@ -18,6 +18,10 @@ void OnFilterCancel(Component* handle) {
     ActivateLayout(NULL);
 }
 
+void OnFieldChange(Component* handle) {
+    EditSetValue(valueEdit, L"");
+}
+
 void InitFilterDialog(int color) {
     int x = (COLS - DIALOG_WIDTH) / 2;
     int y = (LINES - DIALOG_HEIGHT) / 2;
@@ -29,8 +33,10 @@ void InitFilterDialog(int color) {
     fieldSelect = CreateSelect(dataDialogSelectStyle, x + 1, y + 3, 16, 12,
             L"Табельный номер", L"Фамилия", L"Имя", L"Отчество", L"Год рождения", L"Пол", L"Профессия", L"Опыт работы",
             L"Разряд", L"Цех", L"Участок", L"Зарплата");
+    SelectSetEnterAction(fieldSelect, OnFieldChange);
     LayoutAddComponent(filterDialog, fieldSelect);
     valueEdit = CreateEdit(dataDialogEditStyle, x + 18, y + 3, 16);
+    EditSetValue(valueEdit, L"");
     LayoutAddComponent(filterDialog, valueEdit);
     Component* okButton = CreateButton(dataDialogButtonStyle, x + 6, y + DIALOG_HEIGHT - 2, 6, L"  Ок  ", OnFilterConfirm);
     LayoutAddComponent(filterDialog, okButton);
@@ -39,7 +45,6 @@ void InitFilterDialog(int color) {
 }
 
 void ShowFilterDialog(void (* onConfirm)(int fieldId, wchar_t* value)) {
-    EditSetValue(valueEdit, L"");
     confirmAction = onConfirm;
     ActivateLayout(filterDialog);
 }
