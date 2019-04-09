@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <src/log.h>
+#include <conio.h>
 #include "test_console.h"
 #include "test_gui.h"
 

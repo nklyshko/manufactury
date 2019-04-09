@@ -9,7 +9,7 @@ void printE(void* e) {
 }
 
 int comp(void* e1, void* e2) {
-    return *((int*)e1) - *((int*)e2);
+    return **((int**)e1) - **((int**)e2);
 }
 
 int mainConsole() {
@@ -21,8 +21,8 @@ int mainConsole() {
         e = malloc(sizeof(int));
         scanf("%d", &i);
         *e = i;
-        log_debug("%d", *e);
-        array_add_sorted(a, e, comp);
+        log_debug("contains %d %s", *e, array_sorted_contains(a, e, comp) ? "TRUE" : "FALSE");
+        array_sorted_add(a, e, comp);
         array_map(a, printE);
         printf("\n");
     }

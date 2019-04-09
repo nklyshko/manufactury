@@ -1,6 +1,8 @@
 #ifndef MANUFACTURY_GLOBAL_H
 #define MANUFACTURY_GLOBAL_H
 
+#define __STDC_VERSION__ 199901L
+
 #include <stdlib.h>
 #include <mem.h>
 #include <malloc.h>

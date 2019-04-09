@@ -1,15 +1,10 @@
 #include <curses.h>
 #include <panel.h>
-#include <view/component.h>
-#include <view/component/edit.h>
-#include <view/component/label.h>
-#include <view/layout.h>
-#include <view/component/menu.h>
-#include <view/styles.h>
-#include <view/component/button.h>
-#include <view/winapi_bridge.h>
 #include <minwindef.h>
 #include <array.h>
+#include <main/main_presenter.h>
+#include <tui/component/edit.h>
+
 #include "src/log.h"
 #include "view/hotkey.h"
 
@@ -43,7 +38,11 @@ void EditDelete(void) {log_debug("EditDelete");};
 void EditChange(void) {log_debug("EditChange");};
 
 //Tools actions
-void ToolsExportCSV(void) {log_debug("ToolsExportCSV");};
+void ToolsExportCSV(void) {log_debug("ToolsExportCSV");}
+
+void EntryAdded(Employee* e) {
+
+}
 
 void ToolsCreateReport(void) {log_debug("ToolsCreateReport");};
 
@@ -57,7 +56,7 @@ void ButtonAct(Component* handle) {
 
 Component* scrollbar;
 
-int parseInt(const wchar_t* s) {
+int parseI(const wchar_t* s) {
     int num = 0;
     int i = 0;
     while(s[i] != L'\0') {
@@ -70,14 +69,14 @@ int parseInt(const wchar_t* s) {
 
 void SetNum(Component* handle) {
     Edit* e = handle->spec;
-    int num = parseInt(e->value);
+    int num = parseI(e->value);
 //    log_debug("SETNUM %d", num);
     ScrollBarSetNumber(scrollbar, num);
 }
 
 void SetCnt(Component* handle) {
     Edit* e = handle->spec;
-    int cnt = parseInt(e->value);
+    int cnt = parseI(e->value);
 //    log_debug("SETCNT %d", cnt);
     ScrollBarSetCount(scrollbar, cnt);
     EditSetEnabled(handle, false);
@@ -90,7 +89,7 @@ void SelectedEvent(Component* handle) {
 void SetWindowSize(int width, int height) {
     //resize_term(0, 0);
     resize_term(height, width);
-    PANEL* panel = stack_top_panel();
+    PANEL* panel = panel_below(NULL);
     while (panel != NULL) {
         touchwin(panel_window(panel));
         panel = panel_below(panel);
