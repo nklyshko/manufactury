@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
-project(manufactury C)
 
 set(CMAKE_C_STANDARD 11)
+
+project(manufactury C)
+
 set(PDCURSES D:/WorkC/PDCurses)
 set(LOGC D:/LIBC/logc)
 set(COLLECTIONSC D:/LIBC/CollectionsC)
