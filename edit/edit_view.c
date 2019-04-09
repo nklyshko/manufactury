@@ -241,7 +241,7 @@ void ShowDataDialog(Employee* e, void (*onIdChange)(int id), void (* onConfirm)(
     wchar_t exp[EXP_INPUT_WIDTH];
     swprintf(exp, EXP_INPUT_WIDTH, L"%d", e->experience);
     EditSetValue(expEdit, exp);
-    SelectSetValue(classSelect, 0);
+    SelectSetValue(classSelect, e->class - 1);
     wchar_t dept[DEPT_INPUT_WIDTH];
     swprintf(dept, DEPT_INPUT_WIDTH, L"%d", e->department);
     EditSetValue(deptEdit, dept);
